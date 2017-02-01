@@ -1,20 +1,22 @@
 # JumpMicro Microservice 
 
-JumpMicro is Scala Microservice by convention. This means it is a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice.
+JumpMicro is Scala Microservice by convention. This means it is a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice and microservices which cooperate together.
   
 It has the following features:
 
 * Is opinionated by default but you can go off and do your own thing, but by doing things in a common way this makes it easier for programmers to understand different MicroServices.
 * Can run in an OSGi container or standalone as a normal Java application.
 * Supports Karaf and Felix OSGi containers. (others are untested but OSGi is a standard, so should work).
+* [Domino](https://github.com/domino-osgi/domino) Domino is a small library for the programming language Scala designed to support developers in writing bundle activators for the Java module system OSGi.
 * Can run in a Docker container.
 * Supports [Akka Actors](http://akka.io/), [Akka Streams](http://akka.io/), [Monix](https://github.com/monix/monix), [Apache Camel](http://camel.apache.org/) in Akka Actors.
 * [Neo4J](https://neo4j.com/) Graph database as the primary data storage using the [Cypher query language](https://neo4j.com/developer/cypher-query-language/).
 * [Neo4j OGM](https://github.com/neo4j/neo4j-ogm) as the Object to Graph database mapper.
 * Uses asynchronous message passing as the primary means of communication between Microservices.
 * Not encouraging HTTP REST, prefer to use Akka Remoting message passing. You can use REST if you wish to.
+* [Kamon.io](http://kamon.io/) for  metric recording.
 
-Features can be added to individual MicroServices:
+Features can be added to individual MicroServices, the following features exist:
 
 * [Idris language](http://www.idris-lang.org/) compiles, runs and interacts on the JVM in the MicroService using [Idris-JVM](https://github.com/mmhelloworld/idris-jvm) to compile in the sbt project. 
 
