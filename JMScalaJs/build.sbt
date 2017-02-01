@@ -381,7 +381,7 @@ libraryDependencies ++= moduleDeps ++ Seq(
 )
 
 //import com.softwaremill.clippy.ClippySbtPlugin._ // needed in global configuration only
-clippyColorsEnabled := true
+clippyColorsEnabled := false
 
 //addCompilerPlugin("com.softwaremill.clippy" %% "plugin" % "0.5.0" classifier "bundle")
 
