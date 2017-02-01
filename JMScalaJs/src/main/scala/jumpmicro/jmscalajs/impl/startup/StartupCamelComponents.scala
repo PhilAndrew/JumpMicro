@@ -1,4 +1,4 @@
-package universe.microservice.jmscalajs.impl.startup
+package jumpmicro.jmscalajs.impl.startup
 
 import com.typesafe.scalalogging.Logger
 import org.apache.camel.component.exec.ExecComponent
@@ -9,9 +9,10 @@ import org.apache.camel.component.stream.StreamComponent
 import org.apache.camel.component.ssh.SshComponent
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 
-//: ----------------------------------------------------------------------------------
+//: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
-//: ----------------------------------------------------------------------------------
+//: Released under the MIT License, refer to the project website for licence information.
+//: -------------------------------------------------------------------------------------
 
 class StartupCamelComponents {
   val logger = Logger(classOf[StartupCamelComponents])

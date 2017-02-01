@@ -1,4 +1,4 @@
-module microservicescalajs.CallJava
+module jmscalajs.CallJava
 
 import IdrisJvm.FFI
 import IdrisJvm.IO
@@ -7,7 +7,7 @@ import Java.Util
 import Java.Math
 
 IdrisThreadClass : JVM_NativeTy
-IdrisThreadClass = Class "universe/microservice/microservicescalajs/impl/idris/IdrisThread"
+IdrisThreadClass = Class "jumpmicro/jmscalajs/impl/idris/IdrisThread"
 
 IdrisThread : Type
 IdrisThread = JVM_Native IdrisThreadClass
@@ -78,13 +78,13 @@ showList : List Int -> String
 showList = show
 
 ListIntClass : JVM_NativeTy
-ListIntClass = Class "universe/microservice/microservicescalajs/impl/idris/ListInt"
+ListIntClass = Class "jumpmicro/jmscalajs/impl/idris/ListInt"
 
 ListInt : Type
 ListInt = JVM_Native ListIntClass
 
 JExportTestClass : JVM_NativeTy
-JExportTestClass = Class "universe/microservice/microservicescalajs/impl/idris/JExportTest"
+JExportTestClass = Class "jumpmicro/jmscalajs/impl/idris/JExportTest"
 
 JExportTest : Type
 JExportTest = JVM_Native JExportTestClass
@@ -165,9 +165,9 @@ floatClassLit = classLit "float"
 doubleClassLit : Class
 doubleClassLit = classLit "double"
 
-exports1 : FFI_Export FFI_JVM "universe/microservice/microservicescalajs/impl/idris/IdrisThread extends java/lang/Thread implements java/lang/Runnable" []
+exports1 : FFI_Export FFI_JVM "jumpmicro/jmscalajs/impl/idris/IdrisThread extends java/lang/Thread implements java/lang/Runnable" []
 exports1 =
-  Data (List Int) "universe/microservice/microservicescalajs/impl/idris/ListInt" $
+  Data (List Int) "jumpmicro/jmscalajs/impl/idris/ListInt" $
   Fun numbersField (ExportInstanceField "numbers") $
   Fun numbersField (ExportStaticField "numbersStatic") $
   Fun exportedBoolToString (ExportStatic "boolToString") $
@@ -178,9 +178,9 @@ exports1 =
   Fun getThreadName (Super "getName") $
   End
 
-exports2 : FFI_Export FFI_JVM "universe/microservice/microservicescalajs/impl/idris/JExportTest" []
+exports2 : FFI_Export FFI_JVM "jumpmicro/jmscalajs/impl/idris/JExportTest" []
 exports2 =
-  Data (List Int) "universe/microservice/microservicescalajs/impl/idris/ListInt" $
+  Data (List Int) "jumpmicro/jmscalajs/impl/idris/ListInt" $
   Fun cons (ExportStatic "cons") $
   Fun emptyList (ExportStatic "emptyList") $
   Fun showList (ExportStatic "showList") $

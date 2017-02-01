@@ -1,28 +1,25 @@
-package universe.microservice.jmscalajs.impl.actor
+package jumpmicro.jmscalajs.impl.actor
 
 import akka.camel.{CamelMessage, Consumer}
 import com.typesafe.scalalogging.Logger
 import scaldi.Injectable
-import universe.microservice.microservicescalajs.impl.message.MicroServiceMessages.CreateDemo
-import universe.microservice.shared.util.osgi.OsgiGlobal
-import universe.microservice.microservicescalajs.impl.configuration.GlobalModule._
-import universe.microservice.shared.bean.UIRectangle
 import org.neo4j.ogm.session.Neo4jSession
 import org.neo4j.ogm.transaction.Transaction
 import org.osgi.framework.ServiceReference
 import org.slf4j.LoggerFactory
-import universe.microservice.jmscalajs.impl.configuration.GlobalModule
+import jumpmicro.jmscalajs.impl.configuration.GlobalModule
+import jumpmicro.shared.util.osgi.OsgiGlobal
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent._
-import universe.microservice.shared.util.neo4j.Neo4JSessionFactory
-import universe.microservice.shared.model.{ActorInMovie, Movie}
 //import universe.microservice.shared.service.BrowserService
+import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 
-//: ----------------------------------------------------------------------------------
+//: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
-//: ----------------------------------------------------------------------------------
+//: Released under the MIT License, refer to the project website for licence information.
+//: -------------------------------------------------------------------------------------
 
 class StartWebServerActor extends Consumer with Injectable {
   val logger = Logger(classOf[StartWebServerActor])

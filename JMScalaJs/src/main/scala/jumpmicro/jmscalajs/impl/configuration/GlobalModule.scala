@@ -1,4 +1,4 @@
-package universe.microservice.jmscalajs.impl.configuration
+package jumpmicro.jmscalajs.impl.configuration
 
 import java.io.File
 import java.util
@@ -8,19 +8,18 @@ import com.typesafe.scalalogging.Logger
 import org.neo4j.ogm.cypher.{Filter, Filters}
 import org.neo4j.ogm.model.{GraphModel, Result}
 import org.neo4j.ogm.session.Session
-import universe.microservice.jmscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
-import universe.microservice.microservicescalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupOsgi}
-import universe.microservice.shared.util.neo4j.Neo4JSessionFactory
-import universe.microservice.shared.model.{ActorInMovie, MicroConfig}
-import universe.microservice.shared.util.osgi.OsgiGlobal
+import jumpmicro.jmscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
+import jumpmicro.shared.model.MicroConfig
+import jumpmicro.shared.util.osgi.OsgiGlobal
 //import org.neo4j.driver.v1.{AuthTokens, Driver, GraphDatabase}
 import scaldi._
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-//: ----------------------------------------------------------------------------------
+//: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
-//: ----------------------------------------------------------------------------------
+//: Released under the MIT License, refer to the project website for licence information.
+//: -------------------------------------------------------------------------------------
 
 class GlobalModule extends Module {
   val logger = Logger(classOf[Any])

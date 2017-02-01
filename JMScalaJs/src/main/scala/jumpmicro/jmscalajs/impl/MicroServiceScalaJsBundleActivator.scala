@@ -1,31 +1,26 @@
-package universe.microservice.jmscalajs.impl
+package jumpmicro.jmscalajs.impl
 
 import scaldi.Injectable
-import universe.microservice.microservicescalajs.MicroServiceScalaJsService
-import universe.microservice.microservicescalajs.impl.service.HelloWorldServiceImpl
-import universe.microservice.microservicescalajs.impl.startup.StartupOsgi
-import universe.microservice.shared.util.osgi.{BundleActivatorBoilerplate, OsgiGlobal}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import com.typesafe.scalalogging.Logger
 import scaldi.Injectable
-import universe.microservice.microservicescalajs.impl.configuration.{GlobalModule, MicroConfiguration}
-import universe.microservice.microservicescalajs.impl.configuration.GlobalModule._
-import universe.microservice.microservicescalajs.impl.idris.TestIdris
-import universe.microservice.microservicescalajs.impl.startup.{StartupCamelRoutes, StartupOsgi}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
-import universe.microservice.jmscalajs.MicroServiceScalaJsService
-import universe.microservice.jmscalajs.impl.configuration.MicroConfiguration
-import universe.microservice.jmscalajs.impl.idris.TestIdris
-import universe.microservice.jmscalajs.impl.service.HelloWorldServiceImpl
-import universe.microservice.jmscalajs.impl.startup.StartupOsgi
+import jumpmicro.jmscalajs.MicroServiceScalaJsService
+import jumpmicro.jmscalajs.impl.configuration.MicroConfiguration
+import jumpmicro.jmscalajs.impl.idris.TestIdris
+import jumpmicro.jmscalajs.impl.service.HelloWorldServiceImpl
+import jumpmicro.jmscalajs.impl.startup.StartupOsgi
+import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiGlobal}
+import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 
-//: ----------------------------------------------------------------------------------
+//: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
-//: ----------------------------------------------------------------------------------
+//: Released under the MIT License, refer to the project website for licence information.
+//: -------------------------------------------------------------------------------------
 
 class MicroServiceScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectable {
   val logger = Logger(classOf[MicroServiceScalaJsBundleActivator])

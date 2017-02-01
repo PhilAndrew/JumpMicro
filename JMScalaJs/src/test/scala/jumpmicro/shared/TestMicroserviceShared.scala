@@ -1,4 +1,4 @@
-package universe.microservice.shared
+package jumpmicro.shared
 
 //: ----------------------------------------------------------------------------------
 //: Copyright © 2016 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

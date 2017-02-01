@@ -1,8 +1,9 @@
-package universe.microservice.jmscalajs.impl.actor
+package jumpmicro.jmscalajs.impl.actor
 
-//: ----------------------------------------------------------------------------------
-//: Copyright © 2016 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
-//: ----------------------------------------------------------------------------------
+//: -------------------------------------------------------------------------------------
+//: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
+//: Released under the MIT License, refer to the project website for licence information.
+//: -------------------------------------------------------------------------------------
 
 import java.io.{File, IOException}
 import java.nio.file.attribute.BasicFileAttributes
@@ -14,13 +15,13 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.Logger
+import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
+import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.apache.camel.scala.dsl.builder.ScalaRouteBuilder
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import org.osgi.framework.BundleContext
 import scaldi.Injector
-import universe.microservice.shared.util.akkaosgi.MyBundleDelegatingClassLoader
-import universe.microservice.shared.util.osgi.OsgiGlobal
 
 import scala.concurrent.Future
 import scala.io.{Source, StdIn}
