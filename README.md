@@ -9,13 +9,22 @@ It has the following features:
 * Supports Karaf and Felix OSGi containers. (others are untested but OSGi is a standard, so should work).
 * Can run in a Docker container.
 * Supports [Akka Actors](http://akka.io/), [Akka Streams](http://akka.io/), [Monix](https://github.com/monix/monix), [Apache Camel](http://camel.apache.org/) in Akka Actors.
-* [Neo4J](https://neo4j.com/) as the primary data storage.
+* [Neo4J](https://neo4j.com/) Graph database as the primary data storage using the [Cypher query language](https://neo4j.com/developer/cypher-query-language/).
+* [Neo4j OGM](https://github.com/neo4j/neo4j-ogm) as the Object to Graph database mapper.
 * Uses asynchronous message passing as the primary means of communication between Microservices.
-* Does not encourage HTTP REST, prefer to use Akka Remoting message passing. You can use REST if you wish to.
+* Not encouraging HTTP REST, prefer to use Akka Remoting message passing. You can use REST if you wish to.
+
+Features can be added to individual MicroServices:
+
+* [Idris language](http://www.idris-lang.org/) compiles, runs and interacts on the JVM in the MicroService using [Idris-JVM](https://github.com/mmhelloworld/idris-jvm) to compile in the sbt project. 
+
+Preferences:
+
+* Prefer Monix over Akka. 
 
 ## Principles
 
-* Single purpose principle. A single MicroService should have a single purpose which can be defined in about a paragraph of text.
+* [Use a bounded context](https://martinfowler.com/bliki/BoundedContext.html). A single MicroService should have a purpose which can be defined in about a paragraph of text.
 
 ## How to create a new MicroService
 
