@@ -42,7 +42,7 @@ Graphs are portable data structures and can be easily moved from one database to
 
 Data in the graph database should be seen as a source of truth from which things come from, not necessarily as a the on-going state of some system. This distinction means for example a stateful Akka actor may load its initial state from Neo4J but it can keep its ongoing events in a different event log ready for replay when the Akka actor will replay events to restore its state. 
 
-The Neo4J data should change infrequently and represent meaningful data, it is a good idea to think of updating Neo4J data after a minimum period of at least a few seconds, certainly not 100 times per second and this gives the general principle to use. Update Neo4J infrequently and represent a truthful and meaningful state from which new states can emerge. 
+The Neo4J data should change infrequently and represent meaningful data, it is a good idea to think of updating Neo4J data after a period no less than a few seconds for a update on some data, certainly not multiple times per second and this gives the general principle to use. Update Neo4J infrequently and represent a truthful and meaningful state from which new states can emerge. 
 
 Remember Akka Actors can use message passing and encapsulate state rather than using the database as the means of communicating state. Communication and communication of state should not take place by placing data into Neo4J then calling another Microservice to do some action where the other Microservice reads that data from Neo4J. You can instead use Akka message passing to communicate state. 
 
