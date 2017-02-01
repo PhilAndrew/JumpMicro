@@ -324,16 +324,18 @@ compile in Compile <<= (compile in Compile).dependsOn(compileIdris)
 
 // OSGi component properties
 
+lazy val JUMPMICRO_DOT = "jumpmicro."
+
 // The Bundle activator executes when the bundle is loaded or unloaded
 // When this OSGi bundle is started the start method is called on this, when stopped the stop method is called
-bundleActivator := Some("jumpmicro." + name.value.toString.toLowerCase + ".impl.MicroServiceScalaJsBundleActivator")
+bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl.MicroServiceScalaJsBundleActivator")
 
 // Public packages which are exposed by the OSGi component.
 // The root of the Micro Service name should contain exposed traits universe.microservice.microservicescalajs
-exportPackage := Seq("jumpmicro." + name.value.toString.toLowerCase,
+exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
   // The models used by Neo4J OGM must be exposed as public packages to allow Neo4J OGM to read them
-  "jumpmicro.shared.model",
-  "jumpmicro.shared.bean")
+  JUMPMICRO_DOT + "shared.model",
+  JUMPMICRO_DOT + "shared.bean")
 
 def subPackagesOf(path: String): Seq[String] = {
   def recursiveListFiles(f: File): Array[File] = {
@@ -351,14 +353,14 @@ def subPackagesOf(path: String): Seq[String] = {
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
 // The rule is simple, if a new package is created in this project, at least you must add it to the private packages.
-privatePackage := subPackagesOf("jumpmicro." + name.value.toString.toLowerCase + ".impl") ++ Seq(
-  "jumpmicro." + name.value.toString.toLowerCase,
-  "jumpmicro.shared.model",
-  "jumpmicro.shared.bean",
-  "jumpmicro.shared.util.akkaosgi",
-  "jumpmicro.shared.util.boilerplate",
-  "jumpmicro.shared.util.neo4j",
-  "jumpmicro.shared.util.osgi",
+privatePackage := subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++ Seq(
+  JUMPMICRO_DOT + name.value.toString.toLowerCase,
+  JUMPMICRO_DOT + "shared.model",
+  JUMPMICRO_DOT + "shared.bean",
+  JUMPMICRO_DOT + "shared.util.akkaosgi",
+  JUMPMICRO_DOT + "shared.util.boilerplate",
+  JUMPMICRO_DOT + "shared.util.neo4j",
+  JUMPMICRO_DOT + "shared.util.osgi",
   "mmhelloworld.idrisjvmruntime",
   "microservicescalajs",
   "Decidable",
