@@ -1,6 +1,6 @@
 package jumpmicro.jmscalajs.impl.idris
 
-import universe.microservice.microservicescalajs.impl.idris.JBar
+import jumpmicro.jmscalajs.impl.idris.JBar
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

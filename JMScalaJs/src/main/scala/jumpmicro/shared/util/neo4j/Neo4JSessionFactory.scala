@@ -24,11 +24,11 @@ trait Neo4JSessionFactory
 object Neo4JSessionFactory extends Injectable {
   val logger = Logger(classOf[Neo4JSessionFactory])
 
-  def modelPackages = Seq("universe.microservice.shared.model")
+  def modelPackages = Seq("jumpmicro.shared.model")
 
   private lazy val sessionFactory = {
 
-    Neo4JOSGI.modelPackagePath = "universe.microservice.shared.model"
+    Neo4JOSGI.modelPackagePath = "jumpmicro.shared.model"
 
     val neo4Jip = inject [String] (identified by "neo4j.server.ipaddress")
     val neo4Juser = inject [String] (identified by "neo4j.server.user")

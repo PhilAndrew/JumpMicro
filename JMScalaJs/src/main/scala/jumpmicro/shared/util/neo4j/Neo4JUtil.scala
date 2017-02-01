@@ -1,4 +1,4 @@
-package universe.microservice.shared.util.neo4j
+package jumpmicro.shared.util.neo4j
 
 import com.typesafe.scalalogging.Logger
 import org.neo4j.ogm.session.Session
