@@ -6,20 +6,20 @@ It has the following features:
 
 * Is opinionated by default but you can go off and do your own thing, but by doing things in a common way this makes it easier for programmers to understand different MicroServices.
 * Can run in an OSGi container or standalone as a normal Java application.
-* Supports Karaf and Felix OSGi containers. (others are untested but OSGi is a standard so should work).
+* Supports Karaf and Felix OSGi containers. (others are untested but OSGi is a standard, so should work).
 * Can run in a Docker container.
-* Supports [Akka Actors](http://akka.io/), [Monix](https://github.com/monix/monix), [Apache Camel](http://camel.apache.org/) in Akka Actors.
+* Supports [Akka Actors](http://akka.io/), [Akka Streams](http://akka.io/), [Monix](https://github.com/monix/monix), [Apache Camel](http://camel.apache.org/) in Akka Actors.
 * [Neo4J](https://neo4j.com/) as the primary data storage.
 * Uses asynchronous message passing as the primary means of communication between Microservices.
 * Does not encourage HTTP REST, prefer to use Akka Remoting message passing. You can use REST if you wish to.
 
 ## Principles
 
-* Single purpose princple. A single MicroService should have a single purpose which can be defined in about a paragraph of text.
+* Single purpose principle. A single MicroService should have a single purpose which can be defined in about a paragraph of text.
 
 ## How to create a new MicroService
 
-Creation of a new MicroService is done by copying the code of another existing JumpMicro MicroService. In the normal case this would be the copying of a MicroService which acts as a template for a new MicroService, an example is a ScalaJS oriented MicroService whos job is to produce Javascript from ScalaJS code for a particular application.
+Creation of a new MicroService is done by copying the code of another existing JumpMicro MicroService. In the normal case this would be the copying of a MicroService which acts as a template for a new MicroService, an example is a ScalaJS oriented MicroService whos job is to produce Javascript from ScalaJS code for a particular application. Also it is easier to copy existing code which is close to what you want rather than developing new code.
 
 ## FAQ: Why opinionated?
 
@@ -33,12 +33,13 @@ Data in the graph database should be seen as a source of truth from which things
 
 The Neo4J data should change infrequently and represent meaningful data, it is a good idea to think of updating Neo4J after a period of at least a few seconds, certainly not 100 times per second and this gives the general principle to use. Update Neo4J infrequently and represent a truthful and meaningful state from which new states can emerge. 
 
-Remember Akka Actors can use message passing and encapsulate state rather than using the database as the means of communicating state. 
+Remember Akka Actors can use message passing and encapsulate state rather than using the database as the means of communicating state. Communication and communication of state should not take place by placing data into Neo4J then calling another Microservice to do some action where the other Microservice reads from Neo4J. 
 
 In summary:
  
-* Change data infrequently, it is a permanent data store and has a cost for storage.
 * Represent meaningful state. 
+* Change data infrequently.
+* Neo4J should not be the means by which communication takes place.
 
 ### ------------------------  RUBBISH NOTES AFTER THIS
 
