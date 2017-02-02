@@ -14,7 +14,7 @@ It has the following features:
 * [Neo4j OGM](https://github.com/neo4j/neo4j-ogm) as the Object to Graph database mapper.
 * Uses asynchronous message passing as the primary means of communication between Microservices.
 * Not encouraging HTTP REST, prefer to use Akka Remoting message passing. You can use REST if you wish to.
-* [Kamon.io](http://kamon.io/) for  metrics recording.
+* [Dropwizard Metrics](http://metrics.dropwizard.io/) for recording Metrics of the running application to ensure health of your application using [Metrics-Scala](https://github.com/erikvanoosten/metrics-scala) for  metrics recording, [documentation here](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Manual.md) with documentation for [Akka Actos](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Actors.md), [Futures](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Futures.md), [all docs](https://github.com/erikvanoosten/metrics-scala/tree/master/docs).
 
 Features can be added to individual MicroServices, the following features exist:
 
@@ -22,7 +22,14 @@ Features can be added to individual MicroServices, the following features exist:
 
 Preferences:
 
-* Prefer Monix over Akka. 
+* Prefer [Monix](https://github.com/monix/monix) over Akka. 
+
+## Sugggested development environment
+
+Use IntelliJ IDEA with the following plugins enabled, enable them in `File / Settings / Plugins`
+
+* Scala
+* Apache Camel IDEA Plugin
 
 ## Principles
 
@@ -30,11 +37,22 @@ Preferences:
 
 ## How to create a new MicroService
 
-Creation of a new MicroService is done by copying the code of another existing JumpMicro MicroService. In the normal case this would be the copying of a MicroService which acts as a template for a new MicroService, an example is a ScalaJS oriented MicroService whos job is to produce Javascript from ScalaJS code for a particular application. Also it is easier to copy existing code which is close to what you want rather than developing new code.
+Creation of a new MicroService is done by copying the code of another existing MicroService. In the normal case this would be the copying of a MicroService which acts as a template for a new MicroService, an example is a ScalaJS oriented MicroService whos job is to produce Javascript from ScalaJS code for a particular application. Also it is easier to copy existing code which is close to what you want rather than developing new code.
 
 ## FAQ: Why opinionated?
 
 I have opinions so I prefer to do things in a particular way. If you wish to diverge to a different way, you are welcome to do that and I am open to ideas and influence on how to do things, please contribute ideas and code.
+
+## FAQ: Why OSGi?
+
+Two reasons:
+
+* Can share resources between OSGi bundles (modules) in the same process leading to a more efficient runtime for running multiple modules on the same machine. No need to have one process per MicroService.
+* OSGi module system works and is reliable as a module system.
+ 
+## FAQ: What about Java Modules?
+ 
+[Java modules](https://en.wikipedia.org/wiki/Java_Module_System) deferred to a Java 9 release in 2017 looks like a new and good idea but OSGi works and is boring and works. 
 
 ## FAQ: Why Neo4J vs other databases?
 
