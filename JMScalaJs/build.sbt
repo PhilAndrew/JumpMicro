@@ -189,9 +189,18 @@ lazy val ConfigDependency = Seq(
   Seq()
 )
 
+// https://github.com/erikvanoosten/metrics-scala
+lazy val MetricsScalaDependency = Seq(
+  Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
+    "org.hdrhistogram" % "HdrHistogram" % "2.1.9",
+      "nl.grons" %% "metrics-scala" % "3.5.5"), Seq(), Seq(
+    "nl.grons.metrics.scala"
+  )
+)
+
 lazy val dependencys = Seq(ScalaTagsDependency, Slf4jDependency, DeclarativeServicesDependency, DominoOsgiDependency,
   CamelCoreDependency, MonixCoreDependency, AkkaCamelDependency, AkkaDependency, Neo4JDependency, ScaldiDependency,
-  ScalaLoggingDependency, CamelDependency, CatsDependency, ShapelessDependency, ConfigDependency)
+  ScalaLoggingDependency, CamelDependency, CatsDependency, ShapelessDependency, ConfigDependency, MetricsScalaDependency)
 
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
@@ -328,7 +337,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 // The Bundle activator executes when the bundle is loaded or unloaded
 // When this OSGi bundle is started the start method is called on this, when stopped the stop method is called
-bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl.MicroServiceScalaJsBundleActivator")
+bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl.JMScalaJsBundleActivator")
 
 // Public packages which are exposed by the OSGi component.
 // The root of the Micro Service name should contain exposed traits universe.microservice.microservicescalajs
