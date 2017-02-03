@@ -1,5 +1,7 @@
 import java.io.File
 
+import osgifelix.OsgiDependency
+
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
@@ -34,173 +36,181 @@ val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 // Dependencys are the SBT dependency followed by the package import statements for OSGi
 
 
-// ScalaTags
-// http://www.lihaoyi.com/scalatags/
-lazy val ScalaTagsDependency: Seq[Seq[_]] = Seq(
-  // sbt dependencys
-  Seq[ModuleID]("com.lihaoyi" %% "scalatags" % "0.6.1"),
-  // bundle requirements
-  Seq(),
-  // package requirements
-  Seq[String]("scalatags", "scalatags.text")
-)
 
-lazy val Slf4jDependency = Seq(
-  Seq("org.slf4j" % "slf4j-api" % slf4jVersion,
-    "org.slf4j" % "slf4j-simple" % slf4jVersion,
-    "org.slf4j" % "jcl-over-slf4j" % slf4jVersion,
-    "org.slf4j" % "log4j-over-slf4j" % slf4jVersion),
-  Seq(),
-  Seq()
-)
-
-lazy val DeclarativeServicesDependency = Seq(
-  Seq(// Required for Declarative Services
-  // However for DS to work you need to install and run another bundle before this one
-  // http://stackoverflow.com/questions/16707784/using-an-embedded-osgi-container
-  // * http://njbartlett.name/2015/08/17/osgir6-declarative-services.html
-  // * http://felix.apache.org/documentation/subprojects/apache-felix-service-component-runtime.html
-  "org.apache.felix" % "org.apache.felix.scr" % "2.0.6"
-  //  "org.apache.felix" % "org.apache.felix.scr.annotations" % "1.12.0",
-  //  "org.apache.felix" % "org.apache.felix.scr.generator" % "1.8.0", // Dependancy of annotations above line
-  //  "org.apache.felix" % "org.apache.felix.scr.ds-annotations" % "1.2.8",
+lazy val OsgiDependencies = Seq[OsgiDependency](
+  // ScalaTags
+  // http://www.lihaoyi.com/scalatags/
+  OsgiDependency(
+    "ScalaTagsDependency",
+    // sbt dependencys
+    Seq[ModuleID]("com.lihaoyi" %% "scalatags" % "0.6.1"),
+    // bundle requirements
+    Seq(),
+    // package requirements
+    Seq[String]("scalatags", "scalatags.text")
   ),
-  Seq(),
-  Seq()
-)
 
-lazy val DominoOsgiDependency = Seq(
-  Seq(  // Domino OSGi
-    // https://www.helgoboss.org/projects/domino/user-guide
-    "com.github.domino-osgi" % "domino_2.11" % "1.1.1"
+  OsgiDependency("Slf4jDependency",
+    Seq("org.slf4j" % "slf4j-api" % slf4jVersion,
+      "org.slf4j" % "slf4j-simple" % slf4jVersion,
+      "org.slf4j" % "jcl-over-slf4j" % slf4jVersion,
+      "org.slf4j" % "log4j-over-slf4j" % slf4jVersion),
+    Seq(),
+    Seq()
   ),
-  Seq(),
-  Seq("domino")
-)
 
-lazy val CamelCoreDependency = Seq(
-  Seq("org.osgi" % "org.osgi.compendium" % "5.0.0", // Required for camel-core-osgi
-    "org.apache.camel" % "camel-core-osgi" % camelVersion,
-    // Scala DSL for Camel
-    "org.scala-lang.modules" %% "scala-xml" % "1.0.4", // Required by camel-scala
-    "org.apache.camel" % "camel-scala" % camelVersion),
-  Seq("org.apache.camel.camel-core-osgi",
-    "org.apache.camel.camel-scala"
+  OsgiDependency("DeclarativeServicesDependency",
+    Seq(// Required for Declarative Services
+      // However for DS to work you need to install and run another bundle before this one
+      // http://stackoverflow.com/questions/16707784/using-an-embedded-osgi-container
+      // * http://njbartlett.name/2015/08/17/osgir6-declarative-services.html
+      // * http://felix.apache.org/documentation/subprojects/apache-felix-service-component-runtime.html
+      "org.apache.felix" % "org.apache.felix.scr" % "2.0.6"
+      //  "org.apache.felix" % "org.apache.felix.scr.annotations" % "1.12.0",
+      //  "org.apache.felix" % "org.apache.felix.scr.generator" % "1.8.0", // Dependancy of annotations above line
+      //  "org.apache.felix" % "org.apache.felix.scr.ds-annotations" % "1.2.8",
+    ),
+    Seq(),
+    Seq()
   ),
-  Seq()
-)
 
-lazy val MonixCoreDependency = Seq(
-  Seq(  // Monix https://monix.io/
-    "io.monix" %% "monix" % "2.2.1",
-    "io.monix" %% "monix-cats" % "2.2.1"
+  OsgiDependency("DominoOsgiDependency",
+    Seq(  // Domino OSGi
+      // https://www.helgoboss.org/projects/domino/user-guide
+      "com.github.domino-osgi" % "domino_2.11" % "1.1.1"
+    ),
+    Seq(),
+    Seq("domino")
   ),
-  Seq(), // @todo Monix is untested to work
-  Seq()
-)
 
-lazy val AkkaCamelDependency = Seq(
-  Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
-  Seq("com.typesafe.akka.camel"),
-  Seq()
-)
-
-lazy val AkkaDependency = Seq(
-  Seq(  // Akka
-    "com.typesafe.akka" %% "akka-osgi" % akkaVersion,
-    //"com.typesafe.akka" %% "akka-actor" % akkaVersion,
-    //"com.typesafe.akka" %% "akka-stream" % akkaVersion,
-    "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-    "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
-    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+  OsgiDependency("CamelCoreDependency",
+    Seq("org.osgi" % "org.osgi.compendium" % "5.0.0", // Required for camel-core-osgi
+      "org.apache.camel" % "camel-core-osgi" % camelVersion,
+      // Scala DSL for Camel
+      "org.scala-lang.modules" %% "scala-xml" % "1.0.4", // Required by camel-scala
+      "org.apache.camel" % "camel-scala" % camelVersion),
+    Seq("org.apache.camel.camel-core-osgi",
+      "org.apache.camel.camel-scala"
+    ),
+    Seq()
   ),
-  Seq("com.typesafe.akka.osgi"),
-  Seq("akka.http",
-    "akka.http.scaladsl",
-    "akka.http.scaladsl.server")
-)
 
-lazy val Neo4JDependency = Seq(
-  Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.36"),
-  Seq(),
-  Seq("org.neo4j.ogm",
-    "org.neo4j.ogm.compiler",
-    "org.neo4j.ogm.config",
-    "org.neo4j.ogm.session",
-    "org.neo4j.ogm.transaction",
-    "org.neo4j.ogm.drivers.bolt.driver",
-    "org.neo4j.ogm.service",
-    "org.neo4j.ogm.annotation")
-)
+  OsgiDependency("MonixCoreDependency",
+    Seq(  // Monix https://monix.io/
+      "io.monix" %% "monix" % "2.2.1",
+      "io.monix" %% "monix-cats" % "2.2.1"
+    ),
+    Seq(), // @todo Monix is untested to work
+    Seq()
+  ),
 
-lazy val ScalaLoggingDependency = Seq(
-  Seq(  // Logging
-    // https://github.com/typesafehub/scala-logging
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-  ), Seq(), Seq("com.typesafe.scalalogging")
-)
+  OsgiDependency("AkkaCamelDependency",
+    Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
+    Seq("com.typesafe.akka.camel"),
+    Seq()
+  ),
 
-lazy val ScaldiDependency = Seq(
-  // Scala Dependency Injection
-  // http://scaldi.org/
-  Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq(), Seq("scaldi")
-)
+  OsgiDependency("AkkaDependency",
+    Seq(  // Akka
+      "com.typesafe.akka" %% "akka-osgi" % akkaVersion,
+      //"com.typesafe.akka" %% "akka-actor" % akkaVersion,
+      //"com.typesafe.akka" %% "akka-stream" % akkaVersion,
+      "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+      "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
+      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+    ),
+    Seq("com.typesafe.akka.osgi"),
+    Seq("akka.http",
+      "akka.http.scaladsl",
+      "akka.http.scaladsl.server")
+  ),
 
-lazy val CamelDependency = Seq(
-  Seq(// Camel components
-    "org.apache.camel" % "camel-ssh" % camelVersion,
-    "org.apache.camel" % "camel-ftp" % camelVersion,
-    "org.apache.camel" % "camel-exec" % camelVersion,
-    "org.apache.camel" % "camel-stream" % camelVersion),
+  OsgiDependency("Neo4JDependency",
+    Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.36"),
+    Seq(),
+    Seq("org.neo4j.ogm",
+      "org.neo4j.ogm.compiler",
+      "org.neo4j.ogm.config",
+      "org.neo4j.ogm.session",
+      "org.neo4j.ogm.transaction",
+      "org.neo4j.ogm.drivers.bolt.driver",
+      "org.neo4j.ogm.service",
+      "org.neo4j.ogm.annotation")
+  ),
+
+  OsgiDependency("ScalaLoggingDependency",
+    Seq(  // Logging
+      // https://github.com/typesafehub/scala-logging
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+    ), Seq(), Seq("com.typesafe.scalalogging")
+  ),
+
+  OsgiDependency("ScaldiDependency",
+    // Scala Dependency Injection
+    // http://scaldi.org/
+    Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq(), Seq("scaldi")
+  ),
+
+  OsgiDependency("CamelDependency",
+    Seq(// Camel components
+      "org.apache.camel" % "camel-ssh" % camelVersion,
+      "org.apache.camel" % "camel-ftp" % camelVersion,
+      "org.apache.camel" % "camel-exec" % camelVersion,
+      "org.apache.camel" % "camel-stream" % camelVersion),
     // If adding other camel package then add it here like the following:
     //"org.apache.camel.camel-ssh",
     //"org.apache.camel.camel-jsch",),)
-  Seq("org.apache.camel.camel-exec",
-    "org.apache.camel.camel-ssh",
-    "org.apache.camel.camel-ftp",
-    "org.apache.camel.camel-stream"),
-  Seq()
-)
-
-lazy val CatsDependency = Seq(
-  // Cats https://github.com/typelevel/cats
-  // Un-tested to work
-  Seq("org.typelevel" %% "cats-core" % catsVersion),
-  Seq(),
-  Seq()
-)
-
-lazy val ShapelessDependency = Seq(
-  // Shapeless https://github.com/milessabin/shapeless
-  // Un-tested to work
-  Seq("org.typelevel" % "macro-compat_2.11" % "1.1.1",
-  "org.scala-lang" % "scala-reflect" % "2.11.8",
-  "org.scala-lang" % "scala-compiler" % "2.11.8",
-  "com.chuusai" %% "shapeless" % shapelessVersion),
-  Seq(),
-  Seq()
-)
-
-lazy val ConfigDependency = Seq(
-  Seq(  // https://github.com/kxbmap/configs
-    "com.github.kxbmap" %% "configs" % "0.4.4"
+    Seq("org.apache.camel.camel-exec",
+      "org.apache.camel.camel-ssh",
+      "org.apache.camel.camel-ftp",
+      "org.apache.camel.camel-stream"),
+    Seq()
   ),
-  Seq(),
-  Seq()
-)
 
-// https://github.com/erikvanoosten/metrics-scala
-lazy val MetricsScalaDependency = Seq(
-  Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
-    "org.hdrhistogram" % "HdrHistogram" % "2.1.9",
+  OsgiDependency("CatsDependency",
+    // Cats https://github.com/typelevel/cats
+    // Un-tested to work
+    Seq("org.typelevel" %% "cats-core" % catsVersion),
+    Seq(),
+    Seq()
+  ),
+
+  OsgiDependency("ShapelessDependency",
+    // Shapeless https://github.com/milessabin/shapeless
+    // Un-tested to work
+    Seq("org.typelevel" % "macro-compat_2.11" % "1.1.1",
+      "org.scala-lang" % "scala-reflect" % "2.11.8",
+      "org.scala-lang" % "scala-compiler" % "2.11.8",
+      "com.chuusai" %% "shapeless" % shapelessVersion),
+    Seq(),
+    Seq()
+  ),
+
+  OsgiDependency("ConfigDependency",
+    Seq(  // https://github.com/kxbmap/configs
+      "com.github.kxbmap" %% "configs" % "0.4.4"
+    ),
+    Seq(),
+    Seq()
+  ),
+
+  // https://github.com/erikvanoosten/metrics-scala
+  OsgiDependency("MetricsScalaDependency",
+    Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
+      "org.hdrhistogram" % "HdrHistogram" % "2.1.9",
       "nl.grons" %% "metrics-scala" % "3.5.5"), Seq(), Seq(
-    "nl.grons.metrics.scala"
+      "nl.grons.metrics.scala"
+    )
   )
 )
 
-lazy val dependencys = Seq(ScalaTagsDependency, Slf4jDependency, DeclarativeServicesDependency, DominoOsgiDependency,
-  CamelCoreDependency, MonixCoreDependency, AkkaCamelDependency, AkkaDependency, Neo4JDependency, ScaldiDependency,
-  ScalaLoggingDependency, CamelDependency, CatsDependency, ShapelessDependency, ConfigDependency, MetricsScalaDependency)
+
+
+
+
+
+
+lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
@@ -381,7 +391,7 @@ privatePackage := subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase 
   "main"
 )
 
-lazy val moduleDeps: Seq[ModuleID] = dependencys.flatMap(_.head.asInstanceOf[Seq[ModuleID]])
+lazy val moduleDeps: Seq[ModuleID] = dependencys.flatten
 
 libraryDependencies ++= moduleDeps ++ Seq(
   "com.jcraft" % "jzlib" % "1.1.3",
@@ -398,13 +408,13 @@ clippyColorsEnabled := false
 
 //addCompilerPlugin("com.softwaremill.clippy" %% "plugin" % "0.5.0" classifier "bundle")
 
-lazy val bundleDepsReqs: Seq[String] = dependencys.flatMap { (d) => {
-  d.apply(1).asInstanceOf[Seq[String]]
+lazy val bundleDepsReqs: Seq[String] = OsgiDependencies.flatMap { (d) => {
+  d.moduleRequirements
 }
 }
 
-lazy val packageDepsReqs: Seq[String] = dependencys.flatMap { (d) => {
-  d.apply(2).asInstanceOf[Seq[String]]
+lazy val packageDepsReqs: Seq[String] = OsgiDependencies.flatMap { (d) => {
+  d.packageRequirements
 }
 }
 
