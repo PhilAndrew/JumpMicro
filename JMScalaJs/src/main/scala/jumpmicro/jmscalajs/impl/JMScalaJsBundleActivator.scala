@@ -19,6 +19,7 @@ import jumpmicro.jmscalajs.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmscalajs.impl.startup.StartupOsgi
 import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiGlobal}
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
+import org.osgi.framework.{BundleActivator, BundleContext}
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -83,6 +84,4 @@ class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectabl
       stopScaldi()
     }
   }
-
-
 }

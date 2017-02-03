@@ -311,6 +311,7 @@ compileIdris := {
   println("Compile Idris")
 
   import sys.process._
+  IO.delete(new File("target" + File.separator + "idrisclass"))
   IO.createDirectory(new File("target" + File.separator + "idrisclass"))
 
   val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "/home/projects/git/idris-jvm/bin/idrisjvm.bat")
@@ -322,12 +323,15 @@ compileIdris := {
   if (result.indexOf("FAILURE:") == 0) println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
 
   // Copy classes from idrisclass to target/scala-2.11/classes
+  IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main" + File.separator + "Main.class"))
   IO.copyDirectory(new File("target" + File.separator + "idrisclass"), new File("target" + File.separator + "scala-2.11" + File.separator + "classes"), true, true)
+  IO.delete(new File("target" + File.separator + "idrisclass"))
+  IO.delete(new File("target" + File.separator + "scala-2.11" + File.separator + "classes" + File.separator + "jmscalajs"))
 }
 
 cleanFiles += file("target" + File.separator + "idrisclass")
 
-unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
+//unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
 
 compile in Compile <<= (compile in Compile).dependsOn(compileIdris)
 
@@ -371,7 +375,6 @@ privatePackage := subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase 
   JUMPMICRO_DOT + "shared.util.neo4j",
   JUMPMICRO_DOT + "shared.util.osgi",
   "mmhelloworld.idrisjvmruntime",
-  "microservicescalajs",
   "Decidable",
   "Prelude",
   "main"

@@ -1,7 +1,7 @@
 module Main
 
-import public jmscalajs.Bar
-import public jmscalajs.CallJava
+import public jumpmicro.jmscalajs.impl.idris.Bar
+import public jumpmicro.jmscalajs.impl.idris.CallJava
 
 main : IO ()
 main = putStrLn "Hello world"

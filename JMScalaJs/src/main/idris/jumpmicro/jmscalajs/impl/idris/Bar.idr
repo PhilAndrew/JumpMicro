@@ -1,4 +1,4 @@
-module jmscalajs.Bar
+module jumpmicro.jmscalajs.impl.idris.Bar
 
 import IdrisJvm.FFI
 import IdrisJvm.IO

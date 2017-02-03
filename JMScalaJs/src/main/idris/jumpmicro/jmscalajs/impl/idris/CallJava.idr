@@ -1,4 +1,4 @@
-module jmscalajs.CallJava
+module jumpmicro.jmscalajs.impl.idris.CallJava
 
 import IdrisJvm.FFI
 import IdrisJvm.IO
