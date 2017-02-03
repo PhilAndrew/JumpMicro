@@ -2,19 +2,19 @@
 
 JumpMicro is Scala Microservice by convention. This means it is a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice and microservices which cooperate together.
   
-It has the following features:
+It has the following features available, they can be disabled and enabled easily:
 
 * Is opinionated by default but you can go off and do your own thing, but by doing things in a common way this makes it easier for programmers to understand different MicroServices.
 * Can run in an OSGi container or standalone as a normal Java application.
 * Supports Karaf and Felix OSGi containers. (others are untested but OSGi is a standard, so should work).
-* [Domino](https://github.com/domino-osgi/domino) is a small library for the programming language Scala designed to support developers in writing bundle activators for the Java module system OSGi.
+* [Domino](https://github.com/domino-osgi/domino) is a library Scala designed to support developers in writing bundle activators for the Java module system OSGi.
 * Can run in a Docker container.
 * Supports [Akka Actors](http://akka.io/), [Akka Streams](http://akka.io/), [Monix](https://github.com/monix/monix), [Apache Camel](http://camel.apache.org/) in Akka Actors.
 * [Neo4J](https://neo4j.com/) Graph database as the primary data storage using the [Cypher query language](https://neo4j.com/developer/cypher-query-language/).
 * [Neo4j OGM](https://github.com/neo4j/neo4j-ogm) as the Object to Graph database mapper.
 * Uses asynchronous message passing as the primary means of communication between Microservices.
 * Not encouraging HTTP REST, prefer to use Akka Remoting message passing. You can use REST if you wish to.
-* [Dropwizard Metrics](http://metrics.dropwizard.io/) for recording Metrics of the running application to ensure health of your application using [Metrics-Scala](https://github.com/erikvanoosten/metrics-scala) for  metrics recording, [documentation here](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Manual.md) with documentation for [Akka Actos](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Actors.md), [Futures](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Futures.md), [all docs](https://github.com/erikvanoosten/metrics-scala/tree/master/docs).
+* [Dropwizard Metrics](http://metrics.dropwizard.io/) for recording Metrics of the running application to ensure health of your application using [Metrics-Scala](https://github.com/erikvanoosten/metrics-scala) for  metrics recording, [documentation here](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Manual.md) with documentation for [Akka Actos](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Actors.md), [Futures](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Futures.md), [all docs](https://github.com/erikvanoosten/metrics-scala/tree/master/docs) and [3rd party libraries](http://metrics.dropwizard.io/3.1.0/manual/third-party/).
 
 Features can be added to individual MicroServices, the following features exist:
 
@@ -22,7 +22,14 @@ Features can be added to individual MicroServices, the following features exist:
 
 Preferences:
 
-* Prefer [Monix](https://github.com/monix/monix) over Akka. 
+* Prefer [Monix](https://github.com/monix/monix) over Akka?
+ 
+## How to run?
+ 
+Choose one of the following:
+ 
+* On the command line use SBT to do `sbt run`.
+* Run `felix.bat` on Windows which creates an OSGi bundle and runs in a Felix OSGi container. Refer to the folder `target/launcher` to see the Felix bundle.
 
 ## Sugggested development environment
 
