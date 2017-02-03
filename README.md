@@ -29,7 +29,8 @@ Preferences:
 Choose one of the following:
  
 * On the command line use SBT to do `sbt run`.
-* Run `felix.bat` on Windows which creates an OSGi bundle and runs in a Felix OSGi container. Refer to the folder `target/launcher` to see the Felix bundle.
+* Run `felix.bat` on Windows which creates an OSGi bundle and runs in a [Felix](http://felix.apache.org/) OSGi container. Refer to the folder `target/launcher` to see the [Felix](http://felix.apache.org/) bundle.
+* [Apache Karaf](http://karaf.apache.org/) is not working yet.
 
 ## Sugggested development environment
 
