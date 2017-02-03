@@ -323,7 +323,8 @@ compileIdris := {
   if (result.indexOf("FAILURE:") == 0) println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
 
   // Copy classes from idrisclass to target/scala-2.11/classes
-  IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main" + File.separator + "Main.class"))
+  //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
+  //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
   IO.copyDirectory(new File("target" + File.separator + "idrisclass"), new File("target" + File.separator + "scala-2.11" + File.separator + "classes"), true, true)
   IO.delete(new File("target" + File.separator + "idrisclass"))
   IO.delete(new File("target" + File.separator + "scala-2.11" + File.separator + "classes" + File.separator + "jmscalajs"))
