@@ -17,7 +17,7 @@ import jumpmicro.jmscalajs.impl.configuration.MicroConfiguration
 import jumpmicro.jmscalajs.impl.idris.TestIdris
 import jumpmicro.jmscalajs.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmscalajs.impl.startup.StartupOsgi
-import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiGlobal}
+import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule, OsgiGlobal}
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 import org.osgi.framework.{BundleActivator, BundleContext}
 
@@ -52,12 +52,11 @@ class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectabl
 
   // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
+    addCapsule(new OsgiCapsule())
 
     testMetrics()
 
     TestIdris.test()
-
-    startScaldi()
 
     // @todo Can I use scalaDi to better store this bundleContext as a global
     val osgiGlobal: OsgiGlobal = inject[OsgiGlobal]
@@ -81,7 +80,6 @@ class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectabl
 
     onStop {
       system foreach (_.terminate())
-      stopScaldi()
     }
   }
 }

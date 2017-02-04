@@ -385,6 +385,7 @@ privatePackage := subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase 
   JUMPMICRO_DOT + "shared.util.boilerplate",
   JUMPMICRO_DOT + "shared.util.neo4j",
   JUMPMICRO_DOT + "shared.util.osgi",
+  JUMPMICRO_DOT + "shared.util.resourceshare", // @todo use subPackagesOf
   "mmhelloworld.idrisjvmruntime",
   "Decidable",
   "Prelude",
