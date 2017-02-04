@@ -19,6 +19,7 @@ import jumpmicro.jmscalajs.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmscalajs.impl.startup.StartupOsgi
 import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule, OsgiGlobal}
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
+import jumpmicro.shared.util.resourceshare.ResourceShareService
 import org.osgi.framework.{BundleActivator, BundleContext}
 
 //: -------------------------------------------------------------------------------------
@@ -53,6 +54,10 @@ class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectabl
   // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
     addCapsule(new OsgiCapsule())
+
+    whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
+      }
+    }
 
     testMetrics()
 

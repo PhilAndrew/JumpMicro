@@ -16,7 +16,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule
 import jumpmicro.jmscalajs.impl.startup.StartupOsgi
-import jumpmicro.shared.util.resourceshare.ResourceShare
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -24,9 +23,6 @@ import jumpmicro.shared.util.resourceshare.ResourceShare
 //: -------------------------------------------------------------------------------------
 
 class BundleActivatorBoilerplate extends DominoActivator {
-
   protected var camelContext: OsgiDefaultCamelContext = null
   protected var system: Option[ActorSystem] = None
-
-
 }

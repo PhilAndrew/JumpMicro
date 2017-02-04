@@ -377,15 +377,9 @@ def subPackagesOf(path: String): Seq[String] = {
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
 // The rule is simple, if a new package is created in this project, at least you must add it to the private packages.
-privatePackage := subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++ Seq(
+privatePackage := subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
+  subPackagesOf(JUMPMICRO_DOT + "shared") ++ Seq(
   JUMPMICRO_DOT + name.value.toString.toLowerCase,
-  JUMPMICRO_DOT + "shared.model",
-  JUMPMICRO_DOT + "shared.bean",
-  JUMPMICRO_DOT + "shared.util.akkaosgi",
-  JUMPMICRO_DOT + "shared.util.boilerplate",
-  JUMPMICRO_DOT + "shared.util.neo4j",
-  JUMPMICRO_DOT + "shared.util.osgi",
-  JUMPMICRO_DOT + "shared.util.resourceshare", // @todo use subPackagesOf
   "mmhelloworld.idrisjvmruntime",
   "Decidable",
   "Prelude",

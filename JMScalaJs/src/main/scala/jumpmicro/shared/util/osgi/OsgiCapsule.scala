@@ -2,7 +2,7 @@ package jumpmicro.shared.util.osgi
 
 import domino.capsule.Capsule
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule
-import jumpmicro.shared.util.resourceshare.ResourceShare
+import jumpmicro.shared.util.resourceshare.ResourceShareService
 
 //: ----------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -10,7 +10,7 @@ import jumpmicro.shared.util.resourceshare.ResourceShare
 //: ----------------------------------------------------------------------------------
 
 class OsgiCapsule extends Capsule {
-  protected var resourceShare: Option[ResourceShare] = None
+  protected var resourceShare: Option[ResourceShareService] = None
 
   def start() {
     startScaldi()
