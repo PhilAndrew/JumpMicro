@@ -14,9 +14,9 @@ enablePlugins(SbtKarafPackaging)
 
 osgiSettings
 
-lazy val core = project.in(file("../"))
+//lazy val core = project.in(file("../"))
 
-lazy val root = project.in(file(".")).dependsOn(core)
+lazy val root = project.in(file("."))//.dependsOn(core)
   .settings(featuresXml := {
 
 

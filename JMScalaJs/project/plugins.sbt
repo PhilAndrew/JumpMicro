@@ -4,7 +4,7 @@ lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix.
 
 lazy val sbtKaraf = uri("https://github.com/PhilAndrew/osgi-tooling.git#16876f276376ffb3365eff80b8d62f5dcc04017c")
 
-addSbtPlugin("wav.devtools" % "sbt-karaf" % "0.1.3.PHILIP")
+addSbtPlugin("wav.devtools" % "sbt-karaf" % "0.1.11.PHILIP")
 
 //lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin).dependsOn(sbtKaraf)
 
@@ -30,3 +30,5 @@ addSbtPlugin("com.tapad" % "sbt-docker-compose" % "1.0.17")
 addSbtPlugin("com.typesafe.sbt" %% "sbt-native-packager" % "1.1.0")
 
 
+// https://github.com/jrudolph/sbt-dependency-graph/
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.8.2")

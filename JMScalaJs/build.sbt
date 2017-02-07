@@ -11,6 +11,32 @@ import com.typesafe.sbt.osgi.OsgiKeys._
 import osgifelix.OsgiFelixPlugin.autoImport._
 import sbt.Keys._
 
+
+
+
+
+
+
+
+
+osgiSettings
+
+
+enablePlugins(SbtKarafPackaging)
+
+
+import wav.devtools.sbt.karaf.packaging.SbtKarafPackaging
+import SbtKarafPackaging.autoImport._
+import KarafPackagingKeys._
+import wav.devtools.karaf.packaging.FeaturesXml
+import wav.devtools.karaf.packaging.FeaturesXml.{Bundle, Feature, FeatureOption, FeaturesOption}
+
+
+
+
+
+
+
 defaultSingleProjectSettings
 
 name := "JMScalaJS"
@@ -33,9 +59,8 @@ val akkaHttpVersion = "10.0.3"  // ?
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
-// Dependencys are the SBT dependency followed by the package import statements for OSGi
-
-
+// @todo Note, remember to feature:install wrap
+// @todo Note, remember to feature:repo-add  mvn:org.apache.camel.karaf/apache-camel/2.8.2/xml/features
 
 lazy val OsgiDependencies = Seq[OsgiDependency](
   // ScalaTags
@@ -120,9 +145,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     ),
     Seq("com.typesafe.akka.osgi"),
-    Seq("akka.http",
-      "akka.http.scaladsl",
-      "akka.http.scaladsl.server")
+    Seq("akka.http") //, "akka.http.scaladsl.server")
+      //"akka.http.scaladsl",
+      //)
   ),
 
   OsgiDependency("Neo4JDependency",
@@ -153,7 +178,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("CamelDependency",
     Seq(// Camel components
-      "org.apache.camel" % "camel-ssh" % camelVersion,
+      //"org.apache.camel" % "camel-ssh" % camelVersion,
       "org.apache.camel" % "camel-ftp" % camelVersion,
       "org.apache.camel" % "camel-exec" % camelVersion,
       "org.apache.camel" % "camel-stream" % camelVersion),
@@ -161,7 +186,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     //"org.apache.camel.camel-ssh",
     //"org.apache.camel.camel-jsch",),)
     Seq("org.apache.camel.camel-exec",
-      "org.apache.camel.camel-ssh",
+      //"org.apache.camel.camel-ssh",
       "org.apache.camel.camel-ftp",
       "org.apache.camel.camel-stream"),
     Seq()
@@ -192,20 +217,17 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     ),
     Seq(),
     Seq()
-  ),
+  )
 
   // https://github.com/erikvanoosten/metrics-scala
-  OsgiDependency("MetricsScalaDependency",
+  /*OsgiDependency("MetricsScalaDependency",
     Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
       "org.hdrhistogram" % "HdrHistogram" % "2.1.9",
       "nl.grons" %% "metrics-scala" % "3.5.5"), Seq(), Seq(
       "nl.grons.metrics.scala"
     )
-  )
+  )*/
 )
-
-
-
 
 
 
@@ -271,8 +293,10 @@ javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
 scalacOptions += "-deprecation"
 
+
+
 // https://github.com/HairyFotr/linter
-addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1-SNAPSHOT")
+//addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1-SNAPSHOT")
 
 // https://github.com/Tapad/sbt-docker-compose
 enablePlugins(JavaAppPackaging, DockerComposePlugin)
@@ -390,12 +414,12 @@ lazy val moduleDeps: Seq[ModuleID] = dependencys.flatten
 
 libraryDependencies ++= moduleDeps ++ Seq(
   "com.jcraft" % "jzlib" % "1.1.3",
-  "org.scalacheck" %% "scalacheck" % "1.13.4" % "test", // http://www.scalacheck.org/
+  "org.scalacheck" %% "scalacheck" % "1.13.4" % "test" // http://www.scalacheck.org/
 
   // http://www.scalactic.org/
   // ScalaTest http://www.scalatest.org/install
-  "org.scalactic" %% "scalactic" % "3.0.1",
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  //"org.scalactic" %% "scalactic" % "3.0.1",
+  //"org.scalatest" %% "scalatest" % "3.0.1" % "test"
 )
 
 //import com.softwaremill.clippy.ClippySbtPlugin._ // needed in global configuration only
@@ -427,7 +451,7 @@ osgiDependencies in run := bundleReqs(
 // This appends these import packages to the end
 // I need sun.misc, dont know about the rest
 importPackage := Seq(
-  "sun.misc",
+  //"sun.misc",
   "*"
 )
 

@@ -5,29 +5,20 @@ package jumpmicro.jmscalajs.impl.actor
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
-import java.io.{File, IOException}
-import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file._
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import akka.http.scaladsl.{Http, server}
+import akka.actor._
+import akka.stream.ActorMaterializer
+/*import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer
+import akka.stream.ActorMaterializer*/
 import com.typesafe.scalalogging.Logger
 import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
 import jumpmicro.shared.util.osgi.OsgiGlobal
-import org.apache.camel.scala.dsl.builder.ScalaRouteBuilder
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.filefilter.IOFileFilter
 import org.osgi.framework.BundleContext
 import scaldi.Injector
 
-import scala.concurrent.Future
-import scala.io.{Source, StdIn}
-import scala.util.{Success, Try}
 import scalatags.Text.all._
-// import scalatags.JsDom.all._
 import scaldi.Injectable
 
 class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSystem) extends Injectable {
@@ -41,7 +32,7 @@ class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSys
 
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
-
+/*
     val route =
       path("js" / Remaining) { r => {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, {
@@ -73,7 +64,7 @@ class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSys
       }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
-
+*/
     logger.info("Server online at http://localhost:8080/")
 
   }

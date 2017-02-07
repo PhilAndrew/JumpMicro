@@ -2,7 +2,7 @@ package jumpmicro.jmscalajs.impl
 
 import java.util.concurrent.TimeUnit
 
-import com.codahale.metrics.{ConsoleReporter, MetricRegistry}
+//import com.codahale.metrics.{ConsoleReporter, MetricRegistry}
 import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,7 +27,7 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
-class Example() extends nl.grons.metrics.scala.DefaultInstrumented {
+/*class Example() extends nl.grons.metrics.scala.DefaultInstrumented {
   // Define a timer metric
   private[this] val loading = metrics.timer("loading")
 
@@ -36,11 +36,14 @@ class Example() extends nl.grons.metrics.scala.DefaultInstrumented {
     Thread.sleep(1000)
   }
 }
-
-class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectable with nl.grons.metrics.scala.DefaultInstrumented {
+*/
+// with nl.grons.metrics.scala.DefaultInstrumented
+class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectable {
   val logger = Logger(classOf[JMScalaJsBundleActivator])
 
-  def testMetrics() = {
+  println("in JMScalaJsBundleActivator")
+
+  /*def testMetrics() = {
     val reporter = ConsoleReporter.forRegistry(metricRegistry)
       .convertRatesTo(TimeUnit.SECONDS)
       .convertDurationsTo(TimeUnit.MILLISECONDS)
@@ -49,17 +52,18 @@ class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectabl
 
     val n = new Example()
     n.loadStuff()
-  }
+  }*/
 
   // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
+    println("whenBundleActive in JMScalaJsBundleActivator")
     addCapsule(new OsgiCapsule())
 
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
       }
     }
 
-    testMetrics()
+    //testMetrics()
 
     TestIdris.test()
 

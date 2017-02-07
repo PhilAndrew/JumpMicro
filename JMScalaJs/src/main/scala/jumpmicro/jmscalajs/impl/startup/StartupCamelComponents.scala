@@ -6,7 +6,7 @@ import org.apache.camel.component.file.remote.FtpComponent
 import org.apache.camel.component.seda.SedaComponent
 import org.apache.camel.component.stream.StreamComponent
 //import org.apache.camel.component.scp.ScpComponent
-import org.apache.camel.component.ssh.SshComponent
+//import org.apache.camel.component.ssh.SshComponent
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 
 //: -------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ class StartupCamelComponents {
     //camelContext.addComponent("scp", new ScpComponent())
     camelContext.addComponent("seda", new SedaComponent())
     camelContext.addComponent("exec", new ExecComponent())
-    camelContext.addComponent("ssh", new SshComponent())
+    //camelContext.addComponent("ssh", new SshComponent())
     camelContext.addComponent("stream", new StreamComponent())
     camelContext.addComponent("ftp", new FtpComponent())
   }
