@@ -585,14 +585,14 @@ karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: Modul
         }
         {
         jarFilesInBundles.map( (file) => {
-          <bundle>{ "file:/" + file.getName }</bundle>
+          <bundle>{ "file:" + file.getName }</bundle>
         })
         }
         {
 
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("./scala-2.11/" + m.id.name + "-" + m.id.version + ".jar").getName }</bundle>
+            <bundle>{ "file:" + new File("./scala-2.11/" + m.id.name + "-" + m.id.version + ".jar").getName }</bundle>
         }
 
         }
@@ -616,3 +616,9 @@ karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: Modul
   val outputString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + p.format(features)
   IO.write(new File(karDirPath + "/features.xml"), outputString)
 }
+
+
+//val listFiles = IO.listFiles(karafKarDir)
+//val jarPaths = listFiles.map( (f: File) => { (f, f.getName) })
+//IO.jar(jarPaths, new File("./target/karaf/JMScalaJS.kar"), new java.util.jar.Manifest())
+
