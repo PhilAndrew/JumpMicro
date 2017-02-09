@@ -1,18 +1,15 @@
 
 // @todo Should not need to depend on my branch of this, can I change this back to the origional?
-lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix.git#487d21e1fdeca3115fe8eb765f958d4a349aa1dd")
+//lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix.git#487d21e1fdeca3115fe8eb765f958d4a349aa1dd")
 
-lazy val sbtKaraf = uri("https://github.com/PhilAndrew/osgi-tooling.git#16876f276376ffb3365eff80b8d62f5dcc04017c")
-
-addSbtPlugin("wav.devtools" % "sbt-karaf" % "0.1.11.PHILIP")
 
 //lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin).dependsOn(sbtKaraf)
 
 
 
-lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin).dependsOn(sbtKaraf)
+lazy val root = project.in(file("."))//.dependsOn(sbtOsgiFelixPlugin)
 
-addSbtPlugin("org.doolse" % "sbt-osgi-felix" % "1.0.8-PHILIP")
+addSbtPlugin("org.doolse" % "sbt-osgi-felix" % "1.0.10-PHILIP")
 
 // ScalaJS https://www.scala-js.org/
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.14")

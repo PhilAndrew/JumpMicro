@@ -1,6 +1,12 @@
 import java.io.File
+import java.util.jar.JarFile
 
+import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
 import osgifelix.OsgiDependency
+
+import scala.annotation.tailrec
+import scala.collection.immutable.HashSet
+import scala.xml.XML
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -11,35 +17,12 @@ import com.typesafe.sbt.osgi.OsgiKeys._
 import osgifelix.OsgiFelixPlugin.autoImport._
 import sbt.Keys._
 
-
-
-
-
-
-
-
-
 osgiSettings
-
-
-enablePlugins(SbtKarafPackaging)
-
-
-import wav.devtools.sbt.karaf.packaging.SbtKarafPackaging
-import SbtKarafPackaging.autoImport._
-import KarafPackagingKeys._
-import wav.devtools.karaf.packaging.FeaturesXml
-import wav.devtools.karaf.packaging.FeaturesXml.{Bundle, Feature, FeatureOption, FeaturesOption}
-
-
-
-
-
-
 
 defaultSingleProjectSettings
 
-name := "JMScalaJS"
+val projectName = "JMScalaJS"
+name := projectName
 
 // This OSGi bundle version
 bundleVersion := "1.0.0"
@@ -58,6 +41,19 @@ val akkaVersion = "2.4.16"      // http://akka.io/downloads/
 val akkaHttpVersion = "10.0.3"  // ?
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
+
+/*
+<!-- Note that a file dependency dependencys MUST also be a file dependency, not a maven one -->
+<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/neo4j-java-driver-1.0.5.jar</bundle>
+<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/neo4j-ogm-osgi_2.11.jar</bundle>
+<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/scaldi_2.11-0.5.8.jar</bundle>
+<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/scala-2.11/jmscalajs_2.11-0.1-SNAPSHOT.jar</bundle>
+@todo These must be files
+ */
+lazy val karafDepsMustBeFiles = Seq("org.neo4j.driver/neo4j-java-driver/1.0.5",
+                      "universe/neo4j-ogm-osgi_2.11/1.4.36",
+                      "org.scaldi/scaldi_2.11/0.5.8",
+                      "jmscalajs/jmscalajs_2.11/0.1-SNAPSHOT")
 
 // @todo Note, remember to feature:install wrap
 // @todo Note, remember to feature:repo-add  mvn:org.apache.camel.karaf/apache-camel/2.8.2/xml/features
@@ -122,7 +118,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("MonixCoreDependency",
     Seq(  // Monix https://monix.io/
-      "io.monix" %% "monix" % "2.2.1",
+      //"io.monix" %% "monix" % "2.2.1",
       "io.monix" %% "monix-cats" % "2.2.1"
     ),
     Seq(), // @todo Monix is untested to work
@@ -337,6 +333,8 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 // https://github.com/jboner/akka-training/issues/1
 //scalaVersion := Option(System.getProperty("scala.version")).getOrElse("2.12.0")
 
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
 // Compile Idris to Java classes
 
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
@@ -385,6 +383,7 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
   JUMPMICRO_DOT + "shared.model",
   JUMPMICRO_DOT + "shared.bean")
 
+// @todo Only include subpackages which have files in them
 def subPackagesOf(path: String): Seq[String] = {
   def recursiveListFiles(f: File): Array[File] = {
     val these = f.listFiles
@@ -464,42 +463,156 @@ osgiRepositoryRules := Seq(
   //Some(Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc")
 )
 
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
+// Karaf task builds a kar file ready for deployment to Karaf
 
+val karafTask = TaskKey[Unit]("karaf", "Build Karaf features")
 
+//karafTask.dependsOn(dsl.`package` in Compile)
 
+karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: ModuleGraph) =>
 
+  val allModules: Seq[Module] = m.nodes
+  val dependencyMap: Map[net.virtualvoid.sbt.graph.ModuleId, Seq[Module]] = m.dependencyMap
 
+  import collection.JavaConverters._
 
+  def isModuleWrap(m: Module): Boolean = {
+    val opt: Option[Option[String]] = for (j <- m.jarFile) yield {
+      val file: File = j
+      val mf = new JarFile(file.getCanonicalPath).getManifest()
+      val sym = mf.getMainAttributes.getValue("Bundle-SymbolicName")
+      val symOption: Option[String] = if (sym==null) None else {
+        Some(sym).filterNot(_.isEmpty)
+      }
+      symOption
+    }
+    if (opt.isDefined) opt.get.isEmpty else false
+  }
 
+  val ignoredModules = HashSet(
+    "org.osgi/org.osgi.core",
+    "org.osgi/org.osgi.compendium"
+  )
 
+  // Some modules do not work in Karaf
+  def removeIgnoredModules(modules: Seq[Module]): Seq[Module] = {
+    modules.filter(m => {
+      ! ignoredModules.contains(Seq(m.id.organisation, m.id.name).mkString("/"))
+    })
+  }
+  def dependentsOf(module: Module): Set[Module] = {
+    def recursiveFetch(moduleId: ModuleId): Seq[Module] = {
+      // Find all deps
+      val allDeps = dependencyMap(moduleId).filter(! _.isEvicted)
+      val result = for (dep <- allDeps) yield recursiveFetch(dep.id)
+      result.flatten ++ allDeps
+    }
+    recursiveFetch(module.id).toSet
+  }
 
+  def findModulesToRemove(modules: Seq[Module]): Seq[Module] = {
+    val topLevelModulesToRemove: Set[Module] = modules.map(module => {
+      if (module.id.organisation == "org.apache.camel") {
+        if (module.id.name == "camel-core-osgi") {
+          // Ignore this case, keep the module and do not remove any
+          Seq()
+        } else {
+          // Remove the module
+          Seq(module)
+        }
+      } else {
+        Seq()
+      }}).flatten.toSet
 
+    val keepDependents: Set[Module] = (modules.toSet.diff(topLevelModulesToRemove)).flatMap(dependentsOf)
+    val removeDependents: Set[Module] = topLevelModulesToRemove.flatMap(dependentsOf)
+    val modulesToRemove = topLevelModulesToRemove ++ removeDependents.diff(keepDependents)
+    modulesToRemove.toSeq
+  }
 
+  def featuresOf(modules: Seq[Module]): Seq[String] = {
+    modules.map(m => {
+      if (m.id.organisation == "org.apache.camel") {
+        Some(m.id.name)
+      } else None
+    }).flatten ++ Seq("camel")
+  }
 
+  def getMustBeFileOf(module: Module): Option[Module] = {
+    val startsWith = module.id.organisation + "/" + module.id.name
+    if (karafDepsMustBeFiles.exists((s) => s.indexOf(startsWith) == 0)) {
+      Some(module)
+    } else None
+  }
 
+  def modulesWhichMustBeFiles(modules: Seq[Module]): Seq[Module] = {
+    for (module <- modules;
+         mustBeFile <- getMustBeFileOf(module)) yield module
+  }
 
+  def getJarFilesInBundles(mustBeFiles: Seq[Module]): Seq[File] = {
+    for (f <- mustBeFiles;
+         jarFile <- f.jarFile) yield
+      new File("./target/bundles/" + jarFile.getName)
+  }
 
-// for JSON4S "com.thoughtworks.paranamer"
-// For Json4S
-// https://mvnrepository.com/artifact/com.thoughtworks.paranamer/paranamer
-//"com.thoughtworks.paranamer" % "paranamer" % "2.8",
+  val modulesNotEvicted = allModules.filter(! _.isEvicted)
+  val modulesToRemove = findModulesToRemove(modulesNotEvicted)
+  val featuresToAdd = featuresOf(modulesToRemove)
+  val modulesWithThoseRemoved = modulesNotEvicted.diff(modulesToRemove)
+  val modulesNotIgnored = removeIgnoredModules(modulesWithThoseRemoved)
+  val mustBeFiles = modulesWhichMustBeFiles(modulesNotIgnored)
+  val modulesWithoutMustBeFile = modulesNotIgnored.diff(mustBeFiles)
+  val jarFilesInBundles = getJarFilesInBundles(mustBeFiles)
+  val modulesWithWrap = modulesWithoutMustBeFile.map(m => (m, isModuleWrap(m)))
 
-//"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4"
+  val features =
+    <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="JMScalaJS">
+      <repository>mvn:org.apache.camel.karaf/apache-camel/2.18.2/xml/features</repository>
+      <feature description="JMScalaJS" version="0.1.0" name="JMScalaJS">
+        <feature prerequisite="true" dependency="false">wrap</feature>
+        { featuresToAdd.map(f => {
+        <feature>{f}</feature>
+      }
+      ) }
+        { modulesWithWrap.map( (mod) => {
+        val m = mod._1
+        val dep = Seq(m.id.organisation, m.id.name, m.id.version).mkString("/")
+        <bundle>{ s"${if (mod._2) "wrap:" else ""}mvn:$dep" }</bundle>
+      })
+        }
+        {
+        jarFilesInBundles.map( (file) => {
+          <bundle>{ "file:/" + file.getName }</bundle>
+        })
+        }
+        {
 
-//"com.typesafe.akka" %% "akka-remote" % akkaVersion,
+        for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
+          // jmscalajs_2.11-0.1-SNAPSHOT.jar
+            <bundle>{ "file:/" + new File("./scala-2.11/" + m.id.name + "-" + m.id.version + ".jar").getName }</bundle>
+        }
 
-//"org.apache.camel" % "camel-jsch" % camelVersion,
-//"org.apache.felix",
-//"org.apache.felix.scr.annotations",
-//"org.apache.felix.scrplugin.processing",
-//"org.osgi.service.component"
-//"org.apache.felix.scr"
-//additionalHeaders := Map("Service-Component" -> "OSGI-INF/serviceComponents.xml")
-// Service-Component
-/*
-@todo This may be a good idea?
-http://stackoverflow.com/questions/28365000/no-configuration-setting-found-for-key-akka
-assemblyMergeStrategy in assembly := {
-  case PathList("reference.conf") => MergeStrategy.concat
+        }
+      </feature>
+    </features>
+
+  val karafDir = new File("./target/karaf")
+  val karDirPath = "./target/karaf/" + projectName
+  val karafKarDir = new File(karDirPath)
+  IO.delete(karafDir)
+  IO.createDirectory(karafDir)
+  IO.createDirectory(karafKarDir)
+
+  for (j <- jarFilesInBundles) IO.copyFile(j, new File(karDirPath + "/" + j.getName))
+  for (m <- mustBeFiles; if m.jarFile.isEmpty) {
+    val file = new File("./target/scala-2.11/" + m.id.name + "-" + m.id.version + ".jar")
+    IO.copyFile(file, new File(karDirPath + "/" + file.getName))
+  }
+
+  val p = new scala.xml.PrettyPrinter(1000, 4)
+  val outputString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + p.format(features)
+  IO.write(new File(karDirPath + "/features.xml"), outputString)
 }
-*/
