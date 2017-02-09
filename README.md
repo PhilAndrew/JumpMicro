@@ -7,7 +7,7 @@ It has the following features available, they can be disabled and enabled easily
 * Is opinionated by default but you can go off and do your own thing, but by doing things in a common way this makes it easier for programmers to understand different MicroServices.
 * Can run in an OSGi container or standalone as a normal Java application.
 * Supports Karaf and Felix OSGi containers. (others are untested but OSGi is a standard, so should work).
-* [Domino](https://github.com/domino-osgi/domino) is a library Scala designed to support developers in writing bundle activators for the Java module system OSGi.
+* [Domino](https://github.com/domino-osgi/domino) with [user guide](https://github.com/domino-osgi/domino/blob/master/UserGuide.adoc) makes OSGi easier to understand and use from Scala, it support developers in writing bundle activators for the JVM module system OSGi. 
 * Can run in a Docker container.
 * Supports [Akka Actors](http://akka.io/), [Akka Streams](http://akka.io/), [Monix](https://github.com/monix/monix), [Apache Camel](http://camel.apache.org/) in Akka Actors.
 * [Neo4J](https://neo4j.com/) Graph database as the primary data storage using the [Cypher query language](https://neo4j.com/developer/cypher-query-language/).
@@ -30,7 +30,8 @@ Choose one of the following:
  
 * On the command line use SBT to do `sbt run`.
 * Run `felix.bat` on Windows which creates an OSGi bundle and runs in a [Felix](http://felix.apache.org/) OSGi container. Refer to the folder `target/launcher` to see the [Felix](http://felix.apache.org/) bundle.
-* [Apache Karaf](http://karaf.apache.org/) is not working yet.
+* [Apache Karaf](http://karaf.apache.org/) is being tested.
+* [Knopflerfish](http://www.knopflerfish.org/) is not tested yet.
 
 ## Sugggested development environment
 
@@ -47,6 +48,10 @@ Use IntelliJ IDEA with the following plugins enabled, enable them in `File / Set
 
 Creation of a new MicroService is done by copying the code of another existing MicroService. In the normal case this would be the copying of a MicroService which acts as a template for a new MicroService, an example is a ScalaJS oriented MicroService whos job is to produce Javascript from ScalaJS code for a particular application. Also it is easier to copy existing code which is close to what you want rather than developing new code.
 
+## Potentially useful libraries
+
+* [Project Reactor](https://github.com/sinwe/reactor-core-scala)
+
 ## FAQ: Why opinionated?
 
 I have opinions so I prefer to do things in a particular way. If you wish to diverge to a different way, you are welcome to do that and I am open to ideas and influence on how to do things, please contribute ideas and code.
@@ -55,12 +60,12 @@ I have opinions so I prefer to do things in a particular way. If you wish to div
 
 Two reasons:
 
-* Can share resources between OSGi bundles (modules) in the same process leading to a more efficient runtime for running multiple modules on the same machine. No need to have one process per MicroService.
+* Can share resources between OSGi bundles (modules) in the same process leading to a more efficient runtime for running multiple modules on the same machine. No need to have one process per MicroService, have one process for many MicroServices.
 * OSGi module system works and is reliable as a module system.
  
 ## FAQ: What about Java Modules?
  
-[Java modules](https://en.wikipedia.org/wiki/Java_Module_System) deferred to a Java 9 release in 2017 looks like a new and good idea but OSGi works and is boring and works. 
+[Java modules](https://en.wikipedia.org/wiki/Java_Module_System) deferred to a Java 9 release in 2017 looks like a new and good idea but OSGi, although boring, works. 
 
 ## FAQ: Why Neo4J vs other databases?
 
@@ -72,13 +77,17 @@ Data in the graph database should be seen as a source of truth from which things
 
 The Neo4J data should change infrequently and represent meaningful data, it is a good idea to think of updating Neo4J data after a period no less than a few seconds for a update on some data, certainly not multiple times per second and this gives the general principle to use. Update Neo4J infrequently and represent a truthful and meaningful state from which new states can emerge. 
 
-Remember Akka Actors can use message passing and encapsulate state rather than using the database as the means of communicating state. Communication and communication of state should not take place by placing data into Neo4J then calling another Microservice to do some action where the other Microservice reads that data from Neo4J. You can instead use Akka message passing to communicate state. 
+Akka Actors can use message passing and encapsulate state rather than using the database as the means of communicating state. Communication and communication of state should not take place by placing data into Neo4J then calling another Microservice to do some action where the other Microservice reads that data from Neo4J. You can instead use Akka message passing to communicate state. 
 
 In summary:
  
 * Represent meaningful state. 
 * Change data infrequently.
 * Neo4J should not be the means by which communication takes place.
+
+## FAQ: Why not use OSGi Blueprint?
+
+I tried OSGi Blueprints and it didn't work well with Akka, Apache Camel all mixed up together, it was too much of a struggle and now I prefer annotated classes over XML configuration. 
 
 ### ------------------------  RUBBISH NOTES AFTER THIS
 
