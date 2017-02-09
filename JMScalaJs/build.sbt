@@ -585,14 +585,14 @@ karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: Modul
         }
         {
         jarFilesInBundles.map( (file) => {
-          <bundle>{ "file:" + file.getName }</bundle>
+          <bundle>{ "file:/" + file.getCanonicalPath.replace('\\', '/') }</bundle>
         })
         }
         {
 
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:" + new File("./scala-2.11/" + m.id.name + "-" + m.id.version + ".jar").getName }</bundle>
+            <bundle>{ "file:/" + new File("./scala-2.11/" + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath.replace('\\', '/') }</bundle>
         }
 
         }
