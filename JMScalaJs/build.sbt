@@ -42,21 +42,9 @@ val akkaHttpVersion = "10.0.3"  // ?
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
-/*
-<!-- Note that a file dependency dependencys MUST also be a file dependency, not a maven one -->
-<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/neo4j-java-driver-1.0.5.jar</bundle>
-<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/neo4j-ogm-osgi_2.11.jar</bundle>
-<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/scaldi_2.11-0.5.8.jar</bundle>
-<bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/scala-2.11/jmscalajs_2.11-0.1-SNAPSHOT.jar</bundle>
-@todo These must be files
- */
-lazy val karafDepsMustBeFiles = Seq("org.neo4j.driver/neo4j-java-driver/1.0.5",
+lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver/1.0.5",
                       "universe/neo4j-ogm-osgi_2.11/1.4.36",
-                      "org.scaldi/scaldi_2.11/0.5.8",
-                      "jmscalajs/jmscalajs_2.11/0.1-SNAPSHOT")
-
-// @todo Note, remember to feature:install wrap
-// @todo Note, remember to feature:repo-add  mvn:org.apache.camel.karaf/apache-camel/2.8.2/xml/features
+                      "org.scaldi/scaldi_2.11/0.5.8")
 
 lazy val OsgiDependencies = Seq[OsgiDependency](
   // ScalaTags
@@ -64,11 +52,11 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   OsgiDependency(
     "ScalaTagsDependency",
     // sbt dependencys
-    Seq[ModuleID]("com.lihaoyi" %% "scalatags" % "0.6.1"),
+    Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
     // bundle requirements
     Seq(),
     // package requirements
-    Seq[String]("scalatags", "scalatags.text")
+    Seq("scalatags", "scalatags.text")
   ),
 
   OsgiDependency("Slf4jDependency",
@@ -214,7 +202,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq()
   )
-
   // https://github.com/erikvanoosten/metrics-scala
   /*OsgiDependency("MetricsScalaDependency",
     Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
@@ -224,9 +211,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     )
   )*/
 )
-
-
-
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
@@ -289,8 +273,6 @@ javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
 scalacOptions += "-deprecation"
 
-
-
 // https://github.com/HairyFotr/linter
 //addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1-SNAPSHOT")
 
@@ -298,7 +280,6 @@ scalacOptions += "-deprecation"
 enablePlugins(JavaAppPackaging, DockerComposePlugin)
 
 dockerImageCreationTask := (publishLocal in Docker).value
-
 
 initialize := {
   val _ = initialize.value
@@ -308,6 +289,10 @@ initialize := {
 
 // Copy paste detector https://github.com/sbt/cpd4sbt
 enablePlugins(CopyPasteDetector)
+
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
+// ScalaJS compile Scala to Javascript
 
 lazy val packageScalaJsResource = taskKey[Unit]("Package ScalaJS")
 
@@ -327,42 +312,38 @@ compile in Compile <<= (compile in Compile).dependsOn(packageScalaJsResource)
 // http://stackoverflow.com/questions/30513492/sbt-in-a-multi-project-build-how-to-invoke-project-bs-task-from-project-a
 compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in scalaJsProject)
 
-// In scalajs\target\scala-2.11\ there is scalajsproject-fastopt.js and scalajsproject-fastopt.js.map and scalajsproject-jsdeps.js
-
-// http://stackoverflow.com/questions/30011826/intellij-not-compiling-scala-project
-// https://github.com/jboner/akka-training/issues/1
-//scalaVersion := Option(System.getProperty("scala.version")).getOrElse("2.12.0")
-
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Compile Idris to Java classes
 
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
 
+lazy val \\ = File.separator
+
 compileIdris := {
   println("Compile Idris")
 
   import sys.process._
-  IO.delete(new File("target" + File.separator + "idrisclass"))
-  IO.createDirectory(new File("target" + File.separator + "idrisclass"))
+  IO.delete(new File("target" + \\ + "idrisclass"))
+  IO.createDirectory(new File("target" + \\ + "idrisclass"))
 
-  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "/home/projects/git/idris-jvm/bin/idrisjvm.bat")
-  val dest = "." + File.separator + "target" + File.separator + "idrisclass"
-  val command = exec + " --interface --cg-opt --interface ." + File.separator +
-    "src" + File.separator + "main" + File.separator + "idris" + File.separator + "Main.idr -i \"." + File.separator +
-    "src" + File.separator + "main" + File.separator + "idris\" -o " + dest
+  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
+  val dest = "." + File.separator + "target" + \\ + "idrisclass"
+  val command = exec + " --interface --cg-opt --interface ." + \\ +
+    "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
+    "src" + \\ + "main" + \\ + "idris\" -o " + dest
   val result = command !!;
   if (result.indexOf("FAILURE:") == 0) println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
 
   // Copy classes from idrisclass to target/scala-2.11/classes
   //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
   //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
-  IO.copyDirectory(new File("target" + File.separator + "idrisclass"), new File("target" + File.separator + "scala-2.11" + File.separator + "classes"), true, true)
-  IO.delete(new File("target" + File.separator + "idrisclass"))
-  IO.delete(new File("target" + File.separator + "scala-2.11" + File.separator + "classes" + File.separator + "jmscalajs"))
+  IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
+  IO.delete(new File("target" + \\ + "idrisclass"))
+  IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + "jmscalajs"))
 }
 
-cleanFiles += file("target" + File.separator + "idrisclass")
+cleanFiles += file("target" + \\ + "idrisclass")
 
 //unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
 
@@ -389,10 +370,10 @@ def subPackagesOf(path: String): Seq[String] = {
     val these = f.listFiles
     these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
   }
-  val file = new File("./src/main/scala/" + path.replace('.','/'))
+  val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
   val r = recursiveListFiles(file)
   val result: Seq[String] = for (f <- r; if f.isDirectory) yield {
-    f.getPath.replace(".\\src\\main\\scala\\", "").replace("\\", ".")
+    f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
   }
   Seq(path) ++ result
 }
@@ -467,11 +448,50 @@ osgiRepositoryRules := Seq(
 // ***********************************************************************************************************************************************
 // Karaf task builds a kar file ready for deployment to Karaf
 
-val karafTask = TaskKey[Unit]("karaf", "Build Karaf features")
+val karafDeployTask = TaskKey[Unit]("karafDeploy", "Deploy Karaf")
 
-//karafTask.dependsOn(dsl.`package` in Compile)
+karafDeployTask := {
+  /*
+  a) KARAF_HOME C:\home\software\apache-karaf-4.0.8\apache-karaf-4.0.8
+  b) KARAF_DEPLOY C:\home\software\apache-karaf-4.0.8\apache-karaf-4.0.8\deploy
+  c) KARAF_JAR_DIRECTORY C:\home\software\apache-karaf-4.0.8\apache-karaf-4.0.8\jars
+   */
 
-karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: ModuleGraph) =>
+  val karafHome = scala.util.Properties.envOrElse("KARAF_HOME", "C:\\home\\software\\apache-karaf-4.0.8\\apache-karaf-4.0.8")
+  val karafDeploy = scala.util.Properties.envOrElse("KARAF_DEPLOY", "C:\\home\\software\\apache-karaf-4.0.8\\apache-karaf-4.0.8\\deploy")
+  val karafJarDirectory = scala.util.Properties.envOrElse("KARAF_JAR_DIRECTORY", "C:\\home\\software\\apache-karaf-4.0.8\\apache-karaf-4.0.8\\jars")
+
+  val dirs = Seq(karafHome, karafDeploy, karafJarDirectory)
+  dirs.foreach(d => if (! new File(d).exists()) IO.createDirectory(new File(d)))
+
+  // Copy the jars across, kars in
+  val jarFolder = new File("." + \\ + "target" + \\ + "karaf" + \\ + projectName + \\)
+  IO.listFiles(jarFolder).toSeq.foreach( (source) => if (source.ext=="jar") IO.copyFile(source, new File(karafJarDirectory + \\ + source.getName)))
+
+  val featuresXml = IO.readLines(new File("." + \\ + "target" + \\ + "karaf" + \\ + projectName + \\ + "features.xml"))
+  // <bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/scaldi_2.11-0.5.8.jar</bundle>
+  val newFeaturesXml = for (line <- featuresXml) yield {
+    if (line.indexOf("<bundle>file:") > 0) {
+      val startIndex = line.indexOf("<bundle>") + "<bundle>".length
+      // @todo get the file name from this
+      val endIndex = line.indexOf("</bundle>")
+      val filePart = line.substring(startIndex, endIndex)
+      // Find last /
+      val lastSlash = filePart.lastIndexOf(\\) + 1
+      val jarFile = filePart.substring(lastSlash)
+      "<bundle>" + karafJarDirectory + \\ + jarFile + "</bundle>"
+    } else line
+  }
+
+  // Write new features xml
+  val dest = new File(karafDeploy + \\ + projectName + ".xml")
+  if (dest.exists()) dest.delete()
+  IO.writeLines(dest, newFeaturesXml)
+}
+
+val karafBuildTask = TaskKey[Unit]("karafBuild", "Build Karaf features")
+
+karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: ModuleGraph) =>
 
   val allModules: Seq[Module] = m.nodes
   val dependencyMap: Map[net.virtualvoid.sbt.graph.ModuleId, Seq[Module]] = m.dependencyMap
@@ -540,9 +560,13 @@ karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: Modul
     }).flatten ++ Seq("camel")
   }
 
+  def karafDepsMustBeJarsFilesPlusMain: Seq[String] = {
+    karafDepsMustBeJarFiles ++ Seq(projectName.toLowerCase + "/" + projectName.toLowerCase + "_2.11/0.1-SNAPSHOT")
+  }
+
   def getMustBeFileOf(module: Module): Option[Module] = {
     val startsWith = module.id.organisation + "/" + module.id.name
-    if (karafDepsMustBeFiles.exists((s) => s.indexOf(startsWith) == 0)) {
+    if (karafDepsMustBeJarsFilesPlusMain.exists((s) => s.indexOf(startsWith) == 0)) {
       Some(module)
     } else None
   }
@@ -555,7 +579,7 @@ karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: Modul
   def getJarFilesInBundles(mustBeFiles: Seq[Module]): Seq[File] = {
     for (f <- mustBeFiles;
          jarFile <- f.jarFile) yield
-      new File("./target/bundles/" + jarFile.getName)
+      new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
   }
 
   val modulesNotEvicted = allModules.filter(! _.isEvicted)
@@ -592,15 +616,15 @@ karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: Modul
 
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("./scala-2.11/" + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath.replace('\\', '/') }</bundle>
+            <bundle>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + "/" + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath.replace('\\', '/') }</bundle>
         }
 
         }
       </feature>
     </features>
 
-  val karafDir = new File("./target/karaf")
-  val karDirPath = "./target/karaf/" + projectName
+  val karafDir = new File("." + \\ + "target" + \\ + "karaf")
+  val karDirPath = "." + \\ + "target" + \\ + "karaf" + projectName
   val karafKarDir = new File(karDirPath)
   IO.delete(karafDir)
   IO.createDirectory(karafDir)
@@ -608,13 +632,13 @@ karafTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: Modul
 
   for (j <- jarFilesInBundles) IO.copyFile(j, new File(karDirPath + "/" + j.getName))
   for (m <- mustBeFiles; if m.jarFile.isEmpty) {
-    val file = new File("./target/scala-2.11/" + m.id.name + "-" + m.id.version + ".jar")
+    val file = new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar")
     IO.copyFile(file, new File(karDirPath + "/" + file.getName))
   }
 
   val p = new scala.xml.PrettyPrinter(1000, 4)
   val outputString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + p.format(features)
-  IO.write(new File(karDirPath + "/features.xml"), outputString)
+  IO.write(new File(karDirPath + \\ + "features.xml"), outputString)
 }
 
 
