@@ -479,7 +479,7 @@ karafDeployTask := {
       // Find last /
       val lastSlash = filePart.lastIndexOf(\\) + 1
       val jarFile = filePart.substring(lastSlash)
-      "<bundle>" + karafJarDirectory + \\ + jarFile + "</bundle>"
+      "        <bundle>" + karafJarDirectory + \\ + jarFile + "</bundle>"
     } else line
   }
 
@@ -609,14 +609,14 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
         }
         {
         jarFilesInBundles.map( (file) => {
-          <bundle>{ "file:/" + file.getCanonicalPath.replace('\\', '/') }</bundle>
+          <bundle>{ "file:/" + file.getCanonicalPath }</bundle>
         })
         }
         {
 
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + "/" + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath.replace('\\', '/') }</bundle>
+            <bundle>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
         }
 
         }
