@@ -327,7 +327,7 @@ compileIdris := {
   IO.delete(new File("target" + \\ + "idrisclass"))
   IO.createDirectory(new File("target" + \\ + "idrisclass"))
 
-  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
+  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
   val dest = "." + File.separator + "target" + \\ + "idrisclass"
   val command = exec + " --interface --cg-opt --interface ." + \\ +
     "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
@@ -480,6 +480,7 @@ karafDeployTask := {
       val lastSlash = filePart.lastIndexOf(\\) + 1
       val jarFile = filePart.substring(lastSlash)
       "        <bundle>" + karafJarDirectory + \\ + jarFile + "</bundle>"
+      line
     } else line
   }
 
@@ -604,19 +605,19 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
         { modulesWithWrap.map( (mod) => {
         val m = mod._1
         val dep = Seq(m.id.organisation, m.id.name, m.id.version).mkString("/")
-        <bundle>{ s"${if (mod._2) "wrap:" else ""}mvn:$dep" }</bundle>
+        <bundleA>{ s"${if (mod._2) "wrap:" else ""}mvn:$dep" }</bundleA>
       })
         }
         {
         jarFilesInBundles.map( (file) => {
-          <bundle>{ "file:/" + file.getCanonicalPath }</bundle>
+          <bundleB>{ "file:/" + file.getCanonicalPath }</bundleB>
         })
         }
         {
 
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
+            <bundleC>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundleC>
         }
 
         }
