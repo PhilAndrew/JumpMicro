@@ -5,7 +5,7 @@
 
 //lazy val concatPlugin = uri("https://github.com/ground5hark/sbt-concat.git#342acc34195438799b8a278fda94b126238aae17")
 
-lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix.git#81dc3fa84243f7c340ed3c602383db073a5e50bf")
+lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix.git#c72e8e6cf4cbe2336486b475bcfb32e791c9559a")
 
 lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin)
 
