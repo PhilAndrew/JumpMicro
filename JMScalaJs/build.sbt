@@ -327,12 +327,14 @@ compileIdris := {
   IO.delete(new File("target" + \\ + "idrisclass"))
   IO.createDirectory(new File("target" + \\ + "idrisclass"))
 
-  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
+  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "c:" + \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
   val dest = "." + File.separator + "target" + \\ + "idrisclass"
-  val command = exec + " --interface --cg-opt --interface ." + \\ +
+  val command: String = exec + " --interface --cg-opt --interface ." + \\ +
     "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
     "src" + \\ + "main" + \\ + "idris\" -o " + dest
+
   val result = command !!;
+
   if (result.indexOf("FAILURE:") == 0) println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
 
   // Copy classes from idrisclass to target/scala-2.11/classes
@@ -340,7 +342,7 @@ compileIdris := {
   //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
   IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
   IO.delete(new File("target" + \\ + "idrisclass"))
-  IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + "jmscalajs"))
+  IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + projectName.toLowerCase))
 }
 
 cleanFiles += file("target" + \\ + "idrisclass")
@@ -355,7 +357,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 // The Bundle activator executes when the bundle is loaded or unloaded
 // When this OSGi bundle is started the start method is called on this, when stopped the stop method is called
-bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl.JMScalaJsBundleActivator")
+bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl." + projectName + "BundleActivator")
 
 // Public packages which are exposed by the OSGi component.
 // The root of the Micro Service name should contain exposed traits universe.microservice.microservicescalajs
@@ -465,10 +467,10 @@ karafDeployTask := {
   dirs.foreach(d => if (! new File(d).exists()) IO.createDirectory(new File(d)))
 
   // Copy the jars across, kars in
-  val jarFolder = new File("." + \\ + "target" + \\ + "karaf" + \\ + projectName + \\)
+  val jarFolder = new File("." + \\ + "target" + \\ + "karaf" + \\)
   IO.listFiles(jarFolder).toSeq.foreach( (source) => if (source.ext=="jar") IO.copyFile(source, new File(karafJarDirectory + \\ + source.getName)))
 
-  val featuresXml = IO.readLines(new File("." + \\ + "target" + \\ + "karaf" + \\ + projectName + \\ + "features.xml"))
+  val featuresXml = IO.readLines(new File("." + \\ + "target" + \\ + "karaf" + \\ + "features.xml"))
   // <bundle>file:/C:/home/projects/git/JumpMicro/JMScalaJs/target/bundles/scaldi_2.11-0.5.8.jar</bundle>
   val newFeaturesXml = for (line <- featuresXml) yield {
     if (line.indexOf("<bundle>file:") > 0) {
@@ -594,9 +596,9 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
   val modulesWithWrap = modulesWithoutMustBeFile.map(m => (m, isModuleWrap(m)))
 
   val features =
-    <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="JMScalaJS">
+    <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name={projectName}>
       <repository>mvn:org.apache.camel.karaf/apache-camel/2.18.2/xml/features</repository>
-      <feature description="JMScalaJS" version="0.1.0" name="JMScalaJS">
+      <feature description={projectName} version="0.1.0" name={projectName}>
         <feature prerequisite="true" dependency="false">wrap</feature>
         { featuresToAdd.map(f => {
         <feature>{f}</feature>
@@ -605,19 +607,19 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
         { modulesWithWrap.map( (mod) => {
         val m = mod._1
         val dep = Seq(m.id.organisation, m.id.name, m.id.version).mkString("/")
-        <bundleA>{ s"${if (mod._2) "wrap:" else ""}mvn:$dep" }</bundleA>
+        <bundle>{ s"${if (mod._2) "wrap:" else ""}mvn:$dep" }</bundle>
       })
         }
         {
         jarFilesInBundles.map( (file) => {
-          <bundleB>{ "file:/" + file.getCanonicalPath }</bundleB>
+          <bundle>{ "file:/" + file.getCanonicalPath }</bundle>
         })
         }
         {
 
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundleC>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundleC>
+            <bundle>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
         }
 
         }
