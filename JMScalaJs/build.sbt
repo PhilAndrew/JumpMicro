@@ -32,7 +32,7 @@ lazy val scalaJsProject = (project in file("scalajs")).settings(
   )
 ).enablePlugins(ScalaJSPlugin)
 
-lazy val neo4jOgmOsgi = RootProject(uri("https://github.com/PhilAndrew/neo4j-ogm-osgi.git#90b328753873e5c224b9d9dd39b3c60b6f464f95"))
+lazy val neo4jOgmOsgi = RootProject(uri("https://github.com/PhilAndrew/neo4j-ogm-osgi.git#3a53f653c20a864701de0825fe107a723fbf9e7b"))
 
 lazy val root = Project("root", file(".")).dependsOn(neo4jOgmOsgi)
 
@@ -66,7 +66,7 @@ val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
 lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver/1.0.5",
-                      "universe/neo4j-ogm-osgi_2.11/1.4.36",
+                      "universe/neo4j-ogm-osgi_2.11/1.4.37",
                       "org.scaldi/scaldi_2.11/0.5.8")
 
 lazy val OsgiDependencies = Seq[OsgiDependency](
@@ -156,7 +156,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   ),
 
   OsgiDependency("Neo4JDependency",
-    Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.36"),
+    Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.37"),
     Seq(),
     Seq("org.neo4j.ogm",
       "org.neo4j.ogm.compiler",
