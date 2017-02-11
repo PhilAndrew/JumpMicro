@@ -129,8 +129,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     ),
     Seq("com.typesafe.akka.osgi"),
-    Seq("akka.http") //, "akka.http.scaladsl.server")
-      //"akka.http.scaladsl",
+    Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
       //)
   ),
 

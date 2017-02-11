@@ -8,10 +8,10 @@ package jumpmicro.jmscalajs.impl.actor
 
 import akka.actor._
 import akka.stream.ActorMaterializer
-/*import akka.http.scaladsl.Http
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer*/
+import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.Logger
 import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
 import jumpmicro.shared.util.osgi.OsgiGlobal
@@ -32,7 +32,7 @@ class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSys
 
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
-/*
+
     val route =
       path("js" / Remaining) { r => {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, {
@@ -64,7 +64,7 @@ class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSys
       }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
-*/
+
     logger.info("Server online at http://localhost:8080/")
 
   }
