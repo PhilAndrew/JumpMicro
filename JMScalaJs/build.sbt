@@ -17,6 +17,29 @@ import com.typesafe.sbt.osgi.OsgiKeys._
 import osgifelix.OsgiFelixPlugin.autoImport._
 import sbt.Keys._
 
+// ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
+// Its dependencies are un-related to OSGi.
+
+lazy val scalaJsProject = (project in file("scalajs")).settings(
+  scalaVersion := "2.11.8",
+  libraryDependencies ++= Seq(
+    "org.scala-js" %%% "scalajs-dom" % "0.8.1",
+    "com.lihaoyi" %%% "scalatags" % "0.5.2",
+    "com.lihaoyi" %%% "scalarx" % "0.2.8",
+    "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
+    "com.lihaoyi" %%% "upickle" % "0.3.4",
+    "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
+  )
+).enablePlugins(ScalaJSPlugin)
+
+lazy val neo4jOgmOsgi = RootProject(uri("https://github.com/PhilAndrew/neo4j-ogm-osgi.git#90b328753873e5c224b9d9dd39b3c60b6f464f95"))
+
+lazy val root = Project("root", file(".")).dependsOn(neo4jOgmOsgi)
+
+lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
+
+
+
 osgiSettings
 
 defaultSingleProjectSettings
@@ -212,22 +235,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
-// ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
-// Its dependencies are un-related to OSGi.
-
-lazy val scalaJsProject = (project in file("scalajs")).settings(
-  scalaVersion := "2.11.8",
-  libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.1",
-    "com.lihaoyi" %%% "scalatags" % "0.5.2",
-    "com.lihaoyi" %%% "scalarx" % "0.2.8",
-    "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
-    "com.lihaoyi" %%% "upickle" % "0.3.4",
-    "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
-  )
-).enablePlugins(ScalaJSPlugin)
-
-lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
 
 
 
