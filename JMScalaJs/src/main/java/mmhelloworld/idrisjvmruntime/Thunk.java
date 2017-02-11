@@ -1,7 +1,5 @@
 package mmhelloworld.idrisjvmruntime;
 
-import java.util.concurrent.Callable;
-
-public interface Thunk extends Callable<Object> {
+public interface Thunk {
     Object call();
 }

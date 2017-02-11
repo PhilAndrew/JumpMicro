@@ -68,7 +68,7 @@ public class Util {
             return equals(b, a);
         } else {
             throw new RuntimeException(
-                    format("Comparing incompatible types: %s (%s) and %s (%s)", a, a.getClass(), b, b.getClass()));
+                format("Comparing incompatible types: %s (%s) and %s (%s)", a, a.getClass(), b, b.getClass()));
         }
     }
 
