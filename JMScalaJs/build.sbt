@@ -33,10 +33,11 @@ lazy val scalaJsProject = (project in file("scalajs")).settings(
 ).enablePlugins(ScalaJSPlugin)
 
 lazy val neo4jOgmOsgi = RootProject(uri("https://github.com/PhilAndrew/neo4j-ogm-osgi.git#3a53f653c20a864701de0825fe107a723fbf9e7b"))
+//RootProject(
 
 //lazy val root = Project("root", file(".")).dependsOn(neo4jOgmOsgi)
-
-lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
+// .dependsOn(neo4jOgmOsgi)
+lazy val rootProject = project.in(file(".")).settings(Defaults.defaultSettings).aggregate(scalaJsProject)
 
 
 
