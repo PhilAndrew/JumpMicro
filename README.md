@@ -1,6 +1,22 @@
 # JumpMicro Microservice 
 
-JumpMicro is Scala Microservice by convention. This means it is a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice and microservices which cooperate together.
+JumpMicro is Scala Microservice by convention, a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice and microservices which cooperate together.
+
+## How to get started
+
+Go to the JMScalaJs directory and
+
+    > sbt update compile run
+
+This runs it in an embedded Felix OSGi container.
+
+## What do you need to setup?
+
+JMScalaJs required that a Neo4J database is available, refer to the file jumpmicro.conf for connection settings.
+
+Also to compile JMScalaJs refer to the Idris compile information below to allow Idris to be compiled.
+
+## Features  
   
 It has the following features available, they can be disabled and enabled easily:
 
