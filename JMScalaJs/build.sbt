@@ -32,13 +32,7 @@ lazy val scalaJsProject = (project in file("scalajs")).settings(
   )
 ).enablePlugins(ScalaJSPlugin)
 
-//lazy val neo4jOgmOsgi = RootProject(uri("https://github.com/PhilAndrew/neo4j-ogm-osgi.git#3a53f653c20a864701de0825fe107a723fbf9e7b"))
-//RootProject(
-
-//lazy val root = Project("root", file(".")).dependsOn(neo4jOgmOsgi)
-// .dependsOn(neo4jOgmOsgi)
-
-lazy val rootProject = project.in(file(".")).settings(Defaults.defaultSettings).aggregate(scalaJsProject)
+lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
 
 
 
@@ -57,6 +51,7 @@ scalaVersion := "2.11.8"
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots"),
+  // This bintray repo is for Neo4J OGM OSGi
   Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
 
 // Versions of libraries in use
@@ -72,6 +67,11 @@ lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver/1.0.5
                       "universe/neo4j-ogm-osgi_2.11/1.4.38",
                       "org.scaldi/scaldi_2.11/0.5.8")
 
+// Dependencies
+// All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
+// the SBT dependency such as "com.lihaoyi" %% "scalatags" % "0.6.1" but we also need to specify what
+// bundle name we are going to import AND/OR what packages we are going to import.
+// The name parameter is not used, only for documentation purposes.
 lazy val OsgiDependencies = Seq[OsgiDependency](
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
@@ -276,10 +276,13 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
 
 
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
+// General sbt settings
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-scalacOptions += "-deprecation"
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-P:acyclic:force")
 
 // https://github.com/HairyFotr/linter
 //addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1-SNAPSHOT")
@@ -297,6 +300,15 @@ initialize := {
 
 // Copy paste detector https://github.com/sbt/cpd4sbt
 enablePlugins(CopyPasteDetector)
+
+// Acyclic, prevents circular dependencies.
+// https://github.com/lihaoyi/acyclic
+libraryDependencies += "com.lihaoyi" %% "acyclic" % "0.1.7" % "provided"
+
+autoCompilerPlugins := true
+
+addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
+// END - Acyclic, prevents circular dependencies.
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
