@@ -21,6 +21,8 @@ import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+import acyclic.skipped
+
 class StartWebServerActor extends Consumer with Injectable {
   val logger = Logger(classOf[StartWebServerActor])
   val osgi = inject[OsgiGlobal]

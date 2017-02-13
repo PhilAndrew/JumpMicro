@@ -17,7 +17,6 @@ import scala.util.{Failure, Success, Try}
 //remove if not needed
 import akka.actor.{ActorSystem}
 import scala.concurrent.ExecutionContext.Implicits.global
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 import scala.concurrent._
 import scala.concurrent.duration._
 
@@ -25,6 +24,7 @@ import scala.concurrent.duration._
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
+import acyclic.skipped
 
 trait StartupAkkaActorsBoilerplate {
   val logger = Logger(classOf[StartupAkkaActorsBoilerplate])

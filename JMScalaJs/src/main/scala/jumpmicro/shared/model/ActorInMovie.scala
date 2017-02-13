@@ -10,6 +10,8 @@ import scala.collection.JavaConverters._
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+import acyclic.skipped
+
 @NodeEntity
 class ActorInMovie {
   def getName: String = name

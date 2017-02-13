@@ -10,6 +10,8 @@ import jumpmicro.jmscalajs.impl.actor.StartCamel
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+import acyclic.skipped
+
 class StartupCamelRoutes {
   val logger = Logger(classOf[StartupCamelRoutes])
 

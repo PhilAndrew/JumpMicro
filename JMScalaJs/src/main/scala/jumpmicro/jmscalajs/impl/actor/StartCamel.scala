@@ -15,6 +15,8 @@ import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+import acyclic.skipped
+
 class StartCamel(context: CamelContext) extends ScalaRouteBuilder(context) with Injectable {
   val logger = Logger(classOf[StartCamel])
 

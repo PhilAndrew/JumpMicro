@@ -11,6 +11,8 @@ import org.neo4j.ogm.annotation.{GraphId, NodeEntity, Relationship}
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+import acyclic.skipped
+
 @NodeEntity
 class Movie {
   def getId: Long = id

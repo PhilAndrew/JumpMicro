@@ -5,8 +5,7 @@ import java.util
 
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.Logger
-import org.neo4j.ogm.cypher.{Filter, Filters}
-import org.neo4j.ogm.model.{GraphModel, Result}
+import org.neo4j.ogm.model.{Result}
 import org.neo4j.ogm.session.Session
 import jumpmicro.jmscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
 import jumpmicro.shared.model.MicroConfig
@@ -20,6 +19,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
+
+import acyclic.skipped
 
 class GlobalModule extends Module {
   val logger = Logger(classOf[Any])

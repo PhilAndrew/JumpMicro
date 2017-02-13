@@ -11,6 +11,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+import acyclic.skipped
+
 class StartupAkkaActors extends StartupAkkaActorsBoilerplate {
 
   // Add your Akka Actors here and they will start when this OSGi component loads
