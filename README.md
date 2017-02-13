@@ -16,13 +16,19 @@ Go to the JMScalaJs directory and
 
 This runs it in an embedded Felix OSGi container.
 
+When it has started the console will state 
+
+    [ActorSystem-akka.actor.default-dispatcher-5] INFO jumpmicro.jmscalajs.impl.actor.WebServer - Server online at http://localhost:8080/
+    
+Then go to http://localhost:8080/test
+
 ## Features  
   
 It has the following features available, they can be disabled and enabled easily:
 
 * Can run in an OSGi container or standalone as a normal Java application using the embedded Felix OSGi container.
 * Dependency Injection using [Scaldi](http://scaldi.org/).
-* Logging using typesafe [Scala Logging](https://github.com/typesafehub/scala-logging).
+* Logging using Typesafe [Scala Logging](https://github.com/typesafehub/scala-logging).
 * Supports [Apache Karaf](http://karaf.apache.org/) and [Apache Felix](http://felix.apache.org/) OSGi containers. (others are untested but OSGi is a standard, so should work).
 * OSGi components using [Domino Scala library](https://github.com/domino-osgi/domino) with [user guide](https://github.com/domino-osgi/domino/blob/master/UserGuide.adoc) makes OSGi easier to understand and use from Scala, it support developers in writing bundle activators for the JVM module system OSGi.
 * [Apache Camel](http://camel.apache.org/) and its [components](https://camel.apache.org/components.html).
