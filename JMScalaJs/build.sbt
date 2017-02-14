@@ -643,7 +643,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
 
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("." + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
+            <bundle>{ "file:/" + new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
         }
 
         }
@@ -651,7 +651,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
     </features>
 
   val karafDir = new File("." + \\ + "target" + \\ + "karaf")
-  val karDirPath = "." + \\ + "target" + \\ + "karaf" + projectName
+  val karDirPath = "." + \\ + "target" + \\ + "karaf"
   val karafKarDir = new File(karDirPath)
   IO.delete(karafDir)
   IO.createDirectory(karafDir)
@@ -660,7 +660,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
   for (j <- jarFilesInBundles) IO.copyFile(j, new File(karDirPath + "/" + j.getName))
   for (m <- mustBeFiles; if m.jarFile.isEmpty) {
     val file = new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar")
-    IO.copyFile(file, new File(karDirPath + "/" + file.getName))
+    IO.copyFile(file, new File(karDirPath + \\ + file.getName))
   }
 
   val p = new scala.xml.PrettyPrinter(1000, 4)
