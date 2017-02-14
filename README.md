@@ -42,9 +42,31 @@ Features can be added to individual MicroServices, the following features exist:
 
 * [Idris language](http://www.idris-lang.org/) compiles, runs and interacts on the JVM in the MicroService using [Idris-JVM](https://github.com/mmhelloworld/idris-jvm) to compile in the sbt project. 
 
-Preferences:
+## SBT commands
 
-* ?
+    > sbt karafBuild
+
+Builds the Karaf features file and dependent jar files, places them in ./target/karaf directory.
+
+    > sbt karafDeploy
+    
+Deploys the Karaf features file and dependent jar files to the environment variable paths as set eg, KARAF_HOME, KARAF_DEPLOY, KARAF_JAR_DIRECTORY.
+
+After deploying Karaf then start Karaf (or it could already be started) and type in Karaf shell
+
+    > feature:install JMScalaJs
+
+## Environment variables
+
+**JUMPMICRO_CONFIG_PATH** Full path to the configuration file, default value is "jumpmicro.conf" which is the configuration file in the current running directory.
+
+If Karaf is the OSGi target being used and is accessable from this SBT project via the file system the the following environment variables should be set.
+
+**KARAF_HOME** Full path to Karaf on file system, for example "C:\\home\\software\\apache-karaf-4.0.8\\apache-karaf-4.0.8"
+
+**KARAF_DEPLOY** Full path to a writeable Karaf deployment directory on file system, for example "C:\\home\\software\\apache-karaf-4.0.8\\apache-karaf-4.0.8\\deploy"
+
+**KARAF_JAR_DIRECTORY** Full path to a writeable directory to allow dependency JAR file to be written to on the file system, for example "C:\\home\\software\\apache-karaf-4.0.8\\apache-karaf-4.0.8\\jars"
  
 ## How to run?
  
@@ -52,7 +74,7 @@ Choose one of the following:
  
 * On the command line use SBT to do `sbt run`.
 * Run `felix.bat` on Windows which creates an OSGi bundle and runs in a [Felix](http://felix.apache.org/) OSGi container. Refer to the folder `target/launcher` to see the [Felix](http://felix.apache.org/) bundle.
-* [Apache Karaf](http://karaf.apache.org/) is being tested.
+* [Apache Karaf](http://karaf.apache.org/) can be deployed to and is being tested.
 * [Knopflerfish](http://www.knopflerfish.org/) is not tested yet.
 
 ## Sugggested development environment
