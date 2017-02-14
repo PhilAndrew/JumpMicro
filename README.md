@@ -1,6 +1,6 @@
 # JumpMicro Microservice 
 
-JumpMicro is Scala Microservice by convention, a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice and microservices which cooperate together.
+JumpMicro is Scala Microservice **by convention**, a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice. Neither a library or a framework, a way of doing things.
 
 ## What do you need to setup?
 
@@ -44,7 +44,7 @@ Features can be added to individual MicroServices, the following features exist:
 
 Preferences:
 
-* Prefer [Monix](https://github.com/monix/monix) over Akka?
+* ?
  
 ## How to run?
  
@@ -80,8 +80,7 @@ I have opinions so I prefer to do things in a particular way. If you wish to div
 
 ## FAQ: Why OSGi?
 
-Two reasons:
-
+* OSGi is a module system which allows for code to be loaded, started and stopped easily.
 * Can share resources between OSGi bundles (modules) in the same process leading to a more efficient runtime for running multiple modules on the same machine. No need to have one process per MicroService, have one process for many MicroServices.
 * OSGi module system works and is reliable as a module system.
  
