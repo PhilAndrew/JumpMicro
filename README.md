@@ -52,7 +52,7 @@ Builds the Karaf features file and dependent jar files, places them in ./target/
     
 Deploys the Karaf features file and dependent jar files to the environment variable paths as set eg, KARAF_HOME, KARAF_DEPLOY, KARAF_JAR_DIRECTORY.
 
-After deploying Karaf then start Karaf (or it could already be started) and type in Karaf shell
+After deploying Karaf then start Karaf (or it could already be started), if the features file is deployed to Karaf then it should auto-install, else start it.
 
     > feature:install JMScalaJs
 
