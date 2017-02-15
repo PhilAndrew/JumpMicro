@@ -20,6 +20,8 @@ import sbt.Keys._
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
+// @feature directory scalajs
+// @feature start scalajs
 lazy val scalaJsProject = (project in file("scalajs")).settings(
   scalaVersion := "2.11.8",
   libraryDependencies ++= Seq(
@@ -33,6 +35,7 @@ lazy val scalaJsProject = (project in file("scalajs")).settings(
 ).enablePlugins(ScalaJSPlugin)
 
 lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
+// @feature end scalajs
 
 osgiSettings
 
@@ -314,6 +317,8 @@ autoCompilerPlugins := true
 addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
 // END - Acyclic, prevents circular dependencies.
 
+// @feature start scalajs
+
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // ScalaJS compile Scala to Javascript
@@ -335,6 +340,12 @@ compile in Compile <<= (compile in Compile).dependsOn(packageScalaJsResource)
 
 // http://stackoverflow.com/questions/30513492/sbt-in-a-multi-project-build-how-to-invoke-project-bs-task-from-project-a
 compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in scalaJsProject)
+
+// @feature end scalajs
+
+// @feature idris directory src/main/idris
+
+// @feature start idris
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
@@ -374,6 +385,8 @@ cleanFiles += file("target" + \\ + "idrisclass")
 //unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
 
 compile in Compile <<= (compile in Compile).dependsOn(compileIdris)
+
+// @feature end idris
 
 // OSGi component properties
 
