@@ -28,9 +28,9 @@ Then go to http://localhost:8080/test
 
 ## MicroService examples available
 
-| MicroService Name        | What does it do?              |
-| ------------------------ |:-----------------------------:|
-| JMScalaJs                | Akka Http server with ScalaJS |
+| MicroService Name        | What does it do?                                 |
+| ------------------------ |:------------------------------------------------:|
+| JMScalaJs                | Akka Http server with ScalaJS running in webpage |
 
 ## Features  
   
