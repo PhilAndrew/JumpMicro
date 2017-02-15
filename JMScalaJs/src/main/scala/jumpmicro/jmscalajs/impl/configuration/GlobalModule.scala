@@ -5,11 +5,12 @@ import java.util
 
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.Logger
-import org.neo4j.ogm.model.{Result}
+import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.Session
 import jumpmicro.jmscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
 import jumpmicro.shared.model.MicroConfig
 import jumpmicro.shared.util.osgi.OsgiGlobal
+import org.neo4j.ogm.exception.ConnectionException
 //import org.neo4j.driver.v1.{AuthTokens, Driver, GraphDatabase}
 import scaldi._
 import scala.concurrent._
@@ -49,23 +50,30 @@ object GlobalModule {
   }
 
   def loadConfigFromNeo4JBlocking(session: Session, nodeId: String): MicroConfig = {
-    // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
-    import collection.JavaConverters._
-    val query = new java.lang.String("MATCH (n:MicroConfig {nodeId:\"" + nodeId + "\"}) RETURN n")
-    val r: Result = session.query(query, new java.util.HashMap[String, Object]())
-    var found = false
-    val it = r.queryResults().iterator()
-    while (it.hasNext) {
-      val next = it.next()
-      //logger.error(next.toString)
-      found = true
-    }
-    val result = if (found) new MicroConfig(nodeId) else {
-      val insert = new MicroConfig(nodeId)
-      session.save(insert)
-      insert
-    }
+    var result: MicroConfig = null
+    try {
+      // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
+      import collection.JavaConverters._
+      val query = new java.lang.String("MATCH (n:MicroConfig {nodeId:\"" + nodeId + "\"}) RETURN n")
+      val r: Result = session.query(query, new java.util.HashMap[String, Object]())
+      var found = false
+      val it = r.queryResults().iterator()
+      while (it.hasNext) {
+        val next = it.next()
+        //logger.error(next.toString)
+        found = true
+      }
+      if (found) new MicroConfig(nodeId) else {
+        result = new MicroConfig(nodeId)
+        session.save(result)
+      }
 
+    } catch {
+      case ex: ConnectionException => {
+        logger.error("The Neo4J Database connection could not be established. This MicroService will continue to function without database access, however any further database access will fail.")
+        result = new MicroConfig(nodeId)
+      }
+    }
     result
   }
 
