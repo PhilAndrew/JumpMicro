@@ -77,6 +77,12 @@ Choose one of the following:
 * [Apache Karaf](http://karaf.apache.org/) can be deployed to and is being tested.
 * [Knopflerfish](http://www.knopflerfish.org/) is not tested yet.
 
+## Configuration
+
+Configuration is initially loaded from a config file at this environment variable path **JUMPMICRO_CONFIG_PATH**.
+
+Then secondly, configuration is loaded from Neo4J if it exists in the Neo4J entity named MicroConfig with the nodeId matching the **jumpmicro.nodeid** in the configuration file.
+
 ## Sugggested development environment
 
 Use IntelliJ IDEA with the following plugins enabled, enable them in `File / Settings / Plugins`
@@ -101,6 +107,8 @@ Creation of a new MicroService is done by copying the code of another existing M
 I have opinions so I prefer to do things in a particular way. If you wish to diverge to a different way, you are welcome to do that and I am open to ideas and influence on how to do things, please contribute ideas and code.
 
 ## FAQ: Why OSGi?
+
+Why OSGI? [https://www.osgi.org/developer/benefits-of-using-osgi/](https://www.osgi.org/developer/benefits-of-using-osgi/)
 
 * OSGi is a module system which allows for code to be loaded, started and stopped easily.
 * Can share resources between OSGi bundles (modules) in the same process leading to a more efficient runtime for running multiple modules on the same machine. No need to have one process per MicroService, have one process for many MicroServices.
