@@ -393,7 +393,7 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
 def subPackagesOf(path: String): Seq[String] = {
   def recursiveListFiles(f: File): Array[File] = {
     val these = f.listFiles
-    these ++ these.filter(_.isFile).flatMap(recursiveListFiles)
+    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
   }
   val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
   val allFiles = recursiveListFiles(file)
