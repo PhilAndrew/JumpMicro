@@ -8,7 +8,7 @@ JumpMicro is Scala Microservice **by convention**, a standard way of writing Mic
 
 ## What do you need to setup?
 
-JMScalaJs required that a Neo4J database is available as that is the default database for storage, refer to the file jumpmicro.conf for connection settings. 
+JMScalaJs wants to use a Neo4J database if it is available as that is the default database for storage, but not required to run. Refer to the file jumpmicro.conf for connection settings. 
 
 Also to compile JMScalaJs refer to the Idris compile information below to allow Idris to be compiled.
 
@@ -16,7 +16,7 @@ Also to compile JMScalaJs refer to the Idris compile information below to allow 
 
 Go to the JMScalaJs directory and
 
-    > sbt update compile run
+    > sbt run
 
 This runs it in an embedded Felix OSGi container.
 
@@ -25,6 +25,14 @@ When it has started the console will state
     [ActorSystem-akka.actor.default-dispatcher-5] INFO jumpmicro.jmscalajs.impl.actor.WebServer - Server online at http://localhost:8080/
     
 Then go to http://localhost:8080/test
+
+## MicroService examples available
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
 
 ## Features  
   
@@ -41,9 +49,6 @@ It has the following features:
 * [Neo4j OGM](https://github.com/neo4j/neo4j-ogm) as the Object to Graph database mapper with a modified version for OSGi [Neo4J OGM OSGi](https://github.com/dkrizic/neo4j-ogm-osgi-demo).
 * [Dropwizard Metrics](http://metrics.dropwizard.io/) for recording Metrics of the running application to ensure health of your application using [Metrics-Scala](https://github.com/erikvanoosten/metrics-scala) for  metrics recording, [documentation here](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Manual.md) with documentation for [Akka Actos](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Actors.md), [Futures](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Futures.md), [all docs](https://github.com/erikvanoosten/metrics-scala/tree/master/docs) and [3rd party libraries](http://metrics.dropwizard.io/3.1.0/manual/third-party/).
 * Can run in a Docker container.
-
-Features can be added to individual MicroServices, the following features exist:
-
 * [Idris language](http://www.idris-lang.org/) compiles, runs and interacts on the JVM in the MicroService using [Idris-JVM](https://github.com/mmhelloworld/idris-jvm) to compile in the sbt project. 
 
 ## SBT commands
