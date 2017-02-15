@@ -1,4 +1,8 @@
-# JumpMicro Microservice [![License][licenseImg]][licenseLink] [![CircleCI][circleCiImg]][circleCiLink] [![Codacy][codacyImg]][codacyLink] 
+# JumpMicro Microservice [![License][licenseImg]][licenseLink] 
+
+[licenseImg]: https://img.shields.io/github/license/pathikrit/better-files.svg
+[licenseImg2]: https://img.shields.io/:license-mit-blue.svg
+[licenseLink]: LICENSE
 
 JumpMicro is Scala Microservice **by convention**, a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice. Neither a library or a framework, a way of doing things.
 
