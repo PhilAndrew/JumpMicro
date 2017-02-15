@@ -640,7 +640,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
         })
         }
         {
-
+        // @todo Should it be file:/ or file:
         for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
           // jmscalajs_2.11-0.1-SNAPSHOT.jar
             <bundle>{ "file:/" + new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
