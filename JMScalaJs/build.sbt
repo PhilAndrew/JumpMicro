@@ -544,7 +544,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
   )
 
   // Some modules do not work in Karaf
-  def removeIgnoredModules(modules: Seq[Module]): Seq[Module] = {
+  def removeModulesWhichDoNotWorkInKaraf(modules: Seq[Module]): Seq[Module] = {
     modules.filter(m => {
       ! ignoredModules.contains(Seq(m.id.organisation, m.id.name).mkString("/"))
     })
@@ -559,7 +559,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
     recursiveFetch(module.id).toSet
   }
 
-  def findModulesToRemove(modules: Seq[Module]): Seq[Module] = {
+  def findModulesToRemoveAsTheyAreInvolvedInKarafFeatures(modules: Seq[Module]): Seq[Module] = {
     val topLevelModulesToRemove: Set[Module] = modules.map(module => {
       if (module.id.organisation == "org.apache.camel") {
         if (module.id.name == "camel-core-osgi") {
@@ -579,7 +579,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
     modulesToRemove.toSeq
   }
 
-  def featuresOf(modules: Seq[Module]): Seq[String] = {
+  def karafFeaturesOfModules(modules: Seq[Module]): Seq[String] = {
     modules.map(m => {
       if (m.id.organisation == "org.apache.camel") {
         Some(m.id.name)
@@ -598,7 +598,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
     } else None
   }
 
-  def modulesWhichMustBeFiles(modules: Seq[Module]): Seq[Module] = {
+  def modulesWhichMustBeOsgiBundleFilesNotFeatures(modules: Seq[Module]): Seq[Module] = {
     for (module <- modules;
          mustBeFile <- getMustBeFileOf(module)) yield module
   }
@@ -609,12 +609,12 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
       new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
   }
 
-  val modulesNotEvicted = allModules.filter(! _.isEvicted)
-  val modulesToRemove = findModulesToRemove(modulesNotEvicted)
-  val featuresToAdd = featuresOf(modulesToRemove)
-  val modulesWithThoseRemoved = modulesNotEvicted.diff(modulesToRemove)
-  val modulesNotIgnored = removeIgnoredModules(modulesWithThoseRemoved)
-  val mustBeFiles = modulesWhichMustBeFiles(modulesNotIgnored)
+  val modulesWithEvictedOnesRemoved = allModules.filter(! _.isEvicted)
+  val modulesToRemove = findModulesToRemoveAsTheyAreInvolvedInKarafFeatures(modulesWithEvictedOnesRemoved)
+  val featuresToAdd = karafFeaturesOfModules(modulesToRemove)
+  val modulesMinusTheRemovedOnes = modulesWithEvictedOnesRemoved.diff(modulesToRemove)
+  val modulesNotIgnored = removeModulesWhichDoNotWorkInKaraf(modulesMinusTheRemovedOnes)
+  val mustBeFiles = modulesWhichMustBeOsgiBundleFilesNotFeatures(modulesNotIgnored)
   val modulesWithoutMustBeFile = modulesNotIgnored.diff(mustBeFiles)
   val jarFilesInBundles = getJarFilesInBundles(mustBeFiles)
   val modulesWithWrap = modulesWithoutMustBeFile.map(m => (m, isModuleWrap(m)))
