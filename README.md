@@ -1,6 +1,6 @@
 # JumpMicro Microservice [![License][licenseImg]][licenseLink] 
 
-[licenseImg]: https://img.shields.io/github/license/pathikrit/better-files.svg
+[licenseImg]: https://img.shields.io/github/license/PhilAndrew/JumpMicro.svg
 [licenseImg2]: https://img.shields.io/:license-mit-blue.svg
 [licenseLink]: LICENSE
 
