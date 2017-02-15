@@ -1,4 +1,4 @@
-# JumpMicro Microservice 
+# JumpMicro Microservice [![License][licenseImg]][licenseLink] [![CircleCI][circleCiImg]][circleCiLink] [![Codacy][codacyImg]][codacyLink] 
 
 JumpMicro is Scala Microservice **by convention**, a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice. Neither a library or a framework, a way of doing things.
 
@@ -24,7 +24,7 @@ Then go to http://localhost:8080/test
 
 ## Features  
   
-It has the following features available, they can be disabled and enabled easily:
+It has the following features:
 
 * Can run in an OSGi container or standalone as a normal Java application using the embedded Felix OSGi container.
 * Dependency Injection using [Scaldi](http://scaldi.org/).
