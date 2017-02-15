@@ -51,12 +51,8 @@ object GlobalModule {
   def loadConfigFromNeo4JBlocking(session: Session, nodeId: String): MicroConfig = {
     // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
     import collection.JavaConverters._
-
-    // @todo This should query by the node identifier
-    val query = new java.lang.String("MATCH (n:MicroConfig) RETURN n")
-
+    val query = new java.lang.String(s"MATCH (n:MicroConfig {nodeId:\"$nodeId\"}) RETURN n")
     val r: Result = session.query(query, new java.util.HashMap[String, Object]())
-
     var found = false
     val it = r.queryResults().iterator()
     while (it.hasNext) {
