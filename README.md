@@ -28,11 +28,9 @@ Then go to http://localhost:8080/test
 
 ## MicroService examples available
 
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| MicroService Name        | What does it do?              |
+| ------------------------ |:-----------------------------:|
+| JMScalaJs                | Akka Http server with ScalaJS |
 
 ## Features  
   
