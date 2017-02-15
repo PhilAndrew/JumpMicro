@@ -30,25 +30,21 @@ class GlobalModule extends Module {
   bind [StartupCamelComponents] to new StartupCamelComponents
   bind [StartupCamelRoutes] to new StartupCamelRoutes
   bind [MicroConfiguration] to new MicroConfiguration
-  //bind [Neo4JSessionFactory] to new Neo4JSessionFactory
 }
 
 object GlobalModule {
   val logger = Logger(classOf[GlobalModule])
+
   private var _config: Config = null
 
-  def loadConfig(): Config = {
+  private def loadConfigFromFile(): Config = {
     var config: Config = null
 
-    val c = System.getProperty("jumpmicro.config.path")
-    val configPath = if (c == null) "jumpmicro.conf" else c
-    if (configPath != null) {
-      val f = new File(configPath)
-      if (f.exists()) {
-        config = ConfigFactory.parseFile(f)
-      }
+    val configPath = scala.util.Properties.envOrElse("JUMPMICRO_CONFIG_PATH", "jumpmicro.conf")
+    val f = new File(configPath)
+    if (f.exists()) {
+      config = ConfigFactory.parseFile(f)
     }
-
     config
   }
 
@@ -56,6 +52,7 @@ object GlobalModule {
     // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
     import collection.JavaConverters._
 
+    // @todo This should query by the node identifier
     val query = new java.lang.String("MATCH (n:MicroConfig) RETURN n")
 
     val r: Result = session.query(query, new java.util.HashMap[String, Object]())
@@ -77,7 +74,7 @@ object GlobalModule {
   }
 
   def loadDI() = {
-    _config = loadConfig()
+    _config = loadConfigFromFile()
     TypesafeConfigInjector(_config) :: new GlobalModule
   }
 

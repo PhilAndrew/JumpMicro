@@ -34,8 +34,6 @@ lazy val scalaJsProject = (project in file("scalajs")).settings(
 
 lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
 
-
-
 osgiSettings
 
 defaultSingleProjectSettings
@@ -51,7 +49,7 @@ scalaVersion := "2.11.8"
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots"),
-  // This bintray repo is for Neo4J OGM OSGi
+  // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
   Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
 
 // Versions of libraries in use
@@ -63,15 +61,17 @@ val akkaHttpVersion = "10.0.3"  // Akka Http library
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
-lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver/1.0.5",
-                      "universe/neo4j-ogm-osgi_2.11/1.4.38",
-                      "org.scaldi/scaldi_2.11/0.5.8")
+lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
+                      "universe/neo4j-ogm-osgi", // universe/neo4j-ogm-osgi_2.11/1.4.38
+                      "org.scaldi/scaldi") // org.scaldi/scaldi_2.11/0.5.8
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
 // the SBT dependency such as "com.lihaoyi" %% "scalatags" % "0.6.1" but we also need to specify what
 // bundle name we are going to import AND/OR what packages we are going to import.
 // The name parameter is not used, only for documentation purposes.
+// When should I use Import-Package and when should I use Require-Bundle?
+// http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
@@ -323,8 +323,8 @@ lazy val packageScalaJsResource = taskKey[Unit]("Package ScalaJS")
 packageScalaJsResource := {
   println("Package ScalaJs")
 
-  val scalaJsPath = "scalajs" + File.separator + "target" + File.separator + "scala-2.11" + File.separator
-  val destPath = "src" + File.separator + "main" + File.separator + "resources" + File.separator + "js" + File.separator
+  val scalaJsPath = "scalajs" + \\ + "target" + \\ + "scala-2.11" + \\
+  val destPath = "src" + \\ + "main" + \\ + "resources" + \\ + "js" + \\
   val dest = new File(destPath)
   dest.delete()
   dest.mkdir()
@@ -352,7 +352,7 @@ compileIdris := {
   IO.createDirectory(new File("target" + \\ + "idrisclass"))
 
   val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "c:" + \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
-  val dest = "." + File.separator + "target" + \\ + "idrisclass"
+  val dest = "." + \\ + "target" + \\ + "idrisclass"
   val command: String = exec + " --interface --cg-opt --interface ." + \\ +
     "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
     "src" + \\ + "main" + \\ + "idris\" -o " + dest
@@ -390,15 +390,15 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
   JUMPMICRO_DOT + "shared.model",
   JUMPMICRO_DOT + "shared.bean")
 
-// @todo Only include subpackages which have files in them
 def subPackagesOf(path: String): Seq[String] = {
   def recursiveListFiles(f: File): Array[File] = {
     val these = f.listFiles
-    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
+    these ++ these.filter(_.isFile).flatMap(recursiveListFiles)
   }
   val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
-  val r = recursiveListFiles(file)
-  val result: Seq[String] = for (f <- r; if f.isDirectory) yield {
+  val allFiles = recursiveListFiles(file)
+  val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
+  val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
     f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
   }
   Seq(path) ++ result
@@ -667,9 +667,4 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
   val outputString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + p.format(features)
   IO.write(new File(karDirPath + \\ + "features.xml"), outputString)
 }
-
-
-//val listFiles = IO.listFiles(karafKarDir)
-//val jarPaths = listFiles.map( (f: File) => { (f, f.getName) })
-//IO.jar(jarPaths, new File("./target/karaf/JMScalaJS.kar"), new java.util.jar.Manifest())
 

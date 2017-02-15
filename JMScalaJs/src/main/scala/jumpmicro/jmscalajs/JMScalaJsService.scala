@@ -17,9 +17,9 @@ import com.typesafe.scalalogging.Logger
   * Rename this to YourNameService where YourName is the name of
   * the service you are providing. You would also want to rename the osgidemo package to com.yourpackage
   *
-  * Trait(s) should exist here in the base package (here osgidemo) for the services the OSGi component is exposing.
+  * Trait(s) should exist here in this for the services the OSGi component is exposing.
   */
-trait MicroServiceScalaJsService {
+trait JMScalaJsService {
   def hello(): Unit
   def startup(): Unit
 }

@@ -12,7 +12,7 @@ import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
-import jumpmicro.jmscalajs.MicroServiceScalaJsService
+import jumpmicro.jmscalajs.JMScalaJsService
 import jumpmicro.jmscalajs.impl.configuration.MicroConfiguration
 import jumpmicro.jmscalajs.impl.idris.TestIdris
 import jumpmicro.jmscalajs.impl.service.HelloWorldServiceImpl
@@ -85,7 +85,7 @@ class JMScalaJSBundleActivator extends BundleActivatorBoilerplate with Injectabl
      }
      */
 
-    new HelloWorldServiceImpl().providesService[MicroServiceScalaJsService]
+    new HelloWorldServiceImpl().providesService[JMScalaJsService]
 
     onStop {
       system foreach (_.terminate())
