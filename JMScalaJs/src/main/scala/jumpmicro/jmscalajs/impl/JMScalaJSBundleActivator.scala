@@ -65,7 +65,7 @@ class JMScalaJSBundleActivator extends BundleActivatorBoilerplate with Injectabl
 
     //testMetrics()
 
-    TestIdris.test()
+    TestIdris.test(bundleContext)
 
     // @todo Can I use scalaDi to better store this bundleContext as a global
     val osgiGlobal: OsgiGlobal = inject[OsgiGlobal]

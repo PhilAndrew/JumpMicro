@@ -1,5 +1,10 @@
 package jumpmicro.jmscalajs.impl.idris
 
+import javax.script.{ScriptEngine, ScriptEngineManager}
+
+import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
+import org.osgi.framework.BundleContext
+
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
@@ -7,7 +12,19 @@ package jumpmicro.jmscalajs.impl.idris
 
 // Proof that Idris code can run from Scala, refer to Main.idr
 object TestIdris {
-  def test() = {
-    println(JBar.pythag(5))
+  def test(context: BundleContext) = {
+
+    val classloader = MyBundleDelegatingClassLoader(context, Some(getClass.getClassLoader))
+
+    import collection.JavaConverters._
+
+    val methods = classloader.findClass("jumpmicro.jmscalajs.impl.idris.JBar").getMethods.toSeq
+
+    for (m <- methods) {
+      if (m.getName=="pythag")
+        println(m.invoke(null, new java.lang.Integer(5)))
+    }
+
+    //println(JBar.pythag(5))
   }
 }
