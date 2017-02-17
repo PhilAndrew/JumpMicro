@@ -29,7 +29,6 @@ Then go to http://localhost:8080/test
 | MicroService Name        | What does it do?                                                             |
 | ------------------------ |:----------------------------------------------------------------------------:|
 | JMScalaJs                | Akka Http server with ScalaJS running in webpage http://localhost:8080/test/ |
-|                          | Also includes Idris code mixed with Scala, but Idris not required            |
 
 ## Features  
   
