@@ -10,8 +10,6 @@ JumpMicro is Scala Microservice **by convention**, a standard way of writing Mic
 
 JMScalaJs wants to use a Neo4J database if it is available as that is the default database for storage, but not required to run. Refer to the file jumpmicro.conf for connection settings. 
 
-JMScalaJs requires Idris.
-
 ## How to get started
 
 Go to the JMScalaJs directory and
@@ -31,6 +29,7 @@ Then go to http://localhost:8080/test
 | MicroService Name        | What does it do?                                                             |
 | ------------------------ |:----------------------------------------------------------------------------:|
 | JMScalaJs                | Akka Http server with ScalaJS running in webpage http://localhost:8080/test/ |
+|                          | Also includes Idris code mixed with Scala, but Idris not required            |
 
 ## Features  
   
@@ -83,6 +82,7 @@ Choose one of the following:
 * Run `felix.bat` on Windows which creates an OSGi bundle and runs in a [Felix](http://felix.apache.org/) OSGi container. Refer to the folder `target/launcher` to see the [Felix](http://felix.apache.org/) bundle.
 * [Apache Karaf](http://karaf.apache.org/) can be deployed to and is being tested.
 * [Knopflerfish](http://www.knopflerfish.org/) is not tested yet.
+* [Eclipse Virgo](http://www.eclipse.org/virgo/) is not tested yet.
 
 ## Configuration
 
