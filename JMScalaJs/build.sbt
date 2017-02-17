@@ -41,7 +41,7 @@ osgiSettings
 
 defaultSingleProjectSettings
 
-val projectName = "JMScalaJS"
+val projectName = "JMScalaJs"
 name := projectName
 
 // This OSGi bundle version
@@ -420,12 +420,14 @@ def subPackagesOf(path: String): Seq[String] = {
     these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
   }
   val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
-  val allFiles = recursiveListFiles(file)
-  val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
-  val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
-    f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
-  }
-  Seq(path) ++ result
+  if (file.exists()) {
+    val allFiles = recursiveListFiles(file)
+    val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
+    val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
+      f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
+    }
+    Seq(path) ++ result
+  } else Seq()
 }
 
 // Packages which are to be inside the OSGi component must be listed here as private packages.
