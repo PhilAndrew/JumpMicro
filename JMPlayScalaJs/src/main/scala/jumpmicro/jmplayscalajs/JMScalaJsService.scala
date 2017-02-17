@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs
+package jumpmicro.jmplayscalajs
 
 import com.typesafe.scalalogging.Logger
 

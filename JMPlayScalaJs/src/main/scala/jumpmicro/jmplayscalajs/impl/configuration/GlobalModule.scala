@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs.impl.configuration
+package jumpmicro.jmplayscalajs.impl.configuration
 
 import java.io.File
 import java.util
@@ -7,7 +7,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.Logger
 import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.Session
-import jumpmicro.jmscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
+import jumpmicro.jmplayscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
 import jumpmicro.shared.model.MicroConfig
 import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.neo4j.ogm.exception.ConnectionException

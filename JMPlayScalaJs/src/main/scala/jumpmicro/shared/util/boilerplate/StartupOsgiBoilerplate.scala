@@ -7,9 +7,9 @@ import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 import scaldi.Injectable
-import jumpmicro.jmscalajs.impl.configuration.{GlobalModule, MicroConfiguration}
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
-import jumpmicro.jmscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
+import jumpmicro.jmplayscalajs.impl.configuration.{GlobalModule, MicroConfiguration}
+import jumpmicro.jmplayscalajs.impl.configuration.GlobalModule._
+import jumpmicro.jmplayscalajs.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
 import jumpmicro.shared.util.akkaosgi.{AkkaCamelContextProvider, MyOsgiActorSystemFactory}
 import jumpmicro.shared.util.neo4j.Neo4JSessionFactory
 

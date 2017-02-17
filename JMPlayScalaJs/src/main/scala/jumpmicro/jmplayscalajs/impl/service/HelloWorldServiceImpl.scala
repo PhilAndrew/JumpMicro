@@ -1,8 +1,8 @@
-package jumpmicro.jmscalajs.impl.service
+package jumpmicro.jmplayscalajs.impl.service
 
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
-import jumpmicro.jmscalajs.JMScalaJsService
+import jumpmicro.jmplayscalajs.JMScalaJsService
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

@@ -12,7 +12,7 @@ import org.neo4j.ogm.session.Session
 import org.neo4j.ogm.session.SessionFactory
 import org.neo4j.ogm.transaction.Transaction
 import scaldi.Injectable
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
+import jumpmicro.jmplayscalajs.impl.configuration.GlobalModule._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs.impl.idris
+package jumpmicro.jmplayscalajs.impl.idris
 
 import javax.script.{ScriptEngine, ScriptEngineManager}
 

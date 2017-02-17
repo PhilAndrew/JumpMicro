@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs.impl.configuration
+package jumpmicro.jmplayscalajs.impl.configuration
 
 import com.typesafe.scalalogging.Logger
 import jumpmicro.shared.model.MicroConfig

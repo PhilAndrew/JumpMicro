@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs.impl.startup
+package jumpmicro.jmplayscalajs.impl.startup
 
 import com.typesafe.scalalogging.Logger
 import org.apache.camel.component.exec.ExecComponent

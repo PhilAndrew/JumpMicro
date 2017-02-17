@@ -1,7 +1,7 @@
 package jumpmicro.shared.util.osgi
 
 import domino.capsule.Capsule
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule
+import jumpmicro.jmplayscalajs.impl.configuration.GlobalModule
 import jumpmicro.shared.util.resourceshare.ResourceShareService
 
 //: ----------------------------------------------------------------------------------

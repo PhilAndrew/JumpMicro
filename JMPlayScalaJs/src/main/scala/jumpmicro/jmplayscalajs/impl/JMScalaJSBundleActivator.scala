@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs.impl
+package jumpmicro.jmplayscalajs.impl
 
 import java.util.concurrent.TimeUnit
 
@@ -12,13 +12,13 @@ import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
-import jumpmicro.jmscalajs.JMScalaJsService
-import jumpmicro.jmscalajs.impl.configuration.MicroConfiguration
-import jumpmicro.jmscalajs.impl.idris.TestIdris
-import jumpmicro.jmscalajs.impl.service.HelloWorldServiceImpl
-import jumpmicro.jmscalajs.impl.startup.StartupOsgi
+import jumpmicro.jmplayscalajs.JMScalaJsService
+import jumpmicro.jmplayscalajs.impl.configuration.MicroConfiguration
+import jumpmicro.jmplayscalajs.impl.idris.TestIdris
+import jumpmicro.jmplayscalajs.impl.service.HelloWorldServiceImpl
+import jumpmicro.jmplayscalajs.impl.startup.StartupOsgi
 import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule, OsgiGlobal}
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
+import jumpmicro.jmplayscalajs.impl.configuration.GlobalModule._
 import jumpmicro.shared.util.resourceshare.ResourceShareService
 import org.osgi.framework.{BundleActivator, BundleContext}
 

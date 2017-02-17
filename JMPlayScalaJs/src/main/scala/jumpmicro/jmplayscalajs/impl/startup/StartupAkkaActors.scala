@@ -1,7 +1,7 @@
-package jumpmicro.jmscalajs.impl.startup
+package jumpmicro.jmplayscalajs.impl.startup
 
 import akka.actor.{ActorRef, Props}
-import jumpmicro.jmscalajs.impl.actor.StartWebServerActor
+import jumpmicro.jmplayscalajs.impl.actor.StartWebServerActor
 import jumpmicro.shared.util.boilerplate.StartupAkkaActorsBoilerplate
 //remove if not needed
 import scala.concurrent.ExecutionContext.Implicits.global

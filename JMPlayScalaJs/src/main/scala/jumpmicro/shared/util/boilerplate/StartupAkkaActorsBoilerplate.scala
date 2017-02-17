@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.Logger
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.slf4j.LoggerFactory
 import scaldi.Injectable
-import jumpmicro.jmscalajs.impl.configuration.MicroConfiguration
+import jumpmicro.jmplayscalajs.impl.configuration.MicroConfiguration
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.{Deadline, Duration}

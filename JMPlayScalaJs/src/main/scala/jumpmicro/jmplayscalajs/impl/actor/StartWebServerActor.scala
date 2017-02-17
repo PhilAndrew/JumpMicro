@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs.impl.actor
+package jumpmicro.jmplayscalajs.impl.actor
 
 import akka.camel.{CamelMessage, Consumer}
 import com.typesafe.scalalogging.Logger
@@ -7,14 +7,14 @@ import org.neo4j.ogm.session.Neo4jSession
 import org.neo4j.ogm.transaction.Transaction
 import org.osgi.framework.ServiceReference
 import org.slf4j.LoggerFactory
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule
+import jumpmicro.jmplayscalajs.impl.configuration.GlobalModule
 import jumpmicro.shared.util.osgi.OsgiGlobal
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent._
 //import universe.microservice.shared.service.BrowserService
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
+import jumpmicro.jmplayscalajs.impl.configuration.GlobalModule._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

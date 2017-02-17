@@ -1,4 +1,4 @@
-package jumpmicro.jmscalajs.impl.actor
+package jumpmicro.jmplayscalajs.impl.actor
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

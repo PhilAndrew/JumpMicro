@@ -14,8 +14,8 @@ import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
-import jumpmicro.jmscalajs.impl.configuration.GlobalModule
-import jumpmicro.jmscalajs.impl.startup.StartupOsgi
+import jumpmicro.jmplayscalajs.impl.configuration.GlobalModule
+import jumpmicro.jmplayscalajs.impl.startup.StartupOsgi
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
