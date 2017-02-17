@@ -370,13 +370,13 @@ compileIdris := {
 
   var result: String = null
   try {
-    result = command !!;
+    if (new File(exec).exists())
+      result = command !!;
   } catch {
     case ex: java.io.IOException => {
       result = null
     }
   }
-  println(result)
 
   if ((result == null) || (result.indexOf("FAILURE:") == 0)) {
     println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
