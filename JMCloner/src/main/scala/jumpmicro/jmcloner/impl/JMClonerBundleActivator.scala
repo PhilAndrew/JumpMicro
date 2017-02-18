@@ -41,8 +41,6 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 class JMClonerBundleActivator extends BundleActivatorBoilerplate with Injectable {
   val logger = Logger(classOf[JMClonerBundleActivator])
 
-  println("in JMScalaJsBundleActivator")
-
   /*def testMetrics() = {
     val reporter = ConsoleReporter.forRegistry(metricRegistry)
       .convertRatesTo(TimeUnit.SECONDS)
@@ -56,7 +54,6 @@ class JMClonerBundleActivator extends BundleActivatorBoilerplate with Injectable
 
   // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
-    println("whenBundleActive in JMScalaJsBundleActivator")
     addCapsule(new OsgiCapsule())
 
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {

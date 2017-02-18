@@ -36,7 +36,7 @@ class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSys
     val route =
       path("js" / Remaining) { r => {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, {
-          println(r)
+          logger.info(r)
           val src = "js/" + r
           val stream = classloader.getResourceAsStream(src)
           val lines = scala.io.Source.fromInputStream(stream).getLines.toList
