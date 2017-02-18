@@ -33,8 +33,11 @@ class StartWebServerActor extends Consumer with Injectable {
   override def receive: Receive = {
     case msg: CamelMessage => {
       implicit val system = context.system
-      webServer = new WebServer(osgi.bundleContext)
-      webServer.start()
+      //webServer = new WebServer(osgi.bundleContext)
+      //webServer.start()
+
+      SimpleExample.main(null)
+      logger.info("HTTP Server for korolev started at http://localhost:8181/")
     }
   }
 }

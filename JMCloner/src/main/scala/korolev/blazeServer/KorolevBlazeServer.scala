@@ -10,6 +10,6 @@ abstract class KorolevBlazeServer(config: BlazeServerConfig = BlazeServerConfig.
   def main(args: Array[String]): Unit = {
     // activate SLF4J backend
     //LoggerConfig.factory = SLF4JLoggerFactory()
-    runServer(service, config)
+    runServer(service, config.copy(doNotBlockCurrentThread = true))
   }
 }
