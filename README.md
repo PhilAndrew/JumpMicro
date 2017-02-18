@@ -29,6 +29,7 @@ Then go to http://localhost:8080/test
 | MicroService Name        | What does it do?                                                             |
 | ------------------------ |:----------------------------------------------------------------------------:|
 | JMScalaJs                | Akka Http server with ScalaJS running in webpage http://localhost:8080/test/ |
+| JMCloner                 | Allow creation of a new MicroService by copying another prototype one<br>http://localhost:8181/        |
 
 ## Features  
   
@@ -46,6 +47,11 @@ It has the following features:
 * [Dropwizard Metrics](http://metrics.dropwizard.io/) for recording Metrics of the running application to ensure health of your application using [Metrics-Scala](https://github.com/erikvanoosten/metrics-scala) for  metrics recording, [documentation here](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Manual.md) with documentation for [Akka Actos](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Actors.md), [Futures](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Futures.md), [all docs](https://github.com/erikvanoosten/metrics-scala/tree/master/docs) and [3rd party libraries](http://metrics.dropwizard.io/3.1.0/manual/third-party/).
 * Can run in a Docker container.
 * [Idris language](http://www.idris-lang.org/) compiles, runs and interacts on the JVM in the MicroService using [Idris-JVM](https://github.com/mmhelloworld/idris-jvm) to compile in the sbt project. 
+
+## Suggested libaries
+
+* [Binding.scala](https://github.com/ThoughtWorksInc/Binding.scala) for HTML on client side
+* [AutoWire](https://github.com/lihaoyi/autowire) for RPC communications between ScalaJS and a server
 
 ## SBT commands
 
