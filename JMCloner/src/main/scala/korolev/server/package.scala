@@ -73,7 +73,7 @@ package object server extends LazyLogging {
         Response.Http(
           status = Response.Status.Ok,
           headers = Seq(
-            "content-type" -> htmlContentType,
+            "content-type" -> { if (extension.getOrElse("") == "css") "text/css" else htmlContentType },
             "set-cookie" -> s"device=$deviceId"
           ),
           body = Some {
