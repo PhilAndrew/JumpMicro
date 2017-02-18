@@ -78,6 +78,7 @@ package object server extends LazyLogging {
           ),
           body = Some {
             val html = if (!extension.isDefined) "<!DOCTYPE html>" + dom.html else {
+              // @todo Super bad code here, blocking read from a file!!!!!!!!!
               val stream =
                 classOf[JSAccess[List]].getClassLoader.getResourceAsStream(request.path.toString)
               Source.fromInputStream(stream).mkString
