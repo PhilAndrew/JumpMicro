@@ -9,17 +9,25 @@
 
 resolvers += Resolver.bintrayRepo("philandrew", "sbt-plugins")
 
-/*resolvers += Resolver.url(
-  "bintray-sbt-plugin-releases",
-  url("http://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
-  Resolver.ivyStylePatterns)
-*/
+// Chose one of the following
 
-//addSbtPlugin("sbt-plugins" % "sbt-osgi-felix-p" % "1.0.12")
+//addSbtPlugin("org.philandrew" % "sbt-osgi-felix-p" % "1.0.13")
 
 lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix.git#c72e8e6cf4cbe2336486b475bcfb32e791c9559a")
 
 lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin)
+
+
+
+
+
+
+
+
+
+
+
+
 
 //addSbtPlugin("org.doolse" % "sbt-osgi-felix" % "1.0.10-PHILIP")
 

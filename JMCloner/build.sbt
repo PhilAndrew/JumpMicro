@@ -2,7 +2,7 @@ import java.io.File
 import java.util.jar.JarFile
 
 import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
-import osgifelix.OsgiDependency
+import osgifelix.{ManifestInstructions, OsgiDependency}
 
 import scala.annotation.tailrec
 import scala.collection.immutable.HashSet
@@ -19,6 +19,26 @@ import sbt.Keys._
 
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
+
+lazy val \\ = File.separator
+
+def subPackagesOf(path: String): Seq[String] = {
+  def recursiveListFiles(f: File): Array[File] = {
+    val these = f.listFiles
+    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
+  }
+  val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
+  if (file.exists()) {
+    val allFiles = recursiveListFiles(file)
+    val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
+    val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
+      f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
+    }
+    Seq(path) ++ result
+  } else Seq()
+}
+
+lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
 
 // @feature directory scalajs
 // @feature start scalajs
@@ -76,6 +96,12 @@ lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver", // org.neo4j.driver/n
 // When should I use Import-Package and when should I use Require-Bundle?
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
+
+  OsgiDependency("For Korolev",
+    Seq("org.log4s" %% "log4s" % "1.3.4", "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715", "org.http4s" %% "blaze-http" % "0.12.4"),
+    Seq("JMCloner.blaze-http_2.11"),
+    Seq("org.log4s")), // "org.http4s.blaze.http", "org.http4s.blaze.http4.http20", "org.http4s.blaze.http4.http_parser", "org.http4s.blaze.http4.util", "org.http4s.blaze.http4.websocket")),
+
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
   OsgiDependency(
@@ -290,7 +316,7 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-P:acyclic:force")
+scalacOptions ++= Seq("-unchecked", "-deprecation") // , "-P:acyclic:force"
 
 // https://github.com/HairyFotr/linter
 //addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1-SNAPSHOT")
@@ -353,8 +379,6 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
 
-lazy val \\ = File.separator
-
 compileIdris := {
   println("Compile Idris")
 
@@ -414,26 +438,10 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
   JUMPMICRO_DOT + "shared.model",
   JUMPMICRO_DOT + "shared.bean")
 
-def subPackagesOf(path: String): Seq[String] = {
-  def recursiveListFiles(f: File): Array[File] = {
-    val these = f.listFiles
-    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
-  }
-  val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
-  if (file.exists()) {
-    val allFiles = recursiveListFiles(file)
-    val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
-    val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
-      f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
-    }
-    Seq(path) ++ result
-  } else Seq()
-}
-
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
 // The rule is simple, if a new package is created in this project, at least you must add it to the private packages.
-privatePackage := subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
+privatePackage := privatePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
   subPackagesOf(JUMPMICRO_DOT + "shared") ++ Seq(
   JUMPMICRO_DOT + name.value.toString.toLowerCase,
   "mmhelloworld.idrisjvmruntime",
@@ -491,7 +499,7 @@ lazy val DeployLauncher = config("deployLauncher")
 
 osgiRepositoryRules := Seq(
   // Required to allow Neo4J OGM OSGi to "see" the model packages exposed by this OSGi bundle.
-  //rewriteCustom("neo4j-ogm-osgi_2.11", ManifestInstructions(extraProperties = Map("DynamicImport-Package" -> "*")))
+  //rewriteCustom("JMCloner.blaze-http_2.11", ManifestInstructions(extraProperties = Map("Require-Capability" -> "")))
   // @todo Add boot delegation here? https://github.com/doolse/sbt-osgi-felix/pull/2
   //Some(Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc")
 )
