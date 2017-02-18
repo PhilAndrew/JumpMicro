@@ -41,6 +41,12 @@ package object server extends LazyLogging {
     val sessions = TrieMap.empty[String, KorolevSession[F]]
 
     def renderStatic(request: Request): F[Response] = {
+
+      println("renderStatic:" + request.path.toString)
+
+      val extension: Option[String] = if (request.path.toString.toLowerCase().endsWith(".js")) Some("js")
+      else if (request.path.toString.toLowerCase().endsWith(".css")) Some("css") else None
+
       val (_, deviceId) = deviceFromRequest(request)
       val sessionId = Random.alphanumeric.take(16).mkString
       val stateF = config.serverRouter
@@ -71,7 +77,11 @@ package object server extends LazyLogging {
             "set-cookie" -> s"device=$deviceId"
           ),
           body = Some {
-            val html = "<!DOCTYPE html>" + dom.html
+            val html = if (!extension.isDefined) "<!DOCTYPE html>" + dom.html else {
+              val stream =
+                classOf[JSAccess[List]].getClassLoader.getResourceAsStream(request.path.toString)
+              Source.fromInputStream(stream).mkString
+            }
             val bytes = html.getBytes(StandardCharsets.UTF_8)
             new ByteArrayInputStream(bytes)
           }
