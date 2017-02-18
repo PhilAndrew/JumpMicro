@@ -290,7 +290,20 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-P:acyclic:force")
+// "-P:acyclic:force"
+scalacOptions ++= Seq(
+  "-target:jvm-1.8",
+  "-encoding", "UTF-8",
+  "-unchecked",
+  "-deprecation",
+  "-Xfuture",
+  "-Yno-adapted-args",
+  "-Ywarn-dead-code",
+  "-Ywarn-numeric-widen",
+  "-Ywarn-value-discard",
+  "-Ywarn-unused",
+  "-P:acyclic:force"
+)
 
 // https://github.com/HairyFotr/linter
 //addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1-SNAPSHOT")
