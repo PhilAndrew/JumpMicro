@@ -29,7 +29,7 @@ Then go to http://localhost:8080/test
 | MicroService Name        | What does it do?                                                             |
 | ------------------------ |:----------------------------------------------------------------------------:|
 | JMScalaJs                | Akka Http server with ScalaJS running in webpage http://localhost:8080/test/ |
-| JMCloner                 | Allow creation of a new MicroService by copying another prototype one<br>http://localhost:8181/        |
+| JMCloner                 | Allow creation of a new MicroService by copying another prototype one<br>After sbt run the visit http://localhost:8181/        |
 
 ## Features  
   
