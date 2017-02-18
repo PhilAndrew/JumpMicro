@@ -7,7 +7,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
 
 import bridge.JSAccess
+import com.typesafe.scalalogging.LazyLogging
 import korolev.Async._
+//import slogging.LazyLogging
 
 import scala.collection.concurrent.TrieMap
 import scala.io.Source
@@ -17,7 +19,7 @@ import scala.util.{Failure, Random, Success}
 /**
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
   */
-package object server {
+package object server extends LazyLogging {
 
   type MimeTypes = String => Option[String]
 
@@ -208,11 +210,11 @@ package object server {
           Response.WebSocket(
             destroyHandler = () => session.destroy() run {
               case Success(_) => // do nothing
-              case Failure(e) => println("An error occurred during destroying the session", e)
+              case Failure(e) => logger.error("An error occurred during destroying the session", e)
             },
             publish = message => session.publish(message) run {
               case Success(_) => // do nothing
-              case Failure(e) => println("An error occurred during publishing message to session", e)
+              case Failure(e) => logger.error("An error occurred during publishing message to session", e)
             },
             subscribe = { newSubscriber =>
               def aux(): Unit = session.nextMessage run {
@@ -221,7 +223,7 @@ package object server {
                   aux()
                 case Failure(e: SessionDestroyedException) => // Do nothing
                 case Failure(e) =>
-                  println("An error occurred during polling message from session", e)
+                  logger.error("An error occurred during polling message from session", e)
               }
               aux()
             }

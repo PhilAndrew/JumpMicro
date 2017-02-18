@@ -98,9 +98,13 @@ lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver", // org.neo4j.driver/n
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("For Korolev",
-    Seq("org.log4s" %% "log4s" % "1.3.4", "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715", "org.http4s" %% "blaze-http" % "0.12.4"),
-    Seq("JMCloner.blaze-http_2.11"),
-    Seq("org.log4s")), // "org.http4s.blaze.http", "org.http4s.blaze.http4.http20", "org.http4s.blaze.http4.http_parser", "org.http4s.blaze.http4.util", "org.http4s.blaze.http4.websocket")),
+    Seq("biz.enef" %% "slogging" % "0.5.2",
+      "biz.enef" %% "slogging-slf4j" % "0.5.2",
+      "org.log4s" %% "log4s" % "1.3.4",
+      "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
+      "org.http4s" %% "blaze-http" % "0.12.4"),
+    Seq(s"$projectName.slogging-slf4j_2.11", s"$projectName.blaze-http_2.11"),
+    Seq("org.log4s", "slogging")),
 
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
@@ -316,7 +320,19 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-scalacOptions ++= Seq("-unchecked", "-deprecation") // , "-P:acyclic:force"
+// "-P:acyclic:force"
+scalacOptions ++= Seq(
+  "-target:jvm-1.8",
+  "-encoding", "UTF-8",
+  "-unchecked",
+  "-deprecation",
+  "-Xfuture",
+  //"-Yno-adapted-args",
+  "-Ywarn-dead-code",
+  "-Ywarn-numeric-widen",
+  "-Ywarn-value-discard",
+  "-Ywarn-unused"
+)
 
 // https://github.com/HairyFotr/linter
 //addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1-SNAPSHOT")

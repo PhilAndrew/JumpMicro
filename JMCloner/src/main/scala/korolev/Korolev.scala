@@ -3,8 +3,10 @@ package korolev
 import java.util.concurrent.atomic.AtomicInteger
 
 import bridge.JSAccess
+import com.typesafe.scalalogging.LazyLogging
 import korolev.Effects.{Access, ElementId}
 import korolev.Async.AsyncOps
+//import slogging.LazyLogging
 
 import scala.language.higherKinds
 import scala.util.{Failure, Success}
@@ -14,7 +16,7 @@ trait Korolev
 /**
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
   */
-object Korolev extends EventPropagation {
+object Korolev extends EventPropagation with LazyLogging {
 
   import VDom._
   import Change._
@@ -58,7 +60,7 @@ object Korolev extends EventPropagation {
           enabledEvents = enabledEvents + `type`
           Async[F].run(client.call("ListenEvent", `type`.name, false)) {
             case Success(_) => // do nothing
-            case Failure(e) => println("Error occurred when invoking ListenEvent", e)
+            case Failure(e) => logger.error("Error occurred when invoking ListenEvent", e)
           }
         }
       }
@@ -95,7 +97,7 @@ object Korolev extends EventPropagation {
             val unit = Async[F].flatMap(asyncState)(localDux.update)
             Async[F].run(unit) {
               case Success(_) => // do nothing
-              case Failure(e) => println("Error occurred when updating state", e)
+              case Failure(e) => logger.error("Error occurred when updating state", e)
             }
           }
         } flatMap { historyCallback =>
@@ -115,7 +117,7 @@ object Korolev extends EventPropagation {
 
     Async[F].run(initialization) {
       case Success(_) =>
-        println("Korolev initialization complete")
+        logger.trace("Korolev initialization complete")
         val renderOpt = render.lift
 
         @volatile var lastRender =
@@ -154,14 +156,14 @@ object Korolev extends EventPropagation {
               }
               jsAccess.flush()
             case None =>
-              println(s"Render is nod defined for ${state.getClass.getSimpleName}")
+              logger.warn(s"Render is nod defined for ${state.getClass.getSimpleName}")
           }
         }
 
         localDux.subscribe(onState)
         if (fromScratch) onState(initialState)
         else jsAccess.flush()
-      case Failure(e) => println("Error occurred on event callback registration", e)
+      case Failure(e) => logger.error("Error occurred on event callback registration", e)
     }
 
     localDux
