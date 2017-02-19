@@ -557,7 +557,7 @@ karafDeployTask := {
 
 val karafBuildTask = TaskKey[Unit]("karafBuild", "Build Karaf features")
 
-karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: ModuleGraph) =>
+karafBuildTask <<= (moduleGraph in Compile) map { (p, m: ModuleGraph) =>
 
   val allModules: Seq[Module] = m.nodes
   val dependencyMap: Map[net.virtualvoid.sbt.graph.ModuleId, Seq[Module]] = m.dependencyMap
@@ -632,7 +632,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
 
   def getMustBeFileOf(module: Module): Option[Module] = {
     val startsWith = module.id.organisation + "/" + module.id.name
-    if (karafDepsMustBeJarsFilesPlusMain.exists((s) => startsWith.indexOf(s) == 0)) {
+    if (karafDepsMustBeJarsFilesPlusMain.exists((s) => s.indexOf(startsWith) >= 0)) {
       Some(module)
     } else None
   }
