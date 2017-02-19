@@ -8,7 +8,7 @@ import slogging._
   */
 abstract class KorolevBlazeServer(config: BlazeServerConfig = BlazeServerConfig.default) {
   def service: HttpService
-  def main(args: Array[String]): Unit = {
+  def start(): Unit = {
     // activate SLF4J backend
     //LoggerConfig.factory = SLF4JLoggerFactory()
     runServer(service, config)

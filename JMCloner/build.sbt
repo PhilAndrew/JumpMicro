@@ -17,6 +17,8 @@ import com.typesafe.sbt.osgi.OsgiKeys._
 import osgifelix.OsgiFelixPlugin.autoImport._
 import sbt.Keys._
 
+
+
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
@@ -84,9 +86,12 @@ val akkaHttpVersion = "10.0.3"  // Akka Http library
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
-lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
-                      "universe/neo4j-ogm-osgi", // universe/neo4j-ogm-osgi_2.11/1.4.38
-                      "org.scaldi/scaldi") // org.scaldi/scaldi_2.11/0.5.8
+lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
+                      "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
+                      "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
+                      "org.http4s/blaze-core_2.11",
+                      "org.http4s/blaze-http_2.11",
+                      "org.http4s/http4s-websocket_2.11")
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -102,8 +107,10 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "biz.enef" %% "slogging-slf4j" % "0.5.2",
       "org.log4s" %% "log4s" % "1.3.4",
       "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
+      //"org.http4s" %% "http4s-blaze-server" % "0.15.4",
+      "org.http4s" %% "http4s-websocket" % "0.1.6",
       "org.http4s" %% "blaze-http" % "0.12.4"),
-    Seq(s"$projectName.slogging-slf4j_2.11", s"$projectName.blaze-http_2.11"),
+    Seq(s"$projectName.http4s-websocket_2.11", s"$projectName.slogging-slf4j_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
     Seq("org.log4s", "slogging")),
 
   // ScalaTags
@@ -568,7 +575,7 @@ karafDeployTask := {
 
 val karafBuildTask = TaskKey[Unit]("karafBuild", "Build Karaf features")
 
-karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: ModuleGraph) =>
+karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
 
   val allModules: Seq[Module] = m.nodes
   val dependencyMap: Map[net.virtualvoid.sbt.graph.ModuleId, Seq[Module]] = m.dependencyMap
@@ -643,7 +650,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
 
   def getMustBeFileOf(module: Module): Option[Module] = {
     val startsWith = module.id.organisation + "/" + module.id.name
-    if (karafDepsMustBeJarsFilesPlusMain.exists((s) => startsWith.indexOf(s) == 0)) {
+    if (karafDepsMustBeJarsFilesPlusMain.exists((s) => s.indexOf(startsWith) >= 0)) {
       Some(module)
     } else None
   }

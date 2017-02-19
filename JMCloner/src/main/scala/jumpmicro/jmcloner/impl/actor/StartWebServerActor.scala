@@ -35,7 +35,7 @@ class StartWebServerActor extends Consumer with Injectable {
       //webServer = new WebServer(osgi.bundleContext)
       //webServer.start()
 
-      WebServer.main(null)
+      WebServer.start()
       logger.info("HTTP Server for korolev started at http://localhost:8181/")
     }
   }

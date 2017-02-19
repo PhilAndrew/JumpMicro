@@ -18,7 +18,7 @@ object TestIdris {
 
     import collection.JavaConverters._
 
-    val methods = classloader.findClass("jumpmicro.jmscalajs.impl.idris.JBar").getMethods.toSeq
+    val methods = classloader.findClass("jumpmicro.jmcloner.impl.idris.JBar").getMethods.toSeq
 
     for (m <- methods) {
       if (m.getName=="pythag")
