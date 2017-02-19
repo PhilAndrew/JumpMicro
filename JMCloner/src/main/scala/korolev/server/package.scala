@@ -32,21 +32,15 @@ package object server extends LazyLogging {
   }
 
   def korolevService[F[+_]: Async, S, M](
-    mimeTypes: MimeTypes,
-    config: KorolevServiceConfig[F, S, M]
-  ): PartialFunction[Request, F[Response]] = {
+                                          mimeTypes: MimeTypes,
+                                          config: KorolevServiceConfig[F, S, M]
+                                        ): PartialFunction[Request, F[Response]] = {
 
     import misc._
 
     val sessions = TrieMap.empty[String, KorolevSession[F]]
 
     def renderStatic(request: Request): F[Response] = {
-
-      println("renderStatic:" + request.path.toString)
-
-      val extension: Option[String] = if (request.path.toString.toLowerCase().endsWith(".js")) Some("js")
-      else if (request.path.toString.toLowerCase().endsWith(".css")) Some("css") else None
-
       val (_, deviceId) = deviceFromRequest(request)
       val sessionId = Random.alphanumeric.take(16).mkString
       val stateF = config.serverRouter
@@ -64,25 +58,20 @@ package object server extends LazyLogging {
             'script(bridgeJs) ::
               'script(
                 s"var KorolevSessionId = '$sessionId';\n" +
-                s"var KorolevServerRootPath = '${config.serverRouter.rootPath}';\n" +
+                  s"var KorolevServerRootPath = '${config.serverRouter.rootPath}';\n" +
                   korolevJs
               ) ::
-            config.head.children),
+              config.head.children),
           body
         )
         Response.Http(
           status = Response.Status.Ok,
           headers = Seq(
-            "content-type" -> { if (extension.getOrElse("") == "css") "text/css" else htmlContentType },
+            "content-type" -> htmlContentType,
             "set-cookie" -> s"device=$deviceId"
           ),
           body = Some {
-            val html = if (!extension.isDefined) "<!DOCTYPE html>" + dom.html else {
-              // @todo Super bad code here, blocking read from a file!!!!!!!!!
-              val stream =
-                classOf[JSAccess[List]].getClassLoader.getResourceAsStream(request.path.toString)
-              Source.fromInputStream(stream).mkString
-            }
+            val html = "<!DOCTYPE html>" + dom.html
             val bytes = html.getBytes(StandardCharsets.UTF_8)
             new ByteArrayInputStream(bytes)
           }
