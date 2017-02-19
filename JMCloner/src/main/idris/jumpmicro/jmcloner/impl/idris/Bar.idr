@@ -1,4 +1,4 @@
-module jumpmicro.jmscalajs.impl.idris.Bar
+module jumpmicro.jmcloner.impl.idris.Bar
 
 import IdrisJvm.FFI
 import IdrisJvm.IO
@@ -21,7 +21,7 @@ jmain args = do
  printLn $ jpythag 50
  helloIdris "Bar"
 
-exports : FFI_Export FFI_JVM "jumpmicro/jmscalajs/impl/idris/JBar" []
+exports : FFI_Export FFI_JVM "jumpmicro/jmcloner/impl/idris/JBar" []
 exports =
  Fun jpythag (ExportStatic "pythag") $
  Fun helloIdris (ExportStatic "helloIdris") $
