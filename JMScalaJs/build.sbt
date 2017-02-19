@@ -632,7 +632,7 @@ karafBuildTask <<= (packageBin in Compile, moduleGraph in Compile) map { (p, m: 
 
   def getMustBeFileOf(module: Module): Option[Module] = {
     val startsWith = module.id.organisation + "/" + module.id.name
-    if (karafDepsMustBeJarsFilesPlusMain.exists((s) => s.indexOf(startsWith) == 0)) {
+    if (karafDepsMustBeJarsFilesPlusMain.exists((s) => startsWith.indexOf(s) == 0)) {
       Some(module)
     } else None
   }
