@@ -557,7 +557,7 @@ karafDeployTask := {
 
 val karafBuildTask = TaskKey[Unit]("karafBuild", "Build Karaf features")
 
-karafBuildTask <<= (moduleGraph in Compile) map { (p, m: ModuleGraph) =>
+karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
 
   val allModules: Seq[Module] = m.nodes
   val dependencyMap: Map[net.virtualvoid.sbt.graph.ModuleId, Seq[Module]] = m.dependencyMap
