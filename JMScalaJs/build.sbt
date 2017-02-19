@@ -64,9 +64,9 @@ val akkaHttpVersion = "10.0.3"  // Akka Http library
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
-lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
-                      "universe/neo4j-ogm-osgi", // universe/neo4j-ogm-osgi_2.11/1.4.38
-                      "org.scaldi/scaldi") // org.scaldi/scaldi_2.11/0.5.8
+lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
+  "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
+  "org.scaldi/scaldi_2.11") // org.scaldi/scaldi_2.11/0.5.8
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
