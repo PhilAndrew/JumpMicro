@@ -27,6 +27,39 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+class JMClonerBundleActivator extends BundleActivatorBoilerplate with Injectable {
+  val logger = Logger(classOf[JMClonerBundleActivator])
+  // https://www.helgoboss.org/projects/domino/user-guide
+  whenBundleActive {
+    addCapsule(new OsgiCapsule())
+    whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
+      }
+    }
+    TestIdris.test(bundleContext)
+    // @todo Can I use scalaDi to better store this bundleContext as a global
+    val osgiGlobal: OsgiGlobal = inject[OsgiGlobal]
+    osgiGlobal.bundleContext = bundleContext
+    val config: MicroConfiguration = inject[MicroConfiguration]
+    org.neo4j.ogm.Neo4JOGM.setBundleContext(bundleContext)
+    camelContext = new OsgiDefaultCamelContext(bundleContext)
+    osgiGlobal.camelContext = camelContext
+    StartupOsgi.startup(config, bundleContext, camelContext)
+    new HelloWorldServiceImpl().providesService[JMClonerService]
+    onStop {
+      system foreach (_.terminate())
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
 /*class Example() extends nl.grons.metrics.scala.DefaultInstrumented {
   // Define a timer metric
   private[this] val loading = metrics.timer("loading")
@@ -38,54 +71,27 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 }
 */
 // with nl.grons.metrics.scala.DefaultInstrumented
-class JMClonerBundleActivator extends BundleActivatorBoilerplate with Injectable {
-  val logger = Logger(classOf[JMClonerBundleActivator])
 
-  /*def testMetrics() = {
-    val reporter = ConsoleReporter.forRegistry(metricRegistry)
-      .convertRatesTo(TimeUnit.SECONDS)
-      .convertDurationsTo(TimeUnit.MILLISECONDS)
-      .build()
-    reporter.start(1, TimeUnit.SECONDS)
 
-    val n = new Example()
-    n.loadStuff()
-  }*/
 
-  // https://www.helgoboss.org/projects/domino/user-guide
-  whenBundleActive {
-    addCapsule(new OsgiCapsule())
+/*def testMetrics() = {
+  val reporter = ConsoleReporter.forRegistry(metricRegistry)
+    .convertRatesTo(TimeUnit.SECONDS)
+    .convertDurationsTo(TimeUnit.MILLISECONDS)
+    .build()
+  reporter.start(1, TimeUnit.SECONDS)
 
-    whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
-      }
-    }
+  val n = new Example()
+  n.loadStuff()
+}*/
 
-    //testMetrics()
 
-    TestIdris.test(bundleContext)
+/*
+ whenServicePresent[OtherService] { os =>
+   new MyService(os).providesService[MyService]
+ }
+ */
 
-    // @todo Can I use scalaDi to better store this bundleContext as a global
-    val osgiGlobal: OsgiGlobal = inject[OsgiGlobal]
-    osgiGlobal.bundleContext = bundleContext
 
-    val config: MicroConfiguration = inject[MicroConfiguration]
-    org.neo4j.ogm.Neo4JOGM.setBundleContext(bundleContext)
+//testMetrics()
 
-    camelContext = new OsgiDefaultCamelContext(bundleContext)
-    osgiGlobal.camelContext = camelContext
-
-    StartupOsgi.startup(config, bundleContext, camelContext)
-
-    /*
-     whenServicePresent[OtherService] { os =>
-       new MyService(os).providesService[MyService]
-     }
-     */
-
-    new HelloWorldServiceImpl().providesService[JMClonerService]
-
-    onStop {
-      system foreach (_.terminate())
-    }
-  }
-}
