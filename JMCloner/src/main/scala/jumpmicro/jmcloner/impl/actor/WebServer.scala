@@ -22,10 +22,11 @@ object WebServer extends KorolevBlazeServer {
       'meta('charset /= "utf-8"),
       'meta('name /= "viewport", 'content /= "width=device-width, initial-scale=1, shrink-to-fit=no"),
       'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "tether-1.3.3/dist/css/tether.css"),
-      'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css"),
+      'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css"),
+      'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "style.css"),
       'script('src /= "jquery/jquery-3.1.1.js"),
       'script('src /= "tether-1.3.3/dist/js/tether.js"),
-      'script('src /= "bootstrap-4.0.0-alpha.6-dist/js/bootstrap.js")),
+      'script('src /= "bootstrap-4.0.0-alpha.6-dist/js/bootstrap.min.js")),
     render = {
       case state =>
 
@@ -51,7 +52,16 @@ object WebServer extends KorolevBlazeServer {
         'body(
           'div('class /= "container",
             'div('class /= "header clearfix",
-            'nav(), 'h3('class /= "text-muted", "Project name")),
+            'nav(
+              'ul('class /= "nav nav-pills float-right",
+                'li('class /= "nav-item",
+                  'a('class /= "nav-link active", 'href /= "#", "Home")),
+                'li('class /= "nav-item",
+                  'a('class /= "nav-link", 'href /= "#", "Test")),
+                'li('class /= "nav-item",
+                  'a('class /= "nav-link", 'href /= "#", "Test2"))
+              )
+            ), 'h3('class /= "text-muted", "Project name")),
 
             /*
                       <div class="jumbotron">
@@ -97,7 +107,10 @@ object WebServer extends KorolevBlazeServer {
                 'p("Hello")),
               'div('class /= "col-lg-6",
                 'h4("Sub heading"),
-                'p("Hello")))
+                'p("Hello"))),
+
+            'footer('class /= "footer",
+              'p("test"))
           )
         )
 
