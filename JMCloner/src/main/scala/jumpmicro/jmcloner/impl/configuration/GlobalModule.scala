@@ -4,7 +4,7 @@ import java.io.File
 import java.util
 
 import com.typesafe.config.{Config, ConfigFactory}
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.Session
 import jumpmicro.jmcloner.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
@@ -24,7 +24,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import acyclic.skipped
 
 class GlobalModule extends Module {
-  val logger = Logger(classOf[Any])
+  //val logger = Logger(classOf[Any])
 
   bind [OsgiGlobal] to new OsgiGlobal
   bind [StartupAkkaActors] to new StartupAkkaActors
@@ -34,7 +34,7 @@ class GlobalModule extends Module {
 }
 
 object GlobalModule {
-  val logger = Logger(classOf[GlobalModule])
+  //val logger = Logger(classOf[GlobalModule])
 
   private var _config: Config = null
 
@@ -70,7 +70,7 @@ object GlobalModule {
 
     } catch {
       case ex: ConnectionException => {
-        logger.error("The Neo4J Database connection could not be established. This MicroService will continue to function without database access, however any further database access will fail.")
+        //logger.error("The Neo4J Database connection could not be established. This MicroService will continue to function without database access, however any further database access will fail.")
         result = new MicroConfig(nodeId)
       }
     }

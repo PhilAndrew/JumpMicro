@@ -7,7 +7,7 @@ import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,7 +28,7 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 //: -------------------------------------------------------------------------------------
 
 class JMClonerBundleActivator extends BundleActivatorBoilerplate with Injectable {
-  val logger = Logger(classOf[JMClonerBundleActivator])
+  //val logger = Logger(classOf[JMClonerBundleActivator])
   // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
     addCapsule(new OsgiCapsule())

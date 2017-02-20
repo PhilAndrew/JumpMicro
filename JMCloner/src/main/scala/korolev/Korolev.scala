@@ -3,7 +3,7 @@ package korolev
 import java.util.concurrent.atomic.AtomicInteger
 
 import bridge.JSAccess
-import com.typesafe.scalalogging.LazyLogging
+//import com.typesafe.scalalogging.LazyLogging
 import korolev.Effects.{Access, ElementId}
 import korolev.Async.AsyncOps
 //import slogging.LazyLogging
@@ -16,7 +16,7 @@ trait Korolev
 /**
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
   */
-object Korolev extends EventPropagation with LazyLogging {
+object Korolev extends EventPropagation {
 
   import VDom._
   import Change._
@@ -60,7 +60,7 @@ object Korolev extends EventPropagation with LazyLogging {
           enabledEvents = enabledEvents + `type`
           Async[F].run(client.call("ListenEvent", `type`.name, false)) {
             case Success(_) => // do nothing
-            case Failure(e) => logger.error("Error occurred when invoking ListenEvent", e)
+            case Failure(e) => { } //logger.error("Error occurred when invoking ListenEvent", e)
           }
         }
       }
@@ -97,7 +97,7 @@ object Korolev extends EventPropagation with LazyLogging {
             val unit = Async[F].flatMap(asyncState)(localDux.update)
             Async[F].run(unit) {
               case Success(_) => // do nothing
-              case Failure(e) => logger.error("Error occurred when updating state", e)
+              case Failure(e) => { }//logger.error("Error occurred when updating state", e)
             }
           }
         } flatMap { historyCallback =>
@@ -117,7 +117,7 @@ object Korolev extends EventPropagation with LazyLogging {
 
     Async[F].run(initialization) {
       case Success(_) =>
-        logger.trace("Korolev initialization complete")
+        //logger.trace("Korolev initialization complete")
         val renderOpt = render.lift
 
         @volatile var lastRender =
@@ -155,15 +155,15 @@ object Korolev extends EventPropagation with LazyLogging {
                 case _ =>
               }
               jsAccess.flush()
-            case None =>
-              logger.warn(s"Render is nod defined for ${state.getClass.getSimpleName}")
+            case None => { }
+              //logger.warn(s"Render is nod defined for ${state.getClass.getSimpleName}")
           }
         }
 
         localDux.subscribe(onState)
         if (fromScratch) onState(initialState)
         else jsAccess.flush()
-      case Failure(e) => logger.error("Error occurred on event callback registration", e)
+      case Failure(e) => { }//logger.error("Error occurred on event callback registration", e)
     }
 
     localDux

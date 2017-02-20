@@ -1,6 +1,6 @@
 package jumpmicro.shared.util.osgi
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.apache.camel.CamelContext
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 //: -------------------------------------------------------------------------------------
 
 class OsgiGlobal {
-  val logger = Logger(classOf[OsgiGlobal])
+  //val logger = Logger(classOf[OsgiGlobal])
 
   var bundleContext: BundleContext = null
   var camelContext: CamelContext = null

@@ -7,7 +7,7 @@ import scaldi.Injectable
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework._
 import akka.actor.ActorSystem
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 import scaldi.Injectable

@@ -39,7 +39,7 @@ class HttpServerStage(maxReqBody: Long, maxNonbody: Int)(handleRequest: HttpServ
 
   // Will act as our loop
   override def stageStartup() {
-    logger.info("Starting HttpStage")
+    //logger.info("Starting HttpStage")
     requestLoop()
   }
 
@@ -92,7 +92,7 @@ class HttpServerStage(maxReqBody: Long, maxNonbody: Int)(handleRequest: HttpServ
     }
     catch {
       case NonFatal(e) =>
-        logger.error(e)("Error during `handleRequest` of HttpServerStage")
+        //logger.error(e)("Error during `handleRequest` of HttpServerStage")
         val body = ByteBuffer.wrap("Internal Service Error".getBytes(StandardCharsets.ISO_8859_1))
         val resp = HttpResponse(200, "OK", Nil, body)
 
@@ -126,21 +126,21 @@ class HttpServerStage(maxReqBody: Long, maxNonbody: Int)(handleRequest: HttpServ
     val sb = new StringBuilder(512)
     WebsocketHandshake.serverHandshake(reqHeaders) match {
       case Left((i, msg)) =>
-        logger.info(s"Invalid handshake: $i: $msg")
+        //logger.info(s"Invalid handshake: $i: $msg")
         sb.append("HTTP/1.1 ").append(i).append(' ').append(msg).append('\r').append('\n')
           .append('\r').append('\n')
 
         channelWrite(ByteBuffer.wrap(sb.result().getBytes(StandardCharsets.ISO_8859_1))).map(_ => Close)
 
       case Right(hdrs) =>
-        logger.info("Starting websocket request")
+        //logger.info("Starting websocket request")
         sb.append("HTTP/1.1 101 Switching Protocols\r\n")
         hdrs.foreach { case (k, v) => sb.append(k).append(": ").append(v).append('\r').append('\n') }
         sb.append('\r').append('\n')
 
         // write the accept headers and reform the pipeline
         channelWrite(ByteBuffer.wrap(sb.result().getBytes(StandardCharsets.ISO_8859_1))).map{ _ =>
-          logger.debug("Switching pipeline segments for upgrade")
+          //logger.debug("Switching pipeline segments for upgrade")
           val segment = wsBuilder.prepend(new WebSocketDecoder(false))
           this.replaceInline(segment)
           Upgrade
@@ -224,7 +224,7 @@ class HttpServerStage(maxReqBody: Long, maxNonbody: Int)(handleRequest: HttpServ
         else if (v.equalsIgnoreCase("close")) false
         else if (v.equalsIgnoreCase("Upgrade")) true
         else {
-          logger.info(s"Bad Connection header value: '$v'. Closing after request.")
+          //logger.info(s"Bad Connection header value: '$v'. Closing after request.")
           false
         }
 
@@ -234,7 +234,7 @@ class HttpServerStage(maxReqBody: Long, maxNonbody: Int)(handleRequest: HttpServ
   }
 
   override protected def stageShutdown(): Unit = {
-    logger.info("Shutting down HttpPipeline at " + new Date())
+    //logger.info("Shutting down HttpPipeline at " + new Date())
     shutdownParser()
   }
 

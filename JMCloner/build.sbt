@@ -106,15 +106,15 @@ lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver", // 
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("For Korolev",
-    Seq("biz.enef" %% "slogging" % "0.5.2",
-      "biz.enef" %% "slogging-slf4j" % "0.5.2",
-      "org.log4s" %% "log4s" % "1.3.4",
+    Seq(//"biz.enef" %% "slogging" % "0.5.2",
+      //"biz.enef" %% "slogging-slf4j" % "0.5.2",
+      //"org.log4s" %% "log4s" % "1.3.4",
       "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
       //"org.http4s" %% "http4s-blaze-server" % "0.15.4",
-      "org.http4s" %% "http4s-websocket" % "0.1.6",
+     // "org.http4s" %% "http4s-websocket" % "0.1.6",
       "org.http4s" %% "blaze-http" % "0.12.4"),
-    Seq(s"$projectName.http4s-websocket_2.11", s"$projectName.slogging-slf4j_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
-    Seq("org.log4s", "slogging")),
+    Seq(s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
+    Seq("org.log4s")),
 
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
@@ -129,10 +129,10 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   ),
 
   OsgiDependency("Slf4jDependency",
-    Seq("org.slf4j" % "slf4j-api" % slf4jVersion,
+    Seq(/*"org.slf4j" % "slf4j-api" % slf4jVersion,
       "org.slf4j" % "slf4j-simple" % slf4jVersion,
       "org.slf4j" % "jcl-over-slf4j" % slf4jVersion,
-      "org.slf4j" % "log4j-over-slf4j" % slf4jVersion),
+      "org.slf4j" % "log4j-over-slf4j" % slf4jVersion*/),
     Seq(),
     Seq()
   ),
@@ -217,8 +217,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   OsgiDependency("ScalaLoggingDependency",
     Seq(  // Logging
       // https://github.com/typesafehub/scala-logging
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-    ), Seq(), Seq("com.typesafe.scalalogging")
+      //"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+    ), Seq(/*"com.typesafe.scala-logging"*/), Seq() //"com.typesafe.scalalogging"
   ),
 
   OsgiDependency("ScaldiDependency",
@@ -525,7 +525,8 @@ lazy val DeployLauncher = config("deployLauncher")
 
 osgiRepositoryRules := Seq(
   // Required to allow Neo4J OGM OSGi to "see" the model packages exposed by this OSGi bundle.
-  //rewriteCustom("JMCloner.blaze-http_2.11", ManifestInstructions(extraProperties = Map("Require-Capability" -> "")))
+  //rewrite("scala-logging", exports = "com.typesafe.scalalogging;uses:=\"scala,scala.collection,scala.reflect,scala.reflect.api,scala.reflect.macros.blackbox ,scala.runtime\";version=\"3.5.0\"")
+  //rewriteCustom("com.typesafe.scala-logging/scala-logging/3.5.0", ManifestInstructions(extraProperties = Map("Require-Capability" -> "")))
   // @todo Add boot delegation here? https://github.com/doolse/sbt-osgi-felix/pull/2
   //Some(Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc")
 )

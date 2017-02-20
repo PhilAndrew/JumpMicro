@@ -1,7 +1,7 @@
 package korolev.blazeServer
 
 import org.http4s.blaze.http.HttpService
-import slogging._
+
 
 /**
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>

@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
 
 import bridge.JSAccess
-import com.typesafe.scalalogging.LazyLogging
+//import com.typesafe.scalalogging.LazyLogging
 import korolev.Async._
 import org.apache.commons.io.IOUtils
 //import slogging.LazyLogging
@@ -20,7 +20,7 @@ import scala.util.{Failure, Random, Success}
 /**
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
   */
-package object server extends LazyLogging {
+package object server {
 
   type MimeTypes = String => Option[String]
 
@@ -227,11 +227,11 @@ package object server extends LazyLogging {
           Response.WebSocket(
             destroyHandler = () => session.destroy() run {
               case Success(_) => // do nothing
-              case Failure(e) => logger.error("An error occurred during destroying the session", e)
+              case Failure(e) => { }//logger.error("An error occurred during destroying the session", e)
             },
             publish = message => session.publish(message) run {
               case Success(_) => // do nothing
-              case Failure(e) => logger.error("An error occurred during publishing message to session", e)
+              case Failure(e) => { } //logger.error("An error occurred during publishing message to session", e)
             },
             subscribe = { newSubscriber =>
               def aux(): Unit = session.nextMessage run {
@@ -239,8 +239,8 @@ package object server extends LazyLogging {
                   newSubscriber(message)
                   aux()
                 case Failure(e: SessionDestroyedException) => // Do nothing
-                case Failure(e) =>
-                  logger.error("An error occurred during polling message from session", e)
+                case Failure(e) => { }
+                  //logger.error("An error occurred during polling message from session", e)
               }
               aux()
             }

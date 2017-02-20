@@ -23,19 +23,19 @@ trait WebSocketStage extends TailStage[WebSocketFrame] {
   private def _wsLoop(): Unit = {
     channelRead().onComplete {
       case Success(msg) =>
-        logger.debug(s"Received Websocket message: $msg")
+        //logger.debug(s"Received Websocket message: $msg")
         try {
           onMessage(msg)
           _wsLoop()
         }
         catch {case t: Throwable =>
-          logger.error(t)("WSStage onMessage threw exception. Shutting down.")
+          //logger.error(t)("WSStage onMessage threw exception. Shutting down.")
           onDirtyDisconnect(t)
           sendOutboundCommand(Command.Disconnect)
         }
 
       case Failure(t) =>
-        logger.debug(t)("error on Websocket read loop")
+        //logger.debug(t)("error on Websocket read loop")
         onDirtyDisconnect(t)
         sendOutboundCommand(Command.Disconnect)
     }(trampoline)
