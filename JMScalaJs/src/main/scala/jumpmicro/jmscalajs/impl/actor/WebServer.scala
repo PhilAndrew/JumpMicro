@@ -12,7 +12,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
 import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.osgi.framework.BundleContext
@@ -22,7 +22,7 @@ import scalatags.Text.all._
 import scaldi.Injectable
 
 class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSystem) extends Injectable {
-  val logger = Logger(classOf[WebServer])
+  //val logger = Logger(classOf[WebServer])
   val osgi = inject[OsgiGlobal]
 
   private val classloader = MyBundleDelegatingClassLoader(context, Some(getClass.getClassLoader))
@@ -65,7 +65,7 @@ class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSys
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 
-    logger.info("Server online at http://localhost:8080/")
+    //logger.info("Server online at http://localhost:8080/")
 
   }
 }

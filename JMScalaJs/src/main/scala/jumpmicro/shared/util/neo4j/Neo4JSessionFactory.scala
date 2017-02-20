@@ -1,6 +1,6 @@
 package jumpmicro.shared.util.neo4j
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.neo4j.driver.v1.{AuthTokens, GraphDatabase}
 import org.neo4j.ogm.Neo4JOSGI
 import org.neo4j.ogm.annotation._
@@ -22,7 +22,7 @@ import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 trait Neo4JSessionFactory
 
 object Neo4JSessionFactory extends Injectable {
-  val logger = Logger(classOf[Neo4JSessionFactory])
+  //val logger = Logger(classOf[Neo4JSessionFactory])
 
   def modelPackages = Seq("jumpmicro.shared.model")
 

@@ -1,6 +1,6 @@
 package jumpmicro.jmscalajs.impl.startup
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 import jumpmicro.jmscalajs.impl.actor.StartCamel
@@ -13,7 +13,7 @@ import jumpmicro.jmscalajs.impl.actor.StartCamel
 import acyclic.skipped
 
 class StartupCamelRoutes {
-  val logger = Logger(classOf[StartupCamelRoutes])
+ // val logger = Logger(classOf[StartupCamelRoutes])
 
   var keep: StartCamel = null
 

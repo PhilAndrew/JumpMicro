@@ -5,7 +5,7 @@ import javax.activation.DataHandler
 
 import akka.actor.{ActorRef, Props}
 import akka.camel.{Camel, CamelMessage}
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.slf4j.LoggerFactory
 import scaldi.Injectable
@@ -27,7 +27,7 @@ import scala.concurrent.duration._
 import acyclic.skipped
 
 trait StartupAkkaActorsBoilerplate {
-  val logger = Logger(classOf[StartupAkkaActorsBoilerplate])
+  //val logger = Logger(classOf[StartupAkkaActorsBoilerplate])
 
   def akkaActors: Seq[Props]
 

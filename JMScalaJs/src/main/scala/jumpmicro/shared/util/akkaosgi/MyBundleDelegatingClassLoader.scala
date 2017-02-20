@@ -4,7 +4,7 @@ import language.existentials
 import java.net.URL
 import java.util.Enumeration
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.osgi.framework.{Bundle, BundleContext}
 
 import scala.util.Try
@@ -25,7 +25,7 @@ import scala.annotation.tailrec
  * Companion object to create bundle delegating ClassLoader instances
  */
 object MyBundleDelegatingClassLoader {
-  val logger = Logger(classOf[MyBundleDelegatingClassLoader])
+  //val logger = Logger(classOf[MyBundleDelegatingClassLoader])
 
   /*
    * Create a bundle delegating ClassLoader for the bundle context's bundle
@@ -74,7 +74,7 @@ class MyBundleDelegatingClassLoader(bundle: Bundle, fallBackClassLoader: ClassLo
     find(bundle.getBundleContext.getBundles.toList)
   }
 
-  val logger = Logger(LoggerFactory.getLogger("name"))
+  //val logger = Logger(LoggerFactory.getLogger("name"))
   override def findResources(name: String): Enumeration[URL] = {
     // Debugging
     //val bbb = bundle.getBundleContext.getBundles.toList

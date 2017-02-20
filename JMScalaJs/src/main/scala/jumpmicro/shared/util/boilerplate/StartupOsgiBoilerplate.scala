@@ -2,7 +2,7 @@ package jumpmicro.shared.util.boilerplate
 
 import akka.camel.CamelExtension
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
@@ -22,7 +22,7 @@ import scala.concurrent.Future
 //: -------------------------------------------------------------------------------------
 
 abstract class StartupOsgiBoilerplate extends Injectable {
-  val logger = Logger(classOf[StartupOsgiBoilerplate])
+  //val logger = Logger(classOf[StartupOsgiBoilerplate])
 
   val startupAkkaActors = inject [StartupAkkaActors]
   val startupCamelComponents = inject [StartupCamelComponents]

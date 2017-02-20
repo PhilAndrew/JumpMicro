@@ -1,6 +1,6 @@
 package jumpmicro.shared.util.neo4j
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.neo4j.ogm.session.Session
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait Neo4JUtil
 
 object Neo4JUtil {
-  val logger = Logger(classOf[Neo4JUtil])
+  //val logger = Logger(classOf[Neo4JUtil])
 
   def save(session: Session, obj: Any)(implicit ex: ExecutionContext): Future[_] = {
     Future {

@@ -79,6 +79,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
   OsgiDependency(
+
     "ScalaTagsDependency",
     // sbt dependencys
     Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
@@ -177,8 +178,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   OsgiDependency("ScalaLoggingDependency",
     Seq(  // Logging
       // https://github.com/typesafehub/scala-logging
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-    ), Seq(), Seq("com.typesafe.scalalogging")
+      //"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+    ), Seq(), Seq() //"com.typesafe.scalalogging")
   ),
 
   OsgiDependency("ScaldiDependency",

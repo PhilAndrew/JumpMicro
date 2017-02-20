@@ -7,7 +7,7 @@ import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,7 +39,7 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 */
 // with nl.grons.metrics.scala.DefaultInstrumented
 class JMScalaJSBundleActivator extends BundleActivatorBoilerplate with Injectable {
-  val logger = Logger(classOf[JMScalaJSBundleActivator])
+//  val logger = Logger(classOf[JMScalaJSBundleActivator])
 
   println("in JMScalaJsBundleActivator")
 

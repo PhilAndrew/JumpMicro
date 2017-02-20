@@ -3,7 +3,7 @@ package jumpmicro.jmscalajs.impl.actor
 import java.io.File
 import java.util.UUID
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.{CamelContext, Exchange, Processor}
 import org.apache.camel.scala.dsl.builder.ScalaRouteBuilder
@@ -18,7 +18,7 @@ import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 import acyclic.skipped
 
 class StartCamel(context: CamelContext) extends ScalaRouteBuilder(context) with Injectable {
-  val logger = Logger(classOf[StartCamel])
+  //val logger = Logger(classOf[StartCamel])
 
   from("direct:start").to("direct:startWebServer")
 

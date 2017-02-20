@@ -1,6 +1,6 @@
 package jumpmicro.jmscalajs.impl.startup
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import org.apache.camel.component.exec.ExecComponent
 import org.apache.camel.component.file.remote.FtpComponent
 import org.apache.camel.component.seda.SedaComponent
@@ -15,7 +15,7 @@ import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 //: -------------------------------------------------------------------------------------
 
 class StartupCamelComponents {
-  val logger = Logger(classOf[StartupCamelComponents])
+  //val logger = Logger(classOf[StartupCamelComponents])
 
   def startup(camelContext: OsgiDefaultCamelContext) = {
     // Camel components should be added here.

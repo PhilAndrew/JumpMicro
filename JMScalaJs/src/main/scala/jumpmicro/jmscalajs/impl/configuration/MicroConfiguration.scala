@@ -1,6 +1,6 @@
 package jumpmicro.jmscalajs.impl.configuration
 
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
 import jumpmicro.shared.model.MicroConfig
 import org.slf4j.LoggerFactory
 import scala.concurrent.{Future, Promise}
@@ -12,7 +12,7 @@ import scala.util.{Success, Try}
 //: -------------------------------------------------------------------------------------
 
 class MicroConfiguration {
-  val logger = Logger(classOf[MicroConfiguration])
+  //val logger = Logger(classOf[MicroConfiguration])
 
   private val configurationLoaded: Promise[MicroConfig] = Promise[MicroConfig]()
 
