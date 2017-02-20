@@ -42,6 +42,9 @@ def subPackagesOf(path: String): Seq[String] = {
 
 lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
 
+lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
+  "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
+
 // @feature directory scalajs
 // @feature start scalajs
 lazy val scalaJsProject = (project in file("scalajs")).settings(
@@ -464,7 +467,7 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
 // The rule is simple, if a new package is created in this project, at least you must add it to the private packages.
-privatePackage := privatePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
+privatePackage := privatePackages ++ resourcePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
   subPackagesOf(JUMPMICRO_DOT + "shared") ++ Seq(
   JUMPMICRO_DOT + name.value.toString.toLowerCase,
   "mmhelloworld.idrisjvmruntime",
