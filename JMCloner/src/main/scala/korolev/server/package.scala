@@ -1,6 +1,6 @@
 package korolev
 
-import java.io.{ByteArrayInputStream, InputStream}
+import java.io.{ByteArrayInputStream, InputStream, StringWriter}
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
 import bridge.JSAccess
 import com.typesafe.scalalogging.LazyLogging
 import korolev.Async._
+import org.apache.commons.io.IOUtils
 //import slogging.LazyLogging
 
 import scala.collection.concurrent.TrieMap
@@ -89,13 +90,28 @@ package object server extends LazyLogging {
           case Root => None
           case path @ _ / fileName =>
             val fsPath = s"/static${path.toString}"
-            val stream = getClass.getResourceAsStream(fsPath)
-            Option(stream) map { stream =>
-              val fileExtension = fileName.lastIndexOf('.') match {
-                case -1 => binaryContentType
-                case index => fileName.substring(index + 1)
+            val fileStream = getClass.getResourceAsStream(fsPath)
+
+            // @todo Note!!!!! READ THIS!!!!!
+            // @todo Strangely I need to do this code to make it to work on OSGi Karaf.
+            // @todo Either the read using UTF-8 encoding OR the complete read into memory OR both
+            // @todo Fixes the problem.
+
+            if (fileStream==null) None else {
+              val writer = new StringWriter()
+              IOUtils.copy(fileStream, writer, "UTF-8")
+              val theString = writer.toString()
+
+              val stream = new ByteArrayInputStream(theString.getBytes("UTF-8"))
+              fileStream.close()
+
+              Option(stream) map { stream =>
+                val fileExtension = fileName.lastIndexOf('.') match {
+                  case -1 => binaryContentType
+                  case index => fileName.substring(index + 1)
+                }
+                (stream, fileExtension)
               }
-              (stream, fileExtension)
             }
         }
     }
@@ -178,8 +194,9 @@ package object server extends LazyLogging {
     val service: PartialFunction[Request, F[Response]] = {
       case matchStatic(stream, fileExtensionOpt) =>
         val headers = mimeTypes(fileExtensionOpt).fold(Seq.empty[(String, String)]) {
-          fileExtension =>
+          fileExtension => {
             Seq("content-type" -> fileExtension)
+          }
         }
         val response = Response.Http(Response.Status.Ok, Some(stream), headers)
         Async[F].pure(response)
@@ -239,13 +256,11 @@ package object server extends LazyLogging {
     val htmlContentType = "text/html"
     val binaryContentType = "application/octet-stream"
     val korolevJs = {
-      val stream =
-        classOf[Korolev].getClassLoader.getResourceAsStream("korolev.js")
+      val stream = classOf[Korolev].getClassLoader.getResourceAsStream("korolev.js")
       Source.fromInputStream(stream).mkString
     }
     val bridgeJs = {
-      val stream =
-        classOf[JSAccess[List]].getClassLoader.getResourceAsStream("bridge.js")
+      val stream = classOf[JSAccess[List]].getClassLoader.getResourceAsStream("bridge.js")
       Source.fromInputStream(stream).mkString
     }
   }

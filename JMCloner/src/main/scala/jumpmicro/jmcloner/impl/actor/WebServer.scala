@@ -21,12 +21,12 @@ object WebServer extends KorolevBlazeServer {
     head = 'head(
       'meta('charset /= "utf-8"),
       'meta('name /= "viewport", 'content /= "width=device-width, initial-scale=1, shrink-to-fit=no"),
-      'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "tether-1.3.3/dist/css/tether.css"),
-      'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css"),
+      'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "tether/dist/css/tether.css"),
+      'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "bootstrap/css/bootstrap.min.css"),
       'link('rel /= "stylesheet", 'type /= "text/css", 'href /= "style.css"),
       'script('src /= "jquery/jquery-3.1.1.js"),
-      'script('src /= "tether-1.3.3/dist/js/tether.js"),
-      'script('src /= "bootstrap-4.0.0-alpha.6-dist/js/bootstrap.min.js")),
+      'script('src /= "tether/dist/js/tether.js"),
+      'script('src /= "bootstrap/js/bootstrap.min.js")),
     render = {
       case state =>
         'body(
