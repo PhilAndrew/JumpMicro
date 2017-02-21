@@ -58,7 +58,7 @@ abstract class StartupOsgiBoilerplate extends Injectable {
     // @todo Camel routes must be added first before this starts
     startupAkkaActors.addActors(config, system.get, camel, camelContext)
     startupCamelRoutes.addCamelRoutes(camelContext)
-    //camelContext.start()
+    camelContext.start()
   }
 
 }
