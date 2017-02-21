@@ -105,13 +105,8 @@ lazy val karafDepsMustBeJarFiles = Seq("org.neo4j.driver/neo4j-java-driver", // 
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
-  OsgiDependency("For Korolev",
-    Seq(//"biz.enef" %% "slogging" % "0.5.2",
-      //"biz.enef" %% "slogging-slf4j" % "0.5.2",
-      //"org.log4s" %% "log4s" % "1.3.4",
-      "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
-      //"org.http4s" %% "http4s-blaze-server" % "0.15.4",
-     // "org.http4s" %% "http4s-websocket" % "0.1.6",
+  OsgiDependency("Korolev",
+      Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
       "org.http4s" %% "blaze-http" % "0.12.4"),
     Seq(s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
     Seq("org.log4s")),
@@ -126,15 +121,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     // package requirements
     Seq("scalatags", "scalatags.text")
-  ),
-
-  OsgiDependency("Slf4jDependency",
-    Seq(/*"org.slf4j" % "slf4j-api" % slf4jVersion,
-      "org.slf4j" % "slf4j-simple" % slf4jVersion,
-      "org.slf4j" % "jcl-over-slf4j" % slf4jVersion,
-      "org.slf4j" % "log4j-over-slf4j" % slf4jVersion*/),
-    Seq(),
-    Seq()
   ),
 
   OsgiDependency("DeclarativeServicesDependency",
