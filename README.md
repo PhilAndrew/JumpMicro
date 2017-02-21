@@ -26,6 +26,22 @@ Then go to http://localhost:8080/test
 
 You are looking at an Akka Http server delivering a ScalaJs page running in OSGi in Felix Embedded.
 
+## Deploy to Karaf
+
+The normal build steps to get it to Karaf as
+
+1. Compile it
+
+    > sbt clean update compile
+    
+2. Osgi Bundle
+
+    > sbt osgiBundle
+    
+3. Build features file for Karaf and deploy it to Karaf
+
+    > sbt karafBuild karafDeploy
+
 ## MicroService examples available
 
 | MicroService Name        | What does it do?                                                             |
