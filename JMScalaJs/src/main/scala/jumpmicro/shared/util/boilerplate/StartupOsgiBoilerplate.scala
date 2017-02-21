@@ -2,7 +2,7 @@ package jumpmicro.shared.util.boilerplate
 
 import akka.camel.CamelExtension
 import com.typesafe.config.Config
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
@@ -53,12 +53,12 @@ abstract class StartupOsgiBoilerplate extends Injectable {
     //system foreach (addLogServiceListener(context, _))
     //system foreach (configure(bundleContext, _))
     val camel = CamelExtension(system.get)
-    val producerTemplate = camel.template
+    //val producerTemplate = camel.template
     // Add routes and Actors
     // @todo Camel routes must be added first before this starts
     startupAkkaActors.addActors(config, system.get, camel, camelContext)
     startupCamelRoutes.addCamelRoutes(camelContext)
-    camelContext.start()
+    //camelContext.start()
   }
 
 }

@@ -89,14 +89,10 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq("scalatags", "scalatags.text")
   ),
 
-  /*OsgiDependency("Slf4jDependency",
-    Seq("org.slf4j" % "slf4j-api" % slf4jVersion,
-      "org.slf4j" % "slf4j-simple" % slf4jVersion,
-      "org.slf4j" % "jcl-over-slf4j" % slf4jVersion,
-      "org.slf4j" % "log4j-over-slf4j" % slf4jVersion),
+  OsgiDependency("Log4s",
+    Seq("org.log4s" %% "log4s" % "1.3.4"),
     Seq(),
-    Seq()
-  ),*/
+    Seq("org.log4s")),
 
   OsgiDependency("DeclarativeServicesDependency",
     Seq(// Required for Declarative Services
@@ -174,13 +170,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.neo4j.ogm.service",
       "org.neo4j.ogm.annotation")
   ),
-
-  /*OsgiDependency("ScalaLoggingDependency",
-    Seq(  // Logging
-      // https://github.com/typesafehub/scala-logging
-      //"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-    ), Seq(), Seq() //"com.typesafe.scalalogging")
-  ),*/
 
   OsgiDependency("ScaldiDependency",
     // Scala Dependency Injection

@@ -1,6 +1,6 @@
 package jumpmicro.shared.util.neo4j
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.neo4j.ogm.session.Session
 
 import scala.concurrent.{ExecutionContext, Future}

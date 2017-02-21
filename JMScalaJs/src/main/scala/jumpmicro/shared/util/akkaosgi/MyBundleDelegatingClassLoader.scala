@@ -4,7 +4,7 @@ import language.existentials
 import java.net.URL
 import java.util.Enumeration
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.osgi.framework.{Bundle, BundleContext}
 
 import scala.util.Try
@@ -25,7 +25,7 @@ import scala.annotation.tailrec
  * Companion object to create bundle delegating ClassLoader instances
  */
 object MyBundleDelegatingClassLoader {
-  //val logger = Logger(classOf[MyBundleDelegatingClassLoader])
+  private[this] val logger = getLogger
 
   /*
    * Create a bundle delegating ClassLoader for the bundle context's bundle

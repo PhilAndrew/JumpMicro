@@ -2,7 +2,7 @@ package jumpmicro.shared.util.akkaosgi
 
 import akka.actor.ExtendedActorSystem
 import akka.camel.ContextProvider
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.impl.DefaultCamelContext
 
 //: -------------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ import org.apache.camel.impl.DefaultCamelContext
 //: -------------------------------------------------------------------------------------
 
 class AkkaCamelContextProvider extends ContextProvider {
- // val logger = Logger(classOf[AkkaCamelContextProvider])
+  //val logger = Logger(classOf[AkkaCamelContextProvider])
 
   override def getContext(system: ExtendedActorSystem): DefaultCamelContext = {
     AkkaCamelContextProvider.contextProvider
