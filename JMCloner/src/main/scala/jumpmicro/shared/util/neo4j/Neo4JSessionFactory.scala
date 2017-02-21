@@ -4,7 +4,7 @@ import org.log4s._
 import org.neo4j.driver.v1.{AuthTokens, GraphDatabase}
 import org.neo4j.ogm.Neo4JOSGI
 import org.neo4j.ogm.annotation._
-import org.neo4j.ogm.config.{Configuration, DriverConfiguration}
+import org.neo4j.ogm.config.{Configuration}
 import org.neo4j.ogm.drivers.bolt.driver.BoltDriver
 
 import scala.beans.BeanProperty
