@@ -38,7 +38,7 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 }
 */
 // with nl.grons.metrics.scala.DefaultInstrumented
-class JMScalaJSBundleActivator extends BundleActivatorBoilerplate with Injectable {
+class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectable {
 //  val logger = Logger(classOf[JMScalaJSBundleActivator])
 
   println("in JMScalaJsBundleActivator")
