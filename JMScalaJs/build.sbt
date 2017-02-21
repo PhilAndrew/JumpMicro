@@ -68,6 +68,8 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
   "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
   "org.scaldi/scaldi_2.11") // org.scaldi/scaldi_2.11/0.5.8
 
+
+
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
 // the SBT dependency such as "com.lihaoyi" %% "scalatags" % "0.6.1" but we also need to specify what
@@ -88,6 +90,16 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     // package requirements
     Seq("scalatags", "scalatags.text")
   ),
+
+
+  /*OsgiDependency("Slf4jDependency",
+    Seq("org.slf4j" % "slf4j-api" % slf4jVersion,
+      "org.slf4j" % "slf4j-simple" % slf4jVersion,
+      "org.slf4j" % "jcl-over-slf4j" % slf4jVersion,
+      "org.slf4j" % "log4j-over-slf4j" % slf4jVersion),
+    Seq(),
+    Seq()
+  ),*/
 
   OsgiDependency("Log4s",
     Seq("org.log4s" %% "log4s" % "1.3.4"),
@@ -150,12 +162,12 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.typesafe.akka" %% "akka-osgi" % akkaVersion,
       //"com.typesafe.akka" %% "akka-actor" % akkaVersion,
       //"com.typesafe.akka" %% "akka-stream" % akkaVersion,
-      "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-      "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+      "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
+      //"com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
+      //"com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     ),
     Seq("com.typesafe.akka.osgi"),
-    Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
+    Seq() //Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
   ),
 
   OsgiDependency("Neo4JDependency",
