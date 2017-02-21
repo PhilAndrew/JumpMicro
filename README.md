@@ -33,13 +33,13 @@ You are looking at an Akka Http server delivering a ScalaJs page running in OSGi
 | JMScalaJs                | Akka Http server with ScalaJS running in webpage http://localhost:8080/test/ |
 | JMCloner                 | Allow creation of a new MicroService by copying another prototype one<br>After sbt run the visit http://localhost:8181/        |
 
-## Features  
+## Features    
   
 It has the following features:
 
 * Can run in an OSGi container or standalone as a normal Java application using the embedded Felix OSGi container.
 * Dependency Injection using [Scaldi](http://scaldi.org/).
-* Logging using Typesafe [Scala Logging](https://github.com/typesafehub/scala-logging).
+* Logging using [Log4s](https://github.com/Log4s/log4s) which is a slf4j wrapper and works ok with Apache Karaf OSGi container.
 * Supports [Apache Karaf](http://karaf.apache.org/) and [Apache Felix](http://felix.apache.org/) OSGi containers. (others are untested but OSGi is a standard, so should work).
 * OSGi components using [Domino Scala library](https://github.com/domino-osgi/domino) with [user guide](https://github.com/domino-osgi/domino/blob/master/UserGuide.adoc) makes OSGi easier to understand and use from Scala, it support developers in writing bundle activators for the JVM module system OSGi.
 * [Apache Camel](http://camel.apache.org/) and its [components](https://camel.apache.org/components.html).
