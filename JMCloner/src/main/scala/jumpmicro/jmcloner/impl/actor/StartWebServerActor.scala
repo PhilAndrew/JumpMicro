@@ -1,7 +1,7 @@
 package jumpmicro.jmcloner.impl.actor
 
 import akka.camel.{CamelMessage, Consumer}
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import scaldi.Injectable
 import org.neo4j.ogm.session.Neo4jSession
 import org.neo4j.ogm.transaction.Transaction
@@ -24,7 +24,7 @@ import jumpmicro.jmcloner.impl.configuration.GlobalModule._
 import acyclic.skipped
 
 class StartWebServerActor extends Consumer with Injectable {
-  //val logger = Logger(classOf[StartWebServerActor])
+  private[this] val logger = getLogger
   val osgi = inject[OsgiGlobal]
 
   override def endpointUri: String = "direct:startWebServer"
@@ -36,7 +36,7 @@ class StartWebServerActor extends Consumer with Injectable {
       //webServer.start()
 
       WebServer.start()
-      //logger.info("HTTP Server for korolev started at http://localhost:8181/")
+      logger.info("HTTP Server for korolev started at http://localhost:8181/")
     }
   }
 }

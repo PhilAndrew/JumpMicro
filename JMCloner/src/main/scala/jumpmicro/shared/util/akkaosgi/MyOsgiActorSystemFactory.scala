@@ -3,7 +3,7 @@ package jumpmicro.shared.util.akkaosgi
 import akka.actor.ActorSystem
 import akka.osgi.ActorSystemActivator
 import com.typesafe.config.{Config, ConfigFactory}
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
   * bundle classloaders appropriately to ensure that configuration files and classes get loaded properly
   */
 class MyOsgiActorSystemFactory(val context: BundleContext, val fallbackClassLoader: Option[ClassLoader], config: Config = ConfigFactory.empty) {
-  //val logger = Logger(classOf[MyOsgiActorSystemFactory])
+  private[this] val logger = getLogger
 
   /*
    * Classloader that delegates to the bundle for which the factory is creating an ActorSystem

@@ -2,7 +2,7 @@ package jumpmicro.shared.util.akkaosgi
 
 import akka.actor.ExtendedActorSystem
 import akka.camel.ContextProvider
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.impl.DefaultCamelContext
 
 //: -------------------------------------------------------------------------------------

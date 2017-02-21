@@ -5,7 +5,7 @@ import javax.activation.DataHandler
 
 import akka.actor.{ActorRef, Props}
 import akka.camel.{Camel, CamelMessage}
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.slf4j.LoggerFactory
 import scaldi.Injectable

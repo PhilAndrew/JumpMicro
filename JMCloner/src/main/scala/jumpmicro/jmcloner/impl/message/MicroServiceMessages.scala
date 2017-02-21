@@ -1,6 +1,6 @@
 package jumpmicro.jmcloner.impl.message
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

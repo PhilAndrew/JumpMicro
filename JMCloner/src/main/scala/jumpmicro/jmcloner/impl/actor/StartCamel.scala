@@ -3,7 +3,7 @@ package jumpmicro.jmcloner.impl.actor
 import java.io.File
 import java.util.UUID
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.{CamelContext, Exchange, Processor}
 import org.apache.camel.scala.dsl.builder.ScalaRouteBuilder

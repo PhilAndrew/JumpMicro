@@ -1,6 +1,6 @@
 package jumpmicro.jmcloner.impl.service
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.slf4j.LoggerFactory
 import jumpmicro.jmcloner.JMClonerService
 
@@ -10,13 +10,13 @@ import jumpmicro.jmcloner.JMClonerService
 //: -------------------------------------------------------------------------------------
 
 class HelloWorldServiceImpl extends JMClonerService {
-  //val logger = Logger(classOf[HelloWorldServiceImpl])
+  private[this] val logger = getLogger
 
   def hello(): Unit = {
-    //logger.info("hello world!")
+    logger.info("hello world!")
   }
 
   def startup(): Unit = {
-    //logger.info("startup method in HelloWorldServiceImpl")
+    logger.info("startup method in HelloWorldServiceImpl")
   }
 }

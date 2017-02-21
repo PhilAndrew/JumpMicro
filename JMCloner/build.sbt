@@ -111,6 +111,11 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
     Seq("org.log4s")),
 
+  OsgiDependency("Log4s",
+    Seq("org.log4s" %% "log4s" % "1.3.4"),
+    Seq(),
+    Seq("org.log4s")),
+
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
   OsgiDependency(
@@ -198,13 +203,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.neo4j.ogm.drivers.bolt.driver",
       "org.neo4j.ogm.service",
       "org.neo4j.ogm.annotation")
-  ),
-
-  OsgiDependency("ScalaLoggingDependency",
-    Seq(  // Logging
-      // https://github.com/typesafehub/scala-logging
-      //"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-    ), Seq(/*"com.typesafe.scala-logging"*/), Seq() //"com.typesafe.scalalogging"
   ),
 
   OsgiDependency("ScaldiDependency",

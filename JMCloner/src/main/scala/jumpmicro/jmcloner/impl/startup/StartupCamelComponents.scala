@@ -1,6 +1,6 @@
 package jumpmicro.jmcloner.impl.startup
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.component.exec.ExecComponent
 import org.apache.camel.component.file.remote.FtpComponent
 import org.apache.camel.component.seda.SedaComponent

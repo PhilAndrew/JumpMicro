@@ -2,7 +2,7 @@ package jumpmicro.shared.util.boilerplate
 
 import akka.camel.CamelExtension
 import com.typesafe.config.Config
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory

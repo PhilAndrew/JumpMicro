@@ -1,6 +1,6 @@
 package jumpmicro.shared.util.neo4j
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.neo4j.driver.v1.{AuthTokens, GraphDatabase}
 import org.neo4j.ogm.Neo4JOSGI
 import org.neo4j.ogm.annotation._

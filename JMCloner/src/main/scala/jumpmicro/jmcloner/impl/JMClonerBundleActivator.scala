@@ -7,7 +7,7 @@ import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -1,6 +1,6 @@
 package jumpmicro.jmcloner.impl.startup
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 import jumpmicro.jmcloner.impl.actor.StartCamel

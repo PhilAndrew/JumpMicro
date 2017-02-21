@@ -1,6 +1,6 @@
 package jumpmicro.shared.util.osgi
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import org.apache.camel.CamelContext
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory

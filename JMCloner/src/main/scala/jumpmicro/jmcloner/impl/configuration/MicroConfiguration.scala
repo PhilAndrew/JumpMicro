@@ -1,6 +1,6 @@
 package jumpmicro.jmcloner.impl.configuration
 
-//import com.typesafe.scalalogging.Logger
+import org.log4s._
 import jumpmicro.shared.model.MicroConfig
 import org.slf4j.LoggerFactory
 import scala.concurrent.{Future, Promise}
