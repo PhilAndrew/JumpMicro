@@ -193,7 +193,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   ),
 
   OsgiDependency("Neo4JDependency",
-    Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.38"),
+    Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.39"),
     Seq(),
     Seq("org.neo4j.ogm",
       "org.neo4j.ogm.compiler",
