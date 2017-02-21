@@ -61,7 +61,13 @@ object GlobalModule {
       val it = r.queryResults().iterator()
       while (it.hasNext) {
         val next = it.next()
-        logger.error(next.toString)
+        //logger.error("##############################################################")
+        //val linked = next.asInstanceOf[java.util.LinkedHashMap[_,_]]
+        //for (k <- linked.keySet().asScala.toSeq) {
+        //  logger.error(" ############# " + k.toString)
+        //}
+        //logger.error("Node ID IS")
+        //logger.error(linked.get("n").asInstanceOf[MicroConfig].getNodeId)
         found = true
       }
       if (found) new MicroConfig(nodeId) else {
