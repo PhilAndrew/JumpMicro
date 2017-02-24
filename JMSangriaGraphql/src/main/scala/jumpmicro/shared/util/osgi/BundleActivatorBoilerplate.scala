@@ -14,7 +14,7 @@ import scaldi.Injectable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
-import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule
+import jumpmicro.jmsangriagraphql.impl.configuration.{GlobalModule, MicroConfiguration}
 import jumpmicro.jmsangriagraphql.impl.startup.StartupOsgi
 
 //: -------------------------------------------------------------------------------------
@@ -25,4 +25,5 @@ import jumpmicro.jmsangriagraphql.impl.startup.StartupOsgi
 class BundleActivatorBoilerplate extends DominoActivator {
   protected var camelContext: OsgiDefaultCamelContext = null
   protected var system: Option[ActorSystem] = None
+
 }

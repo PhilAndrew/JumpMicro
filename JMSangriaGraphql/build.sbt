@@ -105,6 +105,11 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
+  OsgiDependency("UUID",
+    Seq("io.jvm.uuid" %% "scala-uuid" % "0.2.2"),
+    Seq(),
+    Seq("io.jvm.uuid")),
+
   OsgiDependency("Sangria",
     Seq("org.sangria-graphql" %% "sangria" % "1.0.0"),
     Seq(s"$projectName.sangria_2.11"),

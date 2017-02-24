@@ -12,7 +12,6 @@ import scala.util.{Success, Try}
 //: -------------------------------------------------------------------------------------
 
 class MicroConfiguration {
-  //val logger = Logger(classOf[MicroConfiguration])
 
   private val configurationLoaded: Promise[MicroConfig] = Promise[MicroConfig]()
 

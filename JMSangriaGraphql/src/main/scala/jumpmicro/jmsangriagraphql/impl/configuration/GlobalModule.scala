@@ -1,6 +1,6 @@
 package jumpmicro.jmsangriagraphql.impl.configuration
 
-import java.io.File
+import java.io.{File, FileOutputStream, PrintWriter}
 import java.util
 
 import com.typesafe.config.{Config, ConfigFactory}
@@ -11,10 +11,13 @@ import jumpmicro.jmsangriagraphql.impl.startup.{StartupAkkaActors, StartupCamelC
 import jumpmicro.shared.model.MicroConfig
 import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.neo4j.ogm.exception.ConnectionException
+
+import scala.util.{Failure, Success, Try}
 //import org.neo4j.driver.v1.{AuthTokens, Driver, GraphDatabase}
 import scaldi._
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
+import io.jvm.uuid._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -38,18 +41,34 @@ object GlobalModule {
 
   private var _config: Config = null
 
-  private def loadConfigFromFile(): Config = {
+  // @todo Move some of this code to shared
+
+  private def loadConfigFromFile(): Try[Config] = {
     var config: Config = null
 
     val configPath = scala.util.Properties.envOrElse("JUMPMICRO_CONFIG_PATH", "jumpmicro.conf")
     val f = new File(configPath)
     if (f.exists()) {
       config = ConfigFactory.parseFile(f)
-    }
-    config
+      if (!config.hasPath("jumpmicro.nodeid")) {
+        val packageName = this.getClass.getPackage.getName
+        val thisPackage = packageName.substring(0, packageName.indexOf('.', packageName.indexOf('.')+1))
+        val v = s"$thisPackage.${UUID.random}"
+        // @todo What if we cannot write to the file, what to do?
+        val write = new PrintWriter(new FileOutputStream(new File("jumpmicro.conf"),true))
+        write.println("")
+        write.println(s"jumpmicro.nodeid = $v")
+        write.flush(); write.close()
+
+        config = ConfigFactory.parseFile(f)
+      }
+      Success(config)
+    } else Failure(null)
   }
 
   def loadConfigFromNeo4JBlocking(session: Session, nodeId: String): MicroConfig = {
+    println("NODE ID " + nodeId)
+
     var result: MicroConfig = null
     try {
       // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
@@ -77,9 +96,15 @@ object GlobalModule {
     result
   }
 
-  def loadDI() = {
-    _config = loadConfigFromFile()
-    TypesafeConfigInjector(_config) :: new GlobalModule
+  def loadDI(): MutableInjectorAggregation = {
+    val config = loadConfigFromFile()
+    if (config.isSuccess) {
+      _config = config.get
+      TypesafeConfigInjector(_config) :: new GlobalModule
+    } else {
+      // @todo What to do in error case?
+      null
+    }
   }
 
   implicit var injector: MutableInjectorAggregation = null

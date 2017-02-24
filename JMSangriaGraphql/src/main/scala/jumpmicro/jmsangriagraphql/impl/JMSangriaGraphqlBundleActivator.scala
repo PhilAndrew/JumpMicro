@@ -28,8 +28,6 @@ import org.osgi.framework.{BundleActivator, BundleContext}
 //: -------------------------------------------------------------------------------------
 
 class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with Injectable {
-  //val logger = Logger(classOf[JMSangriaGraphqlBundleActivator])
-  // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
     addCapsule(new OsgiCapsule())
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
@@ -37,60 +35,16 @@ class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with In
     }
     TestIdris.test(bundleContext)
     // @todo Can I use scalaDi to better store this bundleContext as a global
-    val osgiGlobal: OsgiGlobal = inject[OsgiGlobal]
-    osgiGlobal.bundleContext = bundleContext
-    val config: MicroConfiguration = inject[MicroConfiguration]
-    org.neo4j.ogm.Neo4JOGM.setBundleContext(bundleContext)
+
     camelContext = new OsgiDefaultCamelContext(bundleContext)
-    osgiGlobal.camelContext = camelContext
-    StartupOsgi.startup(config, bundleContext, camelContext)
+
     new HelloWorldServiceImpl().providesService[JMSangriaGraphqlService]
+
+    val config: MicroConfiguration = inject[MicroConfiguration]
+    StartupOsgi.startup(config, bundleContext, camelContext)
     onStop {
       system foreach (_.terminate())
     }
   }
 }
 
-
-
-
-
-
-
-
-
-
-/*class Example() extends nl.grons.metrics.scala.DefaultInstrumented {
-  // Define a timer metric
-  private[this] val loading = metrics.timer("loading")
-
-  // Use timer metric
-  def loadStuff() = loading.time {
-    Thread.sleep(1000)
-  }
-}
-*/
-// with nl.grons.metrics.scala.DefaultInstrumented
-
-
-
-/*def testMetrics() = {
-  val reporter = ConsoleReporter.forRegistry(metricRegistry)
-    .convertRatesTo(TimeUnit.SECONDS)
-    .convertDurationsTo(TimeUnit.MILLISECONDS)
-    .build()
-  reporter.start(1, TimeUnit.SECONDS)
-
-  val n = new Example()
-  n.loadStuff()
-}*/
-
-
-/*
- whenServicePresent[OtherService] { os =>
-   new MyService(os).providesService[MyService]
- }
- */
-
-
-//testMetrics()
