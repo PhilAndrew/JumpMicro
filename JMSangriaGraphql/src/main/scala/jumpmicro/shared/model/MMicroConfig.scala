@@ -1,8 +1,12 @@
 package jumpmicro.shared.model
 
-import org.neo4j.ogm.annotation.{GraphId, NodeEntity, Relationship}
+import org.neo4j.ogm.annotation.{GraphId, Index, NodeEntity, Relationship}
+import java.lang.{Long => JLong}
 import java.util.{Set => JSet}
 import java.util.{HashSet => JHashSet}
+import java.lang.{String => JString}
+
+import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
 
 //: -------------------------------------------------------------------------------------
@@ -10,28 +14,19 @@ import scala.collection.JavaConverters._
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
-import acyclic.skipped
-
 @NodeEntity
-class ActorInMovie {
-  def getName: String = name
-
+class MMicroConfig {
   @GraphId
-  private var id: java.lang.Long = _
-  private var name: String = _
+  @BeanProperty
+  var id: java.lang.Long = _
 
-  @Relationship(`type` = "ACTS_IN", direction = "OUTGOING")
-  private var movies: JSet[Movie] = new JHashSet[Movie]()
-  def moviesAsScala: scala.collection.mutable.Set[Movie] = movies.asScala
+  @Index
+  @BeanProperty
+  var nodeId: String = _
 
-  def this(name: String) {
+  def this(s: String) = {
     this()
-    this.name = name
+    nodeId = s
   }
 
-  def actsIn(movie: Movie) {
-    moviesAsScala.add(movie)
-    movie.getActors.add(this)
-  }
 }
-

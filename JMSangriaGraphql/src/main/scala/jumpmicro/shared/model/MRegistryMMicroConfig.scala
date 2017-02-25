@@ -1,24 +1,20 @@
 package jumpmicro.shared.model
 
-import org.neo4j.ogm.annotation.{GraphId, NodeEntity}
-
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
-@NodeEntity
-class MicroConfig {
-  @GraphId
-  private var id: java.lang.Long = _
-  private var nodeId: String = _
+import org.neo4j.ogm.annotation.{GraphId, NodeEntity, Relationship}
+import java.lang.{Long => JLong}
+import java.util.{Set => JSet}
+import java.util.{HashSet => JHashSet}
+import java.lang.{String => JString}
 
-  def getNodeId = nodeId
-  def setNodeId(n: String) = nodeId = n
+import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
-  def this(s: String) = {
-    this()
-    nodeId = s
-  }
-
+class MRegistryMMicroConfig extends MMicroConfig {
+  @BeanProperty
+  var storagePathOnDisk: String = "./data"
 }

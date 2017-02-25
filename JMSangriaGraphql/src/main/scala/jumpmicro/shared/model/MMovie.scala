@@ -1,10 +1,13 @@
 package jumpmicro.shared.model
 
-import java.lang.Long
+import org.neo4j.ogm.annotation.{GraphId, NodeEntity, Relationship}
+import java.lang.{Long => JLong}
 import java.util.{Set => JSet}
 import java.util.{HashSet => JHashSet}
+import java.lang.{String => JString}
+
+import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
-import org.neo4j.ogm.annotation.{GraphId, NodeEntity, Relationship}
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -14,29 +17,31 @@ import org.neo4j.ogm.annotation.{GraphId, NodeEntity, Relationship}
 import acyclic.skipped
 
 @NodeEntity
-class Movie {
-  def getId: Long = id
-
-  def getActors = {
-    if (actors==null)
-      actors = new JHashSet[ActorInMovie]()
-    actors
-  }
-
+class MMovie {
   @GraphId
-  private var id: java.lang.Long = _
+  @BeanProperty
+  var id: java.lang.Long = _
 
-  private var title: String = _
+  @BeanProperty
+  var title: String = _
 
-  private var released: Int = _
+  @BeanProperty
+  var released: Int = _
 
   @Relationship(`type` = "ACTS_IN", direction = "INCOMING")
-  var actors: JSet[ActorInMovie] = _
-  def actorsAsScala: scala.collection.mutable.Set[ActorInMovie] = actors.asScala
+  @BeanProperty
+  var actors: JSet[MActor] = _
+  def actorsAsScala: scala.collection.mutable.Set[MActor] = actors.asScala
 
   def this(title: String, year: Int) {
     this()
     this.title = title
     this.released = year
+  }
+
+  def getActors: JSet[MActor] = {
+    if (actors==null)
+      actors = new JHashSet[MActor]()
+    actors
   }
 }
