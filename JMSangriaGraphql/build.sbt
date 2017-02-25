@@ -40,7 +40,7 @@ def subPackagesOf(path: String): Seq[String] = {
   } else Seq()
 }
 
-lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
+lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev") ++ subPackagesOf("sangria")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
@@ -111,9 +111,11 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq("io.jvm.uuid")),
 
   OsgiDependency("Sangria",
-    Seq("org.sangria-graphql" %% "sangria" % "1.0.0"),
-    Seq(s"$projectName.sangria_2.11"),
-    Seq()),
+    Seq("org.parboiled" %% "parboiled" % "2.1.3",
+      "org.sangria-graphql" % "sangria-marshalling-api_2.11" % "1.0.0",
+      "org.sangria-graphql" % "sangria-streaming-api_2.11" % "1.0.0"),
+    Seq(),
+    Seq("org.parboiled2", "sangria.streaming", "sangria.marshalling")),
 
   OsgiDependency("Korolev",
       Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",

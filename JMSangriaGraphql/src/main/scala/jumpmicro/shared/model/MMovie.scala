@@ -38,10 +38,4 @@ class MMovie {
     this.title = title
     this.released = year
   }
-
-  def getActors: JSet[MActor] = {
-    if (actors==null)
-      actors = new JHashSet[MActor]()
-    actors
-  }
 }
