@@ -3,6 +3,7 @@ package jumpmicro.jmsangriagraphql.impl.idris
 import javax.script.{ScriptEngine, ScriptEngineManager}
 
 import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
+import org.log4s.getLogger
 import org.osgi.framework.BundleContext
 
 //: -------------------------------------------------------------------------------------
@@ -12,6 +13,8 @@ import org.osgi.framework.BundleContext
 
 // Proof that Idris code can run from Scala, refer to Main.idr
 object TestIdris {
+  private[this] val logger = getLogger
+
   def test(context: BundleContext) = {
 
     val classloader = MyBundleDelegatingClassLoader(context, Some(getClass.getClassLoader))

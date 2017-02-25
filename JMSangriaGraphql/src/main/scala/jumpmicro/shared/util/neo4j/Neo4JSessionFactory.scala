@@ -22,7 +22,7 @@ import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
 trait Neo4JSessionFactory
 
 object Neo4JSessionFactory extends Injectable {
-  //val logger = Logger(classOf[Neo4JSessionFactory])
+  private[this] val logger = getLogger
 
   def modelPackages = Seq("jumpmicro.shared.model")
 
@@ -35,6 +35,8 @@ object Neo4JSessionFactory extends Injectable {
     val neo4Jpassword = inject [String] (identified by "neo4j.server.password")
 
     val configuration = new Configuration()
+    // Indexes http://neo4j.com/docs/ogm-manual/current/reference/#reference:indexing
+    configuration.setAutoIndex("assert")
     configuration.set("username", neo4Juser)
     configuration.set("password", neo4Jpassword)
 

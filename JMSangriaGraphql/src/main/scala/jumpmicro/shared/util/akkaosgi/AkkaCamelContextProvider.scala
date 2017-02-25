@@ -11,7 +11,7 @@ import org.apache.camel.impl.DefaultCamelContext
 //: -------------------------------------------------------------------------------------
 
 class AkkaCamelContextProvider extends ContextProvider {
-  //val logger = Logger(classOf[AkkaCamelContextProvider])
+  private[this] val logger = getLogger
 
   override def getContext(system: ExtendedActorSystem): DefaultCamelContext = {
     AkkaCamelContextProvider.contextProvider

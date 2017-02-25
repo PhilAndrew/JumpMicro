@@ -1,7 +1,7 @@
 package jumpmicro.jmsangriagraphql.impl.configuration
 
 import org.log4s._
-import jumpmicro.shared.model.MicroConfig
+import jumpmicro.shared.model.MMicroConfig
 import org.slf4j.LoggerFactory
 import scala.concurrent.{Future, Promise}
 import scala.util.{Success, Try}
@@ -12,14 +12,15 @@ import scala.util.{Success, Try}
 //: -------------------------------------------------------------------------------------
 
 class MicroConfiguration {
+  private[this] val logger = getLogger
 
-  private val configurationLoaded: Promise[MicroConfig] = Promise[MicroConfig]()
+  private val configurationLoaded: Promise[MMicroConfig] = Promise[MMicroConfig]()
 
-  def configuration: Promise[MicroConfig] = {
+  def configuration: Promise[MMicroConfig] = {
     configurationLoaded
   }
 
-  def setConfiguration(config: MicroConfig) = {
+  def setConfiguration(config: MMicroConfig) = {
     configurationLoaded.complete(Success(config))
   }
 }

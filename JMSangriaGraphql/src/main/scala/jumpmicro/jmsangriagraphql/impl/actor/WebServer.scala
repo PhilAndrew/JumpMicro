@@ -3,6 +3,7 @@ package jumpmicro.jmsangriagraphql.impl.actor
 import korolev._
 import korolev.server._
 import korolev.blazeServer._
+import org.log4s.getLogger
 
 import scala.concurrent.Future
 
@@ -10,6 +11,7 @@ import scala.concurrent.Future
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
   */
 object WebServer extends KorolevBlazeServer {
+  private[this] val logger = getLogger
 
   import State.effects._
 

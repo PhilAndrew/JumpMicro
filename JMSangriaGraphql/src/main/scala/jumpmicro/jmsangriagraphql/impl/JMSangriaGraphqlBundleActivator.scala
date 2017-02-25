@@ -31,7 +31,7 @@ class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with In
   whenBundleActive {
     addCapsule(new OsgiCapsule())
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
-      }
+    }
     }
     TestIdris.test(bundleContext)
     // @todo Can I use scalaDi to better store this bundleContext as a global

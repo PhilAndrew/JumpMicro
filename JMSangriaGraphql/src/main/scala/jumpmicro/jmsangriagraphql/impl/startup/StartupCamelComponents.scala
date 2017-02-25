@@ -15,7 +15,7 @@ import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 //: -------------------------------------------------------------------------------------
 
 class StartupCamelComponents {
-  //val logger = Logger(classOf[StartupCamelComponents])
+  private[this] val logger = getLogger
 
   def startup(camelContext: OsgiDefaultCamelContext) = {
     // Camel components should be added here.

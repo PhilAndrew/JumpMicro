@@ -3,6 +3,7 @@ package jumpmicro.jmsangriagraphql.impl.startup
 import akka.actor.{ActorRef, Props}
 import jumpmicro.jmsangriagraphql.impl.actor.StartWebServerActor
 import jumpmicro.shared.util.boilerplate.StartupAkkaActorsBoilerplate
+import org.log4s.getLogger
 //remove if not needed
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -14,6 +15,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import acyclic.skipped
 
 class StartupAkkaActors extends StartupAkkaActorsBoilerplate {
+
+  private[this] val logger = getLogger
 
   // Add your Akka Actors here and they will start when this OSGi component loads
   def akkaActors = Seq(Props[StartWebServerActor])

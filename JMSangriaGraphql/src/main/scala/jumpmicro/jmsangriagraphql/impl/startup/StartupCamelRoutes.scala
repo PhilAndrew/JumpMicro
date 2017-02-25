@@ -13,7 +13,7 @@ import jumpmicro.jmsangriagraphql.impl.actor.StartCamel
 import acyclic.skipped
 
 class StartupCamelRoutes {
-  //val logger = Logger(classOf[StartupCamelRoutes])
+  private[this] val logger = getLogger
 
   var keep: StartCamel = null
 

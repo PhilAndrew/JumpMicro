@@ -27,7 +27,7 @@ import scala.concurrent.duration._
 import acyclic.skipped
 
 trait StartupAkkaActorsBoilerplate {
-  //val logger = Logger(classOf[StartupAkkaActorsBoilerplate])
+  private[this] val logger = getLogger
 
   def akkaActors: Seq[Props]
 

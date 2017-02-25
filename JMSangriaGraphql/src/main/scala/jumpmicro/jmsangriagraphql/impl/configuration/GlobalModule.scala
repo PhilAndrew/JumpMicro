@@ -8,7 +8,7 @@ import org.log4s._
 import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.Session
 import jumpmicro.jmsangriagraphql.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
-import jumpmicro.shared.model.MicroConfig
+import jumpmicro.shared.model.MMicroConfig
 import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.neo4j.ogm.exception.ConnectionException
 
@@ -66,14 +66,14 @@ object GlobalModule {
     } else Failure(null)
   }
 
-  def loadConfigFromNeo4JBlocking(session: Session, nodeId: String): MicroConfig = {
+  def loadConfigFromNeo4JBlocking(session: Session, nodeId: String): MMicroConfig = {
     println("NODE ID " + nodeId)
 
-    var result: MicroConfig = null
+    var result: MMicroConfig = null
     try {
       // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
       import collection.JavaConverters._
-      val query = new java.lang.String("MATCH (n:MicroConfig {nodeId:\"" + nodeId + "\"}) RETURN n")
+      val query = new java.lang.String("MATCH (n:MMicroConfig {nodeId:\"" + nodeId + "\"}) RETURN n")
       val r: Result = session.query(query, new java.util.HashMap[String, Object]())
       var found = false
       val it = r.queryResults().iterator()
@@ -82,15 +82,15 @@ object GlobalModule {
         logger.error(next.toString)
         found = true
       }
-      if (found) new MicroConfig(nodeId) else {
-        result = new MicroConfig(nodeId)
+      if (found) new MMicroConfig(nodeId) else {
+        result = new MMicroConfig(nodeId)
         session.save(result)
       }
 
     } catch {
       case ex: ConnectionException => {
         logger.error("The Neo4J Database connection could not be established. This MicroService will continue to function without database access, however any further database access will fail.")
-        result = new MicroConfig(nodeId)
+        result = new MMicroConfig(nodeId)
       }
     }
     result

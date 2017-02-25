@@ -18,7 +18,7 @@ import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
 import acyclic.skipped
 
 class StartCamel(context: CamelContext) extends ScalaRouteBuilder(context) with Injectable {
-  //val logger = Logger(classOf[StartCamel])
+  private[this] val logger = getLogger
 
   from("direct:start").to("direct:startWebServer")
 

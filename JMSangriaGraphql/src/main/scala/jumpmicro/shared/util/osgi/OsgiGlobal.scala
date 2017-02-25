@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 //: -------------------------------------------------------------------------------------
 
 class OsgiGlobal {
-  //val logger = Logger(classOf[OsgiGlobal])
+  private[this] val logger = getLogger
 
   var bundleContext: BundleContext = null
   var camelContext: CamelContext = null
