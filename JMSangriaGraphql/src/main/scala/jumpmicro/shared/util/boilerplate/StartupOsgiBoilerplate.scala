@@ -62,6 +62,7 @@ abstract class StartupOsgiBoilerplate extends Injectable {
 
     loadNeo4JConfig()
     camelContext.setTracing(true)
+
     startupCamelComponents.startup(camelContext)
     AkkaCamelContextProvider.contextProvider = camelContext
     val sysConfig: Config = getActorSystemConfiguration(bundleContext)
@@ -75,7 +76,6 @@ abstract class StartupOsgiBoilerplate extends Injectable {
     // @todo Camel routes must be added first before this starts
     startupAkkaActors.addActors(config, system.get, camel, camelContext)
     startupCamelRoutes.addCamelRoutes(camelContext)
-    camelContext.start()
   }
 
 }
