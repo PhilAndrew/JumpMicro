@@ -19,7 +19,7 @@ import jumpmicro.jmsangriagraphql.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmsangriagraphql.impl.startup.StartupOsgi
 import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule, OsgiGlobal}
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
-import jumpmicro.shared.util.resourceshare.ResourceShareService
+import jumpmicro.shared.util.resourceshare._
 import org.osgi.framework.{BundleActivator, BundleContext}
 
 //: -------------------------------------------------------------------------------------

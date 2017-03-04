@@ -47,10 +47,7 @@ abstract class StartupOsgiBoilerplate extends Injectable {
         //tx2.commit()
         microConfiguration.setConfiguration(config)
       } else {
-        logger.error("The node identifier for this MicroService has not been set, please add a jumpmicro.nodeid setting in the jumpmicro.conf file, then restart this MicroService.")
-        logger.error("Set the following:")
-        // @todo Fix JMScalaJS
-        logger.error("jumpmicro.nodeid = JMScalaJS." + java.util.UUID.randomUUID.toString)
+        logger.error("The node identifier for this MicroService has not been set, please make jumpmicro.conf writable so this service can add a value, then restart this MicroService.")
       }
     }
     //}
