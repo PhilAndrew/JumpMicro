@@ -40,7 +40,7 @@ def subPackagesOf(path: String): Seq[String] = {
   } else Seq()
 }
 
-lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev") ++ subPackagesOf("sangria")
+lazy val privatePackages: Seq[String] = /*subPackagesOf("bridge") ++ subPackagesOf("korolev") ++ */ subPackagesOf("sangria")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
@@ -110,6 +110,15 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq("io.jvm.uuid")),
 
+  /*
+  Sangria when using OSGI
+  OsgiDependency("Sangria",
+    Seq("org.parboiled" %% "parboiled" % "2.1.6",
+      "org.sangria-graphql" % "sangria-marshalling-api_2.11" % "1.0.3",
+      "org.sangria-graphql" % "sangria-streaming-api_2.11" % "1.0.3"),
+    Seq(),
+    Seq("org.parboiled2", "sangria.streaming", "sangria.marshalling")),
+   */
   OsgiDependency("Sangria",
     Seq("org.parboiled" %% "parboiled" % "2.1.3",
       "org.sangria-graphql" % "sangria-marshalling-api_2.11" % "1.0.0",
@@ -118,10 +127,17 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq("org.parboiled2", "sangria.streaming", "sangria.marshalling")),
 
   OsgiDependency("Korolev",
-      Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
-      "org.http4s" %% "blaze-http" % "0.12.4"),
-    Seq(s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
-    Seq("org.log4s")),
+      Seq(
+        "biz.enef" %% "slogging" % "0.5.3",
+        "biz.enef" %% "slogging-slf4j" % "0.5.3",
+        "com.github.fomkin" %% "korolev" % "0.2.1",
+        "com.github.fomkin" %% "korolev-server" % "0.2.1",
+        "com.github.fomkin" %% "korolev-server-blaze" % "0.2.1",
+        "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
+        "org.http4s" %% "blaze-http" % "0.12.4"),
+    Seq(
+      s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
+    Seq("org.log4s", "korolev", "korolev.server", "korolev.blazeServer", "bridge", "slogging")),
 
   OsgiDependency("Log4s",
     Seq("org.log4s" %% "log4s" % "1.3.4"),
