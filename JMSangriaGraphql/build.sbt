@@ -40,14 +40,14 @@ def subPackagesOf(path: String): Seq[String] = {
   } else Seq()
 }
 
-lazy val privatePackages: Seq[String] = /*subPackagesOf("bridge") ++ subPackagesOf("korolev") ++ */ subPackagesOf("sangria")
+lazy val privatePackages: Seq[String] = subPackagesOf("sangria")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
 
 // @feature directory scalajs
 // @feature start scalajs
-lazy val scalaJsProject = (project in file("scalajs")).settings(
+/*lazy val scalaJsProject = (project in file("scalajs")).settings(
   scalaVersion := "2.11.8",
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "0.8.1",
@@ -57,9 +57,9 @@ lazy val scalaJsProject = (project in file("scalajs")).settings(
     "com.lihaoyi" %%% "upickle" % "0.3.4",
     "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
   )
-).enablePlugins(ScalaJSPlugin)
+).enablePlugins(ScalaJSPlugin)*/
 
-lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
+lazy val rootProject = project.in(file(".")) //.aggregate(scalaJsProject)
 // @feature end scalajs
 
 osgiSettings
@@ -400,10 +400,10 @@ packageScalaJsResource := {
   Seq("scalajsproject-fastopt.js", "scalajsproject-jsdeps.js").foreach(f => IO.copyFile(new File(scalaJsPath + f), new File(destPath + f), true))
 }
 
-compile in Compile <<= (compile in Compile).dependsOn(packageScalaJsResource)
+compile in Compile <<= (compile in Compile) //.dependsOn(packageScalaJsResource)
 
 // http://stackoverflow.com/questions/30513492/sbt-in-a-multi-project-build-how-to-invoke-project-bs-task-from-project-a
-compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in scalaJsProject)
+compile in Compile <<= (compile in Compile) //.dependsOn(fastOptJS in Compile in scalaJsProject)
 
 // @feature end scalajs
 
