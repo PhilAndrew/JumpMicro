@@ -1,8 +1,8 @@
-package jumpmicro.jmsangriagraphql.impl.actor
+package jumpmicro.jmsangriagraphql.impl.webserver
 
 import korolev._
-import korolev.server._
 import korolev.blazeServer._
+import korolev.server._
 import org.log4s.getLogger
 
 import scala.concurrent.Future
@@ -13,10 +13,14 @@ import scala.concurrent.Future
 object WebServer extends KorolevBlazeServer {
   private[this] val logger = getLogger
 
-  import State.effects._
+  def start(): Unit = {
+    // activate SLF4J backend
+    //LoggerConfig.factory = SLF4JLoggerFactory()
+    runServer(service, BlazeServerConfig.default)
+  }
 
   val storage = StateStorage.default[Future, State](State())
-  val inputId = elementId
+  //val inputId = elementId
 
   val service = blazeService[Future, State, Any] from KorolevServiceConfig [Future, State, Any] (
     stateStorage = storage,

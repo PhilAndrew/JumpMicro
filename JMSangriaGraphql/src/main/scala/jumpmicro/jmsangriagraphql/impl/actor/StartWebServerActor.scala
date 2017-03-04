@@ -8,6 +8,7 @@ import org.neo4j.ogm.transaction.Transaction
 import org.osgi.framework.ServiceReference
 import org.slf4j.LoggerFactory
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule
+import jumpmicro.jmsangriagraphql.impl.webserver.WebServer
 import jumpmicro.shared.util.osgi.OsgiGlobal
 
 import scala.concurrent.ExecutionContext.Implicits.global

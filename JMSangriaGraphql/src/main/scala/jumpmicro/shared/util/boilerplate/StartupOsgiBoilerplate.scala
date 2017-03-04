@@ -65,6 +65,7 @@ abstract class StartupOsgiBoilerplate extends Injectable {
 
     startupCamelComponents.startup(camelContext)
     AkkaCamelContextProvider.contextProvider = camelContext
+
     val sysConfig: Config = getActorSystemConfiguration(bundleContext)
     val actorFactory = MyOsgiActorSystemFactory(bundleContext, sysConfig)
     val system = Some(actorFactory.createActorSystem(Option(getActorSystemName(bundleContext))))
@@ -74,6 +75,8 @@ abstract class StartupOsgiBoilerplate extends Injectable {
     //val producerTemplate = camel.template
     // Add routes and Actors
     // @todo Camel routes must be added first before this starts
+    if (! camelContext.isStarted) camelContext.start()
+
     startupAkkaActors.addActors(config, system.get, camel, camelContext)
     startupCamelRoutes.addCamelRoutes(camelContext)
   }

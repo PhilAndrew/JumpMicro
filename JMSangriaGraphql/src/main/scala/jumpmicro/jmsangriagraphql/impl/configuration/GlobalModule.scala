@@ -9,6 +9,7 @@ import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.Session
 import jumpmicro.jmsangriagraphql.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
 import jumpmicro.shared.model.MMicroConfig
+import jumpmicro.shared.util.configuration.ConfigurationUtil
 import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.neo4j.ogm.exception.ConnectionException
 
@@ -54,45 +55,31 @@ object GlobalModule {
         val packageName = this.getClass.getPackage.getName
         val thisPackage = packageName.substring(0, packageName.indexOf('.', packageName.indexOf('.')+1))
         val v = s"$thisPackage.${UUID.random}"
-        // @todo What if we cannot write to the file, what to do?
-        val write = new PrintWriter(new FileOutputStream(new File("jumpmicro.conf"),true))
-        write.println("")
-        write.println(s"jumpmicro.nodeid = $v")
-        write.flush(); write.close()
-
+        val jmFile = new File("jumpmicro.conf")
+        if (jmFile.canWrite) {
+          val write = new PrintWriter(new FileOutputStream(jmFile,true))
+          write.println("")
+          write.println(s"jumpmicro.nodeid = $v")
+          write.flush(); write.close()
+        } else {
+          logger.error("The jumpmicro.conf file is not writable and we are trying to write the jumpmicro.nodeid configuration value. Please make the file writable to allow for this program to startup correctly.")
+        }
         config = ConfigFactory.parseFile(f)
       }
       Success(config)
     } else Failure(null)
   }
 
+
   def loadConfigFromNeo4JBlocking(session: Session, nodeId: String): MMicroConfig = {
-    println("NODE ID " + nodeId)
+    val obj: Object = ConfigurationUtil.neo4JQueryOneResult(session, nodeId)
 
-    var result: MMicroConfig = null
-    try {
-      // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
-      import collection.JavaConverters._
-      val query = new java.lang.String("MATCH (n:MMicroConfig {nodeId:\"" + nodeId + "\"}) RETURN n")
-      val r: Result = session.query(query, new java.util.HashMap[String, Object]())
-      var found = false
-      val it = r.queryResults().iterator()
-      while (it.hasNext) {
-        val next = it.next()
-        logger.error(next.toString)
-        found = true
-      }
-      if (found) new MMicroConfig(nodeId) else {
-        result = new MMicroConfig(nodeId)
-        session.save(result)
-      }
+    val result = if (obj==null) {
+      val r = new MMicroConfig(nodeId)
+      session.save(r)
+      r
+    } else obj.asInstanceOf[MMicroConfig]
 
-    } catch {
-      case ex: ConnectionException => {
-        logger.error("The Neo4J Database connection could not be established. This MicroService will continue to function without database access, however any further database access will fail.")
-        result = new MMicroConfig(nodeId)
-      }
-    }
     result
   }
 
