@@ -5,7 +5,6 @@ import com.typesafe.config.Config
 import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
-import org.slf4j.LoggerFactory
 import scaldi.Injectable
 import jumpmicro.jmsangriagraphql.impl.configuration.{GlobalModule, MicroConfiguration}
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
@@ -13,9 +12,6 @@ import jumpmicro.jmsangriagraphql.impl.startup.{StartupAkkaActors, StartupCamelC
 import jumpmicro.shared.util.akkaosgi.{AkkaCamelContextProvider, MyOsgiActorSystemFactory}
 import jumpmicro.shared.util.neo4j.Neo4JSessionFactory
 import jumpmicro.shared.util.osgi.OsgiGlobal
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.util.Try
 
 //: -------------------------------------------------------------------------------------

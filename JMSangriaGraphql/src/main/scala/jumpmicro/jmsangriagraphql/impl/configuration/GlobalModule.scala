@@ -1,11 +1,8 @@
 package jumpmicro.jmsangriagraphql.impl.configuration
 
 import java.io.{File, FileOutputStream, PrintWriter}
-import java.util
-
 import com.typesafe.config.{Config, ConfigFactory}
 import org.log4s._
-import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.Session
 import jumpmicro.jmsangriagraphql.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
 import jumpmicro.shared.model.MMicroConfig
@@ -14,7 +11,6 @@ import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.neo4j.ogm.exception.ConnectionException
 
 import scala.util.{Failure, Success, Try}
-//import org.neo4j.driver.v1.{AuthTokens, Driver, GraphDatabase}
 import scaldi._
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global

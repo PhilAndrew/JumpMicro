@@ -1,9 +1,7 @@
 package jumpmicro.jmsangriagraphql.impl.startup
 
-import akka.camel.CamelExtension
 import com.typesafe.config.{Config, ConfigFactory}
 import jumpmicro.shared.util.boilerplate.StartupOsgiBoilerplate
-import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.log4s.getLogger
 import org.osgi.framework.BundleContext
 

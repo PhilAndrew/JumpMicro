@@ -1,14 +1,14 @@
 package jumpmicro.jmsangriagraphql.impl.sangria
 
-//: ----------------------------------------------------------------------------------
-//: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
-//: Released under the MIT License, refer to the project website for licence information.
-//: ----------------------------------------------------------------------------------
-
 import sangria.execution.deferred.{Fetcher, HasId}
 import sangria.schema._
 
 import scala.concurrent.Future
+
+//: ----------------------------------------------------------------------------------
+//: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
+//: Released under the MIT License, refer to the project website for licence information.
+//: ----------------------------------------------------------------------------------
 
 /**
   * Defines a GraphQL schema for the current project

@@ -1,7 +1,6 @@
 package jumpmicro.jmsangriagraphql.impl.service
 
 import org.log4s._
-import org.slf4j.LoggerFactory
 import jumpmicro.jmsangriagraphql.JMSangriaGraphqlService
 
 //: -------------------------------------------------------------------------------------

@@ -1,7 +1,5 @@
 package jumpmicro.jmsangriagraphql.impl.idris
 
-import javax.script.{ScriptEngine, ScriptEngineManager}
-
 import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
 import org.log4s.getLogger
 import org.osgi.framework.BundleContext

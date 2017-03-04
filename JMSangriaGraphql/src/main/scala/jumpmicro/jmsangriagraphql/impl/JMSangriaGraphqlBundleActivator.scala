@@ -1,26 +1,15 @@
 package jumpmicro.jmsangriagraphql.impl
 
-import java.util.concurrent.TimeUnit
-
-//import com.codahale.metrics.{ConsoleReporter, MetricRegistry}
-import scaldi.Injectable
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
-import org.log4s._
 import scaldi.Injectable
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import domino._
 import jumpmicro.jmsangriagraphql.JMSangriaGraphqlService
 import jumpmicro.jmsangriagraphql.impl.configuration.MicroConfiguration
 import jumpmicro.jmsangriagraphql.impl.idris.TestIdris
 import jumpmicro.jmsangriagraphql.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmsangriagraphql.impl.startup.StartupOsgi
-import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule, OsgiGlobal}
+import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule}
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
 import jumpmicro.shared.util.resourceshare._
-import org.osgi.framework.{BundleActivator, BundleContext}
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

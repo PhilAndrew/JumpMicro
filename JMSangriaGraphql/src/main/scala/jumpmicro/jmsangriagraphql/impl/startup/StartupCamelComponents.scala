@@ -5,8 +5,6 @@ import org.apache.camel.component.exec.ExecComponent
 import org.apache.camel.component.file.remote.FtpComponent
 import org.apache.camel.component.seda.SedaComponent
 import org.apache.camel.component.stream.StreamComponent
-//import org.apache.camel.component.scp.ScpComponent
-//import org.apache.camel.component.ssh.SshComponent
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 
 //: -------------------------------------------------------------------------------------

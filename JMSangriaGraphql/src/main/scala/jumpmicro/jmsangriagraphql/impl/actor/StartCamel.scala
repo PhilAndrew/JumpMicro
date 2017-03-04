@@ -1,14 +1,9 @@
 package jumpmicro.jmsangriagraphql.impl.actor
 
-import java.io.File
-import java.util.UUID
-
 import org.log4s._
-import org.apache.camel.processor.aggregate.AggregationStrategy
-import org.apache.camel.{CamelContext, Exchange, Processor}
+import org.apache.camel.{CamelContext}
 import org.apache.camel.scala.dsl.builder.ScalaRouteBuilder
 import scaldi.Injectable
-import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

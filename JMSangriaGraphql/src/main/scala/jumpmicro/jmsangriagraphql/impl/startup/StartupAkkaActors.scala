@@ -1,11 +1,9 @@
 package jumpmicro.jmsangriagraphql.impl.startup
 
-import akka.actor.{ActorRef, Props}
+import akka.actor.{Props}
 import jumpmicro.jmsangriagraphql.impl.actor.StartWebServerActor
 import jumpmicro.shared.util.boilerplate.StartupAkkaActorsBoilerplate
 import org.log4s.getLogger
-//remove if not needed
-import scala.concurrent.ExecutionContext.Implicits.global
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
