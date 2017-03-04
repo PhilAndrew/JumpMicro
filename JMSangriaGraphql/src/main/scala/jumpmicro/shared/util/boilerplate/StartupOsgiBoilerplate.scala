@@ -37,16 +37,21 @@ abstract class StartupOsgiBoilerplate extends Injectable {
   def loadNeo4JConfig() = {
     //Future {
     val session2 = Neo4JSessionFactory.getNeo4jSession()
+    if (session2!=null) {
       //val tx2 = session2.beginTransaction()
-    val nodeId = Try { inject[String](identified by "jumpmicro.nodeid") }
-    if (nodeId.isSuccess) {
-      val config = GlobalModule.loadConfigFromNeo4JBlocking(session2, nodeId.getOrElse(""))
-      //tx2.commit()
-      microConfiguration.setConfiguration(config)
-    } else {
-      logger.error("The node identifier for this MicroService has not been set, please add a jumpmicro.nodeid setting in the jumpmicro.conf file, then restart this MicroService.")
-      logger.error("Set the following:")
-      logger.error("jumpmicro.nodeid = JMScalaJS." + java.util.UUID.randomUUID.toString)
+      val nodeId = Try {
+        inject[String](identified by "jumpmicro.nodeid")
+      }
+      if (nodeId.isSuccess) {
+        val config = GlobalModule.loadConfigFromNeo4JBlocking(session2, nodeId.getOrElse(""))
+        //tx2.commit()
+        microConfiguration.setConfiguration(config)
+      } else {
+        logger.error("The node identifier for this MicroService has not been set, please add a jumpmicro.nodeid setting in the jumpmicro.conf file, then restart this MicroService.")
+        logger.error("Set the following:")
+        // @todo Fix JMScalaJS
+        logger.error("jumpmicro.nodeid = JMScalaJS." + java.util.UUID.randomUUID.toString)
+      }
     }
     //}
   }

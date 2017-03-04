@@ -4,7 +4,7 @@ import org.log4s._
 import org.neo4j.driver.v1.{AuthTokens, GraphDatabase}
 import org.neo4j.ogm.Neo4JOSGI
 import org.neo4j.ogm.annotation._
-import org.neo4j.ogm.config.{Configuration}
+import org.neo4j.ogm.config.Configuration
 import org.neo4j.ogm.drivers.bolt.driver.BoltDriver
 
 import scala.beans.BeanProperty
@@ -13,6 +13,7 @@ import org.neo4j.ogm.session.SessionFactory
 import org.neo4j.ogm.transaction.Transaction
 import scaldi.Injectable
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
+import org.neo4j.ogm.exception.ConnectionException
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -44,10 +45,21 @@ object Neo4JSessionFactory extends Injectable {
     configuration.set("driver", "org.neo4j.ogm.drivers.bolt.driver.BoltDriver")
     configuration.set("URI", "bolt://" + neo4Juser + ":" + neo4Jpassword + "@" + neo4Jip + ":7687") // bolt port is 7687, http port is 7474
     import collection.JavaConverters._
-    new SessionFactory(configuration, modelPackages: _*)
+    val result = try {
+      new SessionFactory(configuration, modelPackages: _*)
+    } catch {
+      case ex: ConnectionException => {
+        logger.error("Failed to connect to the Neo4J database, however this MicroService will still continue to run without a connection.")
+        null
+      }
+      case _ => null
+    }
+    result
   }
 
   def getNeo4jSession(): Session = {
-    sessionFactory.openSession()
+    if (sessionFactory!=null)
+      sessionFactory.openSession()
+    else null
   }
 }
