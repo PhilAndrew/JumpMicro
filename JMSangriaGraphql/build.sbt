@@ -420,39 +420,61 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
 
 compileIdris := {
-  println("Compile Idris")
+  def walkTree(file: File): Iterable[File] = {
+    val children = new Iterable[File] {
+      def iterator = if (file.isDirectory) file.listFiles.iterator else Iterator.empty
+    }
+    Seq(file) ++: children.flatMap(walkTree(_))
+  }
 
-  import sys.process._
-  IO.delete(new File("target" + \\ + "idrisclass"))
-  IO.createDirectory(new File("target" + \\ + "idrisclass"))
+  def latestModified(file: File): Long = {
+    walkTree(file).toSeq.map(_.lastModified()).max
+  }
 
-  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "c:" + \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
-  val dest = "." + \\ + "target" + \\ + "idrisclass"
-  val command: String = exec + " --interface --cg-opt --interface ." + \\ +
-    "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
-    "src" + \\ + "main" + \\ + "idris\" -o " + dest
+  val idrisTimestamp = new File("target" + \\ + "idrisbuild.timestamp")
 
-  var result: String = null
-  try {
-    if (new File(exec).exists())
-      result = command !!;
-  } catch {
-    case ex: java.io.IOException => {
-      result = null
+  val idrisSrc = "src" + \\ + "main" + \\ + "idris"
+
+  // What is the most recently changed file in that directory
+  val lastModifiedTimeStamp = idrisTimestamp.lastModified()
+  val lastModifiedInSrc = latestModified(new File(idrisSrc))
+  if (lastModifiedInSrc > lastModifiedTimeStamp) {
+    println("Compile Idris")
+    import sys.process._
+    IO.delete(new File("target" + \\ + "idrisclass"))
+    IO.createDirectory(new File("target" + \\ + "idrisclass"))
+
+    val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "c:" + \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
+    val dest = "." + \\ + "target" + \\ + "idrisclass"
+    val command: String = exec + " --interface --cg-opt --interface ." + \\ +
+      "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
+      "src" + \\ + "main" + \\ + "idris\" -o " + dest
+
+    var result: String = null
+    try {
+      if (new File(exec).exists())
+        result = command !!;
+    } catch {
+      case ex: java.io.IOException => {
+        result = null
+      }
+    }
+
+    if ((result == null) || (result.indexOf("FAILURE:") == 0)) {
+      println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
+      println("ERROR: Note that this MicroService will still continue to work without Idris")
+    } else {
+      // Copy classes from idrisclass to target/scala-2.11/classes
+      //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
+      //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
+      IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
+      IO.delete(new File("target" + \\ + "idrisclass"))
+      IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + projectName.toLowerCase))
     }
   }
 
-  if ((result == null) || (result.indexOf("FAILURE:") == 0)) {
-    println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
-    println("ERROR: Note that this MicroService will still continue to work without Idris")
-  } else {
-    // Copy classes from idrisclass to target/scala-2.11/classes
-    //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
-    //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
-    IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
-    IO.delete(new File("target" + \\ + "idrisclass"))
-    IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + projectName.toLowerCase))
-  }
+  idrisTimestamp.delete()
+  idrisTimestamp.createNewFile()
 }
 
 cleanFiles += file("target" + \\ + "idrisclass")
