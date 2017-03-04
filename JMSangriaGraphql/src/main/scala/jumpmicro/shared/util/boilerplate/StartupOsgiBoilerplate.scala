@@ -73,12 +73,9 @@ abstract class StartupOsgiBoilerplate extends Injectable {
     //system foreach (configure(bundleContext, _))
     val camel = CamelExtension(system.get)
     //val producerTemplate = camel.template
-    // Add routes and Actors
-    // @todo Camel routes must be added first before this starts
     if (! camelContext.isStarted) camelContext.start()
-
-    startupAkkaActors.addActors(config, system.get, camel, camelContext)
     startupCamelRoutes.addCamelRoutes(camelContext)
+    startupAkkaActors.addActors(config, system.get, camel, camelContext)
   }
 
 }
