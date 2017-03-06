@@ -2,6 +2,7 @@ import java.io.File
 import java.util.jar.JarFile
 
 import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
+import org.osgi.framework.Constants
 import osgifelix.{ManifestInstructions, OsgiDependency}
 
 import scala.annotation.tailrec
@@ -74,6 +75,25 @@ name := projectName
 // This OSGi bundle version
 bundleVersion := "1.0.0"
 
+lazy val bundleLicense = "https://opensource.org/licenses/MIT"
+lazy val bundleName = "JumpMicro Sangria Graph QL"
+lazy val bundleDescription = ""
+lazy val bundleDocURL = ""
+lazy val bundleCategory = "" // keywords,go,here
+lazy val bundleVendor = ""
+lazy val bundleContactAddress = ""
+lazy val bundleCopyright = ""
+
+additionalHeaders := Map("Bundle-License" -> bundleLicense,
+  "Bundle-Name" -> bundleName,
+  "Bundle-Description" -> bundleDescription,
+  "Bundle-DocURL" -> bundleDocURL,
+  "Bundle-Category" -> bundleCategory,
+  "Bundle-Vendor" -> bundleVendor,
+  "Bundle-ContactAddress" -> bundleContactAddress,
+  "Bundle-Copyright" -> bundleCopyright
+)
+
 scalaVersion := "2.11.8"
 
 resolvers ++= Seq(
@@ -132,9 +152,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       Seq(
         "biz.enef" %% "slogging" % "0.5.3",
         "biz.enef" %% "slogging-slf4j" % "0.5.3",
-        "com.github.fomkin" %% "korolev" % "0.2.1",
-        "com.github.fomkin" %% "korolev-server" % "0.2.1",
-        "com.github.fomkin" %% "korolev-server-blaze" % "0.2.1",
+        "com.github.fomkin" %% "korolev" % "0.2.2",
+        "com.github.fomkin" %% "korolev-server" % "0.2.2",
+        "com.github.fomkin" %% "korolev-server-blaze" % "0.2.2",
         "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
         "org.http4s" %% "blaze-http" % "0.12.4"),
     Seq(
@@ -558,14 +578,6 @@ importPackage := Seq(
 )
 
 lazy val DeployLauncher = config("deployLauncher")
-
-osgiRepositoryRules := Seq(
-  // Required to allow Neo4J OGM OSGi to "see" the model packages exposed by this OSGi bundle.
-  //rewrite("scala-logging", exports = "com.typesafe.scalalogging;uses:=\"scala,scala.collection,scala.reflect,scala.reflect.api,scala.reflect.macros.blackbox ,scala.runtime\";version=\"3.5.0\"")
-  //rewriteCustom("com.typesafe.scala-logging/scala-logging/3.5.0", ManifestInstructions(extraProperties = Map("Require-Capability" -> "")))
-  // @todo Add boot delegation here? https://github.com/doolse/sbt-osgi-felix/pull/2
-  //Some(Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc")
-)
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
