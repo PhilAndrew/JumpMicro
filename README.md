@@ -165,7 +165,7 @@ In summary:
  
 * Represent meaningful state. 
 * Change data infrequently.
-* Neo4J should not be the means by which communication takes place.
+* Neo4J should not be the means by which communication takes place, don't share data between MicroServices via the database.
 
 ## FAQ: Why not use OSGi Blueprint?
 
