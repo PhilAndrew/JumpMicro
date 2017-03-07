@@ -1,6 +1,7 @@
 package jumpmicro.jmresourceregistry.impl.startup
 
-import akka.actor.{Props}
+import akka.actor.Props
+import jumpmicro.jmresourceregistry.impl.actor.StartWebServerActor
 import jumpmicro.shared.util.boilerplate.StartupAkkaActorsBoilerplate
 import org.log4s.getLogger
 
@@ -16,6 +17,6 @@ class StartupAkkaActors extends StartupAkkaActorsBoilerplate {
   private[this] val logger = getLogger
 
   // Add your Akka Actors here and they will start when this OSGi component loads
-  def akkaActors = Seq() //Props[StartWebServerActor])
+  def akkaActors = Seq(Props[StartWebServerActor])
 
 }
