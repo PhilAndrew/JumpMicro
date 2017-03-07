@@ -363,6 +363,8 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 // General sbt settings
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
+//fork in run := true
+
 cancelable in Global := true
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
