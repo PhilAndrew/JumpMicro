@@ -102,6 +102,10 @@ resolvers ++= Seq(
   // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
   Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
 
+lazy val JUMPMICRO_DOT = "jumpmicro."
+
+lazy val exportPackages = Seq()
+
 // Versions of libraries in use
 
 val slf4jVersion = "1.7.22"     // slf4j logging
@@ -512,8 +516,6 @@ compile in Compile <<= (compile in Compile).dependsOn(compileIdris)
 
 // OSGi component properties
 
-lazy val JUMPMICRO_DOT = "jumpmicro."
-
 // The Bundle activator executes when the bundle is loaded or unloaded
 // When this OSGi bundle is started the start method is called on this, when stopped the stop method is called
 bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl." + projectName + "BundleActivator")
@@ -523,7 +525,7 @@ bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl
 exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
   // The models used by Neo4J OGM must be exposed as public packages to allow Neo4J OGM to read them
   JUMPMICRO_DOT + "shared.model",
-  JUMPMICRO_DOT + "shared.bean")
+  JUMPMICRO_DOT + "shared.bean") ++ exportPackages
 
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
