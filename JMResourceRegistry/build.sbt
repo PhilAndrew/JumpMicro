@@ -301,7 +301,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   OsgiDependency("Acylic",
     Seq("com.lihaoyi" %% "acyclic" % "0.1.7"),
     Seq(),
-    Seq("acyclic"))
+    Seq("acyclic")),
   // https://github.com/erikvanoosten/metrics-scala
   /*OsgiDependency("MetricsScalaDependency",
     Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
@@ -311,6 +311,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     )
   )*/
   // @feature end acylic_dependency
+
+  OsgiDependency("Nothing", Seq(), Seq(), Seq())
 )
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
