@@ -32,6 +32,7 @@ class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with In
     val config: MicroConfiguration = inject[MicroConfiguration]
     StartupOsgi.startup(config, bundleContext, camelContext)
     onStop {
+      camelContext.shutdown()
       system foreach (_.terminate())
     }
   }
