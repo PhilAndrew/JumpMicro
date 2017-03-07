@@ -19,11 +19,15 @@ object TestIdris {
 
     import collection.JavaConverters._
 
-    val methods = classloader.findClass("jumpmicro.jmsangriagraphql.impl.idris.JBar").getMethods.toSeq
+    try {
+      val methods = classloader.findClass("jumpmicro.jmsangriagraphql.impl.idris.JBar").getMethods.toSeq
 
-    for (m <- methods) {
-      if (m.getName=="pythag")
-        println(m.invoke(null, new java.lang.Integer(5)))
+      for (m <- methods) {
+        if (m.getName == "pythag")
+          println(m.invoke(null, new java.lang.Integer(5)))
+      }
+    } catch {
+      case ex: ClassNotFoundException => { logger.warn("Class not found for Idris testing") }
     }
 
     //println(JBar.pythag(5))
