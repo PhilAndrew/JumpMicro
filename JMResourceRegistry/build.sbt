@@ -76,7 +76,7 @@ name := projectName
 bundleVersion := "1.0.0"
 
 lazy val bundleLicense = "https://opensource.org/licenses/MIT"
-lazy val bundleName = "JumpMicro Sangria Graph QL"
+lazy val bundleName = "JumpMicro Resource Registry"
 lazy val bundleDescription = ""
 lazy val bundleDocURL = ""
 lazy val bundleCategory = "" // keywords,go,here
@@ -131,48 +131,23 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
+  // @feature start uuid_dependency
+  // https://github.com/melezov/scala-uuid
   OsgiDependency("UUID",
     Seq("io.jvm.uuid" %% "scala-uuid" % "0.2.2"),
     Seq(),
     Seq("io.jvm.uuid")),
+  // @feature end uuid_dependency
 
-  OsgiDependency("Sangria",
-    Seq("org.parboiled" %% "parboiled" % "2.1.3",
-      "org.sangria-graphql" % "sangria-marshalling-api_2.11" % "1.0.0",
-      "org.sangria-graphql" % "sangria-streaming-api_2.11" % "1.0.0"),
-    Seq(),
-    Seq("org.parboiled2", "sangria.streaming", "sangria.marshalling")),
-
-  OsgiDependency("Korolev",
-      Seq(
-        "biz.enef" %% "slogging" % "0.5.3",
-        "biz.enef" %% "slogging-slf4j" % "0.5.3",
-        "com.github.fomkin" %% "korolev" % "0.2.2",
-        "com.github.fomkin" %% "korolev-server" % "0.2.2",
-        "com.github.fomkin" %% "korolev-server-blaze" % "0.2.2",
-        "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
-        "org.http4s" %% "blaze-http" % "0.12.4"),
-    Seq(
-      s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
-    Seq("org.log4s", "korolev", "korolev.server", "korolev.blazeServer", "bridge", "slogging")),
-
+  // @feature start log4s_dependency
+  // https://github.com/Log4s/log4s
   OsgiDependency("Log4s",
     Seq("org.log4s" %% "log4s" % "1.3.4"),
     Seq(),
     Seq("org.log4s")),
+  // @feature end log4s_dependency
 
-  // ScalaTags
-  // http://www.lihaoyi.com/scalatags/
-  OsgiDependency(
-    "ScalaTagsDependency",
-    // sbt dependencys
-    Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
-    // bundle requirements
-    Seq(),
-    // package requirements
-    Seq("scalatags", "scalatags.text")
-  ),
-
+  // @feature start declarativeservices_dependency
   OsgiDependency("DeclarativeServicesDependency",
     Seq(// Required for Declarative Services
       // However for DS to work you need to install and run another bundle before this one
@@ -187,7 +162,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq()
   ),
+  // @feature end declarativeservices_dependency
 
+  // @feature start domino_dependency
   OsgiDependency("DominoOsgiDependency",
     Seq(  // Domino OSGi
       // https://www.helgoboss.org/projects/domino/user-guide
@@ -196,7 +173,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq("domino")
   ),
+  // @feature end domino_dependency
 
+  // @feature start camel_dependency
   OsgiDependency("CamelCoreDependency",
     Seq("org.osgi" % "org.osgi.compendium" % "5.0.0", // Required for camel-core-osgi
       "org.apache.camel" % "camel-core-osgi" % camelVersion,
@@ -208,7 +187,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     ),
     Seq()
   ),
+  // @feature end camel_dependency
 
+  // @feature start monix_dependency
   OsgiDependency("MonixCoreDependency",
     Seq(  // Monix https://monix.io/
       //"io.monix" %% "monix" % "2.2.1",
@@ -217,13 +198,17 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), // @todo Monix is untested to work
     Seq()
   ),
+  // @feature end monix_dependency
 
+  // @feature start akkacamel_dependency
   OsgiDependency("AkkaCamelDependency",
     Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
     Seq("com.typesafe.akka.camel"),
     Seq()
   ),
+  // @feature end akkacamel_dependency
 
+  // @feature start akka_dependency
   OsgiDependency("AkkaDependency",
     Seq(  // Akka
       "com.typesafe.akka" %% "akka-osgi" % akkaVersion,
@@ -236,7 +221,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq("com.typesafe.akka.osgi"),
     Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
   ),
+  // @feature end akka_dependency
 
+  // @feature start neo4j_dependency
   OsgiDependency("Neo4JDependency",
     Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.39"),
     Seq(),
@@ -249,14 +236,18 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.neo4j.ogm.service",
       "org.neo4j.ogm.annotation")
   ),
+  // @feature end neo4j_dependency
 
+  // @feature start scaldi_dependency
   OsgiDependency("ScaldiDependency",
     // Scala Dependency Injection
     // http://scaldi.org/
     Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq(), Seq("scaldi")
   ),
+  // @feature end scaldi_dependency
 
-  OsgiDependency("CamelDependency",
+  // @feature start camel_components_dependency
+  OsgiDependency("CamelComponentsDependency",
     Seq(// Camel components
       //"org.apache.camel" % "camel-ssh" % camelVersion,
       "org.apache.camel" % "camel-ftp" % camelVersion,
@@ -271,7 +262,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.apache.camel.camel-stream"),
     Seq()
   ),
+  // @feature end camel_components_dependency
 
+  // @feature start cats_dependency
   OsgiDependency("CatsDependency",
     // Cats https://github.com/typelevel/cats
     // Un-tested to work
@@ -279,7 +272,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq()
   ),
+  // @feature end cats_dependency
 
+  // @feature start shapeless_dependency
   OsgiDependency("ShapelessDependency",
     // Shapeless https://github.com/milessabin/shapeless
     // Un-tested to work
@@ -290,7 +285,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq()
   ),
+  // @feature end config_dependency
 
+  // @feature start config_dependency
   OsgiDependency("ConfigDependency",
     Seq(  // https://github.com/kxbmap/configs
       "com.github.kxbmap" %% "configs" % "0.4.4"
@@ -298,7 +295,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq()
   ),
+  // @feature end config_dependency
 
+  // @feature start acylic_dependency
   OsgiDependency("Acylic",
     Seq("com.lihaoyi" %% "acyclic" % "0.1.7"),
     Seq(),
@@ -311,6 +310,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "nl.grons.metrics.scala"
     )
   )*/
+  // @feature end acylic_dependency
 )
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)

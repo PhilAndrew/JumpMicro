@@ -15,7 +15,7 @@ import acyclic.skipped
 class StartCamel(context: CamelContext) extends ScalaRouteBuilder(context) with Injectable {
   private[this] val logger = getLogger
 
-  from("direct:start").to("direct:startWebServer")
+  //from("direct:start").to("direct:startWebServer")
 
   addRoutesToCamelContext(context)
 }
