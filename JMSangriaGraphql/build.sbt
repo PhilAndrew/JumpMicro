@@ -94,7 +94,10 @@ additionalHeaders := Map("Bundle-License" -> bundleLicense,
   "Bundle-Copyright" -> bundleCopyright
 )
 
-scalaVersion := "2.11.8"
+val scalaMajorVersion = "2.11"
+val scalaMinorVersion = "8"
+
+scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -116,11 +119,11 @@ val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
 lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
-                      "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
-                      "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
-                      "org.http4s/blaze-core_2.11",
-                      "org.http4s/blaze-http_2.11",
-                      "org.http4s/http4s-websocket_2.11")
+  "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
+  "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
+  "org.http4s/blaze-core_2.11",
+  "org.http4s/blaze-http_2.11",
+  "org.http4s/http4s-websocket_2.11")
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -150,14 +153,14 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
   // @feature start korolev_dependency
   OsgiDependency("Korolev",
-      Seq(
-        "biz.enef" %% "slogging" % "0.5.3",
-        "biz.enef" %% "slogging-slf4j" % "0.5.3",
-        "com.github.fomkin" %% "korolev" % "0.2.2",
-        "com.github.fomkin" %% "korolev-server" % "0.2.2",
-        "com.github.fomkin" %% "korolev-server-blaze" % "0.2.2",
-        "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
-        "org.http4s" %% "blaze-http" % "0.12.4"),
+    Seq(
+      "biz.enef" %% "slogging" % "0.5.3",
+      "biz.enef" %% "slogging-slf4j" % "0.5.3",
+      "com.github.fomkin" %% "korolev" % "0.2.2",
+      "com.github.fomkin" %% "korolev-server" % "0.2.2",
+      "com.github.fomkin" %% "korolev-server-blaze" % "0.2.2",
+      "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
+      "org.http4s" %% "blaze-http" % "0.12.4"),
     Seq(
       s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
     Seq("org.log4s", "korolev", "korolev.server", "korolev.blazeServer", "bridge", "slogging")),
@@ -731,7 +734,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   }
 
   def karafDepsMustBeJarsFilesPlusMain: Seq[String] = {
-    karafDepsMustBeJarFiles ++ Seq(projectName.toLowerCase + "/" + projectName.toLowerCase + "_2.11/0.1-SNAPSHOT")
+    karafDepsMustBeJarFiles ++ Seq(projectName.toLowerCase + "/" + projectName.toLowerCase + "_")
   }
 
   def getMustBeFileOf(module: Module): Option[Module] = {
@@ -783,12 +786,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
         })
         }
         {
-        // @todo Should it be file:/ or file:
-        for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
-          // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
-        }
-
+        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + scalaMajorVersion + "-" + "0.1-SNAPSHOT" + ".jar").getCanonicalPath }</bundle>
         }
       </feature>
     </features>
