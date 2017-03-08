@@ -786,7 +786,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
         })
         }
         {
-        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + scalaMajorVersion + "-" + "0.1-SNAPSHOT" + ".jar").getCanonicalPath }</bundle>
+        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + "0.1-SNAPSHOT" + ".jar").getCanonicalPath }</bundle>
         }
       </feature>
     </features>
