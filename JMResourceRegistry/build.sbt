@@ -18,11 +18,6 @@ import com.typesafe.sbt.osgi.OsgiKeys._
 import osgifelix.OsgiFelixPlugin.autoImport._
 import sbt.Keys._
 
-
-
-// ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
-// Its dependencies are un-related to OSGi.
-
 lazy val \\ = File.separator
 
 def subPackagesOf(path: String): Seq[String] = {
@@ -41,33 +36,34 @@ def subPackagesOf(path: String): Seq[String] = {
   } else Seq()
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
+// Its dependencies are un-related to OSGi.
+
 lazy val privatePackages: Seq[String] = subPackagesOf("sangria")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
-
-// @feature directory scalajs
-// @feature start scalajs
-/*
-lazy val scalaJsProject = (project in file("scalajs")).settings(
-  scalaVersion := "2.11.8",
-  libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.1",
-    "com.lihaoyi" %%% "scalatags" % "0.5.2",
-    "com.lihaoyi" %%% "scalarx" % "0.2.8",
-    "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
-    "com.lihaoyi" %%% "upickle" % "0.3.4",
-    "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
-  )
-).enablePlugins(ScalaJSPlugin)
-
-lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
-*/
-// @feature end scalajs
-
-osgiSettings
-
-defaultSingleProjectSettings
 
 val projectName = "JMResourceRegistry"
 name := projectName
@@ -94,7 +90,10 @@ additionalHeaders := Map("Bundle-License" -> bundleLicense,
   "Bundle-Copyright" -> bundleCopyright
 )
 
-scalaVersion := "2.11.8"
+val scalaMajorVersion = "2.11"
+val scalaMinorVersion = "8"
+
+scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -116,11 +115,11 @@ val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
 lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
-                      "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
-                      "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
-                      "org.http4s/blaze-core_2.11",
-                      "org.http4s/blaze-http_2.11",
-                      "org.http4s/http4s-websocket_2.11")
+  "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
+  "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
+  "org.http4s/blaze-core_2.11",
+  "org.http4s/blaze-http_2.11",
+  "org.http4s/http4s-websocket_2.11")
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -355,9 +354,14 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
 
 
+
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // General sbt settings
+
+osgiSettings
+
+defaultSingleProjectSettings
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
 //fork in run := true
@@ -697,7 +701,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   }
 
   def karafDepsMustBeJarsFilesPlusMain: Seq[String] = {
-    karafDepsMustBeJarFiles ++ Seq(projectName.toLowerCase + "/" + projectName.toLowerCase + "_2.11/0.1-SNAPSHOT")
+    karafDepsMustBeJarFiles ++ Seq(projectName.toLowerCase + "/" + projectName.toLowerCase + "_")
   }
 
   def getMustBeFileOf(module: Module): Option[Module] = {
@@ -749,12 +753,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
         })
         }
         {
-        // @todo Should it be file:/ or file:
-        for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
-          // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
-        }
-
+        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + "0.1-SNAPSHOT" + ".jar").getCanonicalPath }</bundle>
         }
       </feature>
     </features>

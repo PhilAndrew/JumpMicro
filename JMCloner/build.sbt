@@ -17,11 +17,6 @@ import com.typesafe.sbt.osgi.OsgiKeys._
 import osgifelix.OsgiFelixPlugin.autoImport._
 import sbt.Keys._
 
-
-
-// ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
-// Its dependencies are un-related to OSGi.
-
 lazy val \\ = File.separator
 
 def subPackagesOf(path: String): Seq[String] = {
@@ -40,31 +35,37 @@ def subPackagesOf(path: String): Seq[String] = {
   } else Seq()
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
+// Its dependencies are un-related to OSGi.
+
 lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
-
-// @feature directory scalajs
-// @feature start scalajs
-lazy val scalaJsProject = (project in file("scalajs")).settings(
-  scalaVersion := "2.11.8",
-  libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.1",
-    "com.lihaoyi" %%% "scalatags" % "0.5.2",
-    "com.lihaoyi" %%% "scalarx" % "0.2.8",
-    "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
-    "com.lihaoyi" %%% "upickle" % "0.3.4",
-    "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
-  )
-).enablePlugins(ScalaJSPlugin)
-
-lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
-// @feature end scalajs
-
-osgiSettings
-
-defaultSingleProjectSettings
 
 val projectName = "JMCloner"
 name := projectName
@@ -312,6 +313,10 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 // ***********************************************************************************************************************************************
 // General sbt settings
 
+osgiSettings
+
+defaultSingleProjectSettings
+
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
 // "-P:acyclic:force"
@@ -352,32 +357,6 @@ autoCompilerPlugins := true
 
 addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
 // END - Acyclic, prevents circular dependencies.
-
-// @feature start scalajs
-
-// ***********************************************************************************************************************************************
-// ***********************************************************************************************************************************************
-// ScalaJS compile Scala to Javascript
-
-lazy val packageScalaJsResource = taskKey[Unit]("Package ScalaJS")
-
-packageScalaJsResource := {
-  println("Package ScalaJs")
-
-  val scalaJsPath = "scalajs" + \\ + "target" + \\ + "scala-2.11" + \\
-  val destPath = "src" + \\ + "main" + \\ + "resources" + \\ + "js" + \\
-  val dest = new File(destPath)
-  dest.delete()
-  dest.mkdir()
-  Seq("scalajsproject-fastopt.js", "scalajsproject-jsdeps.js").foreach(f => IO.copyFile(new File(scalaJsPath + f), new File(destPath + f), true))
-}
-
-compile in Compile <<= (compile in Compile).dependsOn(packageScalaJsResource)
-
-// http://stackoverflow.com/questions/30513492/sbt-in-a-multi-project-build-how-to-invoke-project-bs-task-from-project-a
-compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in scalaJsProject)
-
-// @feature end scalajs
 
 // @feature idris directory src/main/idris
 

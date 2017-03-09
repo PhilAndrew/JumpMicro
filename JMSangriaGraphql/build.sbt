@@ -18,8 +18,6 @@ import com.typesafe.sbt.osgi.OsgiKeys._
 import osgifelix.OsgiFelixPlugin.autoImport._
 import sbt.Keys._
 
-
-
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
@@ -40,6 +38,26 @@ def subPackagesOf(path: String): Seq[String] = {
     Seq(path) ++ result
   } else Seq()
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 lazy val privatePackages: Seq[String] = subPackagesOf("sangria")
 
