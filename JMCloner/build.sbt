@@ -35,7 +35,7 @@ def subPackagesOf(path: String): Seq[String] = {
   } else Seq()
 }
 
-
+lazy val JUMPMICRO_DOT = "jumpmicro."
 
 
 
@@ -73,13 +73,18 @@ name := projectName
 // This OSGi bundle version
 bundleVersion := "1.0.0"
 
-scalaVersion := "2.11.8"
+val scalaMajorVersion = "2.11"
+val scalaMinorVersion = "8"
+
+scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots"),
   // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
   Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
+
+lazy val exportPackages = Seq()
 
 // Versions of libraries in use
 
@@ -309,6 +314,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
 
 
+
+
+
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // General sbt settings
@@ -318,6 +326,11 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 osgiSettings
 
 defaultSingleProjectSettings
+
+// http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
+//fork in run := true
+
+cancelable in Global := true
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
@@ -360,6 +373,32 @@ autoCompilerPlugins := true
 addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
 // END - Acyclic, prevents circular dependencies.
 
+// @feature start scalajs
+
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
+// ScalaJS compile Scala to Javascript
+/*
+lazy val packageScalaJsResource = taskKey[Unit]("Package ScalaJS")
+
+packageScalaJsResource := {
+  println("Package ScalaJs")
+
+  val scalaJsPath = "scalajs" + \\ + "target" + \\ + "scala-2.11" + \\
+  val destPath = "src" + \\ + "main" + \\ + "resources" + \\ + "js" + \\
+  val dest = new File(destPath)
+  dest.delete()
+  dest.mkdir()
+  Seq("scalajsproject-fastopt.js", "scalajsproject-jsdeps.js").foreach(f => IO.copyFile(new File(scalaJsPath + f), new File(destPath + f), true))
+}
+
+compile in Compile <<= (compile in Compile).dependsOn(packageScalaJsResource)
+
+// http://stackoverflow.com/questions/30513492/sbt-in-a-multi-project-build-how-to-invoke-project-bs-task-from-project-a
+compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in scalaJsProject)
+*/
+// @feature end scalajs
+
 // @feature idris directory src/main/idris
 
 // @feature start idris
@@ -371,39 +410,61 @@ addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
 
 compileIdris := {
-  println("Compile Idris")
+  def walkTree(file: File): Iterable[File] = {
+    val children = new Iterable[File] {
+      def iterator = if (file.isDirectory) file.listFiles.iterator else Iterator.empty
+    }
+    Seq(file) ++: children.flatMap(walkTree(_))
+  }
 
-  import sys.process._
-  IO.delete(new File("target" + \\ + "idrisclass"))
-  IO.createDirectory(new File("target" + \\ + "idrisclass"))
+  def latestModified(file: File): Long = {
+    walkTree(file).toSeq.map(_.lastModified()).max
+  }
 
-  val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "c:" + \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
-  val dest = "." + \\ + "target" + \\ + "idrisclass"
-  val command: String = exec + " --interface --cg-opt --interface ." + \\ +
-    "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
-    "src" + \\ + "main" + \\ + "idris\" -o " + dest
+  val idrisTimestamp = new File("target" + \\ + "idrisbuild.timestamp")
 
-  var result: String = null
-  try {
-    if (new File(exec).exists())
-      result = command !!;
-  } catch {
-    case ex: java.io.IOException => {
-      result = null
+  val idrisSrc = "src" + \\ + "main" + \\ + "idris"
+
+  // What is the most recently changed file in that directory
+  val lastModifiedTimeStamp = idrisTimestamp.lastModified()
+  val lastModifiedInSrc = latestModified(new File(idrisSrc))
+  if (lastModifiedInSrc > lastModifiedTimeStamp) {
+    println("Compile Idris")
+    import sys.process._
+    IO.delete(new File("target" + \\ + "idrisclass"))
+    IO.createDirectory(new File("target" + \\ + "idrisclass"))
+
+    val exec = scala.util.Properties.envOrElse("JUMPMICRO_IDRISJVM_COMPILER_PATH", "c:" + \\ + "home" + \\ + "projects" + \\ + "git" + \\ + "idris-jvm" + \\ + "bin" + \\ + "idrisjvm.bat")
+    val dest = "." + \\ + "target" + \\ + "idrisclass"
+    val command: String = exec + " --interface --cg-opt --interface ." + \\ +
+      "src" + \\ + "main" + \\ + "idris" + \\ + "Main.idr -i \"." + \\ +
+      "src" + \\ + "main" + \\ + "idris\" -o " + dest
+
+    var result: String = null
+    try {
+      if (new File(exec).exists())
+        result = command !!;
+    } catch {
+      case ex: java.io.IOException => {
+        result = null
+      }
+    }
+
+    if ((result == null) || (result.indexOf("FAILURE:") == 0)) {
+      println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
+      println("ERROR: Note that this MicroService will still continue to work without Idris")
+    } else {
+      // Copy classes from idrisclass to target/scala-2.11/classes
+      //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
+      //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
+      IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
+      IO.delete(new File("target" + \\ + "idrisclass"))
+      IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + projectName.toLowerCase))
     }
   }
 
-  if ((result == null) || (result.indexOf("FAILURE:") == 0)) {
-    println("ERROR: Idris to Java (Idris JVM) compiler requires a server running, check at https://github.com/mmhelloworld/idris-jvm to find out how to install Idris JVM")
-    println("ERROR: Note that this MicroService will still continue to work without Idris")
-  } else {
-    // Copy classes from idrisclass to target/scala-2.11/classes
-    //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
-    //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
-    IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
-    IO.delete(new File("target" + \\ + "idrisclass"))
-    IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + projectName.toLowerCase))
-  }
+  idrisTimestamp.delete()
+  idrisTimestamp.createNewFile()
 }
 
 cleanFiles += file("target" + \\ + "idrisclass")
@@ -416,8 +477,6 @@ compile in Compile <<= (compile in Compile).dependsOn(compileIdris)
 
 // OSGi component properties
 
-lazy val JUMPMICRO_DOT = "jumpmicro."
-
 // The Bundle activator executes when the bundle is loaded or unloaded
 // When this OSGi bundle is started the start method is called on this, when stopped the stop method is called
 bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl." + projectName + "BundleActivator")
@@ -427,7 +486,7 @@ bundleActivator := Some(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl
 exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
   // The models used by Neo4J OGM must be exposed as public packages to allow Neo4J OGM to read them
   JUMPMICRO_DOT + "shared.model",
-  JUMPMICRO_DOT + "shared.bean")
+  JUMPMICRO_DOT + "shared.bean") ++ exportPackages
 
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
@@ -487,14 +546,6 @@ importPackage := Seq(
 )
 
 lazy val DeployLauncher = config("deployLauncher")
-
-osgiRepositoryRules := Seq(
-  // Required to allow Neo4J OGM OSGi to "see" the model packages exposed by this OSGi bundle.
-  //rewrite("scala-logging", exports = "com.typesafe.scalalogging;uses:=\"scala,scala.collection,scala.reflect,scala.reflect.api,scala.reflect.macros.blackbox ,scala.runtime\";version=\"3.5.0\"")
-  //rewriteCustom("com.typesafe.scala-logging/scala-logging/3.5.0", ManifestInstructions(extraProperties = Map("Require-Capability" -> "")))
-  // @todo Add boot delegation here? https://github.com/doolse/sbt-osgi-felix/pull/2
-  //Some(Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc")
-)
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
@@ -614,7 +665,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   }
 
   def karafDepsMustBeJarsFilesPlusMain: Seq[String] = {
-    karafDepsMustBeJarFiles ++ Seq(projectName.toLowerCase + "/" + projectName.toLowerCase + "_2.11/0.1-SNAPSHOT")
+    karafDepsMustBeJarFiles ++ Seq(projectName.toLowerCase + "/" + projectName.toLowerCase + "_")
   }
 
   def getMustBeFileOf(module: Module): Option[Module] = {
@@ -666,12 +717,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
         })
         }
         {
-        // @todo Should it be file:/ or file:
-        for (m <- mustBeFiles; if m.jarFile.isEmpty) yield {
-          // jmscalajs_2.11-0.1-SNAPSHOT.jar
-            <bundle>{ "file:/" + new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar").getCanonicalPath }</bundle>
-        }
-
+        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + "0.1-SNAPSHOT" + ".jar").getCanonicalPath }</bundle>
         }
       </feature>
     </features>

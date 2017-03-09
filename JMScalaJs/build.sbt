@@ -35,7 +35,7 @@ def subPackagesOf(path: String): Seq[String] = {
   } else Seq()
 }
 
-
+lazy val JUMPMICRO_DOT = "jumpmicro."
 
 
 
@@ -105,8 +105,6 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
   // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
   Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
-
-lazy val JUMPMICRO_DOT = "jumpmicro."
 
 lazy val exportPackages = Seq()
 
