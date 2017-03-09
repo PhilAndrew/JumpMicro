@@ -93,7 +93,9 @@ val projectName = "JMScalaJs"
 name := projectName
 
 // This OSGi bundle version
-bundleVersion := "1.0.0"
+//bundleVersion := "1.0.0"
+
+version := "1.0.0"
 
 val scalaMajorVersion = "2.11"
 val scalaMinorVersion = "8"

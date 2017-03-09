@@ -69,7 +69,9 @@ val projectName = "JMResourceRegistry"
 name := projectName
 
 // This OSGi bundle version
-bundleVersion := "1.0.0"
+//bundleVersion := "1.0.0"
+
+version := "1.0.0"
 
 lazy val bundleLicense = "https://opensource.org/licenses/MIT"
 lazy val bundleName = "JumpMicro Resource Registry"
