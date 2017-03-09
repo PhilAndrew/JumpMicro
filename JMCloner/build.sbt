@@ -73,7 +73,9 @@ name := projectName
 // This OSGi bundle version
 //bundleVersion := "1.0.0"
 
-version := "1.0.0"
+lazy val thisVersion = "1.0.0"
+
+version := thisVersion
 
 val scalaMajorVersion = "2.11"
 val scalaMinorVersion = "8"
@@ -719,7 +721,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
         })
         }
         {
-        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + "0.1-SNAPSHOT" + ".jar").getCanonicalPath }</bundle>
+        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + thisVersion + ".jar").getCanonicalPath }</bundle>
         }
       </feature>
     </features>
