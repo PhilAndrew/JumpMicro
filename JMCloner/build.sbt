@@ -269,7 +269,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   )*/
 )
 
-lazy val dependencys = OsgiDependencies.map(_.sbtModules)
+
 
 
 
@@ -312,6 +312,8 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // General sbt settings
+
+lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
 osgiSettings
 
