@@ -66,7 +66,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
-lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev") ++ subPackagesOf("org.http4s")
+lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
