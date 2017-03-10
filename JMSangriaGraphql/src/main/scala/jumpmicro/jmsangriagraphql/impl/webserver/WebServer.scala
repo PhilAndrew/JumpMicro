@@ -13,7 +13,7 @@ import scala.concurrent.Future
 object WebServer extends KorolevBlazeServer {
   private[this] val logger = getLogger
 
-  def start(): Unit = {
+  def startWebServer(): Unit = {
     // activate SLF4J backend
     //LoggerConfig.factory = SLF4JLoggerFactory()
     runServer(service, BlazeServerConfig.default)

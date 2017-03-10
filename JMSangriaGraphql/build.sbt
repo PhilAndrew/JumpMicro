@@ -64,7 +64,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 
 
-lazy val privatePackages: Seq[String] = subPackagesOf("sangria")
+lazy val privatePackages: Seq[String] = subPackagesOf("sangria") ++ subPackagesOf("bridge") ++ subPackagesOf("korolev")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
@@ -152,18 +152,16 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq("org.parboiled2", "sangria.streaming", "sangria.marshalling")),
 
-  OsgiDependency("Korolev",
-    Seq(
-      "biz.enef" %% "slogging" % "0.5.3",
-      "biz.enef" %% "slogging-slf4j" % "0.5.3",
-      "com.github.fomkin" %% "korolev" % "0.2.2",
-      "com.github.fomkin" %% "korolev-server" % "0.2.2",
-      "com.github.fomkin" %% "korolev-server-blaze" % "0.2.2",
-      "org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
-      "org.http4s" %% "blaze-http" % "0.12.4"),
-    Seq(
-      s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
-    Seq("org.log4s", "korolev", "korolev.server", "korolev.blazeServer", "bridge", "slogging")),
+  OsgiDependency("Korolov",
+    Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
+      "biz.enef" %% "slogging" % "0.5.2",
+      "biz.enef" %% "slogging-slf4j" % "0.5.2",
+      "org.http4s" % "blaze-core_2.11" % "0.12.4",
+      "org.http4s" % "blaze-http_2.11" % "0.12.4"),
+    Seq(),
+    Seq("org.log4s", "org.http4s.blaze.http", "org.http4s.blaze.http.http20", "org.http4s.blaze.http.util", "org.http4s.blaze.http.websocket",
+      "org.http4s.blaze.channel", "org.http4s.blaze.channel.nio2",
+      "slogging")),
 
   OsgiDependency("UUID",
     Seq("io.jvm.uuid" %% "scala-uuid" % "0.2.2"),

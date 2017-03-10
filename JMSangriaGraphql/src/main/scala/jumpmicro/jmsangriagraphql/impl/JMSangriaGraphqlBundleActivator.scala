@@ -19,8 +19,10 @@ import jumpmicro.shared.util.resourceshare._
 class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with Injectable {
   whenBundleActive {
     addCapsule(new OsgiCapsule())
+
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
     }
+
     }
     TestIdris.test(bundleContext)
     // @todo Can I use scalaDi to better store this bundleContext as a global
