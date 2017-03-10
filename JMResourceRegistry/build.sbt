@@ -124,6 +124,7 @@ val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
   "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
   "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
+  "io.jvm.uuid/scala-uuid_2.11",
   "org.http4s/blaze-core_2.11",
   "org.http4s/blaze-http_2.11",
   "org.http4s/http4s-websocket_2.11")
