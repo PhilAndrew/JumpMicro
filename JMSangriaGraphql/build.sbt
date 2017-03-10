@@ -1,3 +1,4 @@
+// @feature start commonheader
 import java.io.File
 import java.util.jar.JarFile
 
@@ -44,6 +45,7 @@ def subPackagesOf(path: String): Seq[String] = {
 }
 
 lazy val JUMPMICRO_DOT = "jumpmicro."
+// @feature end commonheader
 
 
 
@@ -127,8 +129,8 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
   "org.http4s/blaze-http_2.11",
   "org.http4s/http4s-websocket_2.11",
   "io.jvm.uuid/scala-uuid_2.11",
-"org.sangria-graphql/sangria-streaming-api_2.11",
-"org.sangria-graphql/sangria-marshalling-api_2.11")
+  "org.sangria-graphql/sangria-streaming-api_2.11",
+  "org.sangria-graphql/sangria-marshalling-api_2.11")
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -358,7 +360,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
 
 
-
+// @feature start commonfooter
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // General sbt settings
@@ -782,3 +784,4 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   val outputString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + p.format(features)
   IO.write(new File(karDirPath + \\ + "features.xml"), outputString)
 }
+// @feature end commonfooter

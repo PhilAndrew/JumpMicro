@@ -1,3 +1,4 @@
+// @feature start commonheader
 import java.io.File
 import java.util.jar.JarFile
 
@@ -41,7 +42,7 @@ def subPackagesOf(path: String): Seq[String] = {
 }
 
 lazy val JUMPMICRO_DOT = "jumpmicro."
-
+// @feature end commonheader
 
 
 
@@ -331,7 +332,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
 
 
-
+// @feature start commonfooter
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // General sbt settings
@@ -755,3 +756,4 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   val outputString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + p.format(features)
   IO.write(new File(karDirPath + \\ + "features.xml"), outputString)
 }
+// @feature end commonfooter
