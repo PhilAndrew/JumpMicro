@@ -1,4 +1,7 @@
 
+// Coursier https://github.com/alexarchambault/coursier
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
+
 // @todo Should not need to depend on my branch of this, can I change this back to the origional?
 
 //lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin).dependsOn(sbtKaraf)
@@ -33,5 +36,3 @@ addSbtPlugin("com.typesafe.sbt" %% "sbt-native-packager" % "1.1.0")
 // https://github.com/jrudolph/sbt-dependency-graph/
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.8.2")
 
-// Coursier https://github.com/alexarchambault/coursier
-addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
