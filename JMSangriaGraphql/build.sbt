@@ -745,7 +745,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   val features =
     <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name={projectName}>
       <repository>mvn:org.apache.camel.karaf/apache-camel/2.18.2/xml/features</repository>
-      <feature description={projectName} version="0.1.0" name={projectName} install="auto">
+      <feature description={projectName} version={thisVersion} name={projectName} install="auto">
         <feature prerequisite="true" dependency="false">wrap</feature>
         { featuresToAdd.map(f => {
         <feature>{f}</feature>
