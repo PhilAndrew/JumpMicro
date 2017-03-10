@@ -3,7 +3,7 @@ import java.io.File
 import java.util.jar.JarFile
 
 import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
-import osgifelix.OsgiDependency
+import osgifelix.{ManifestInstructions, OsgiDependency}
 
 import scala.annotation.tailrec
 import scala.collection.immutable.HashSet
@@ -41,7 +41,7 @@ def subPackagesOf(path: String): Seq[String] = {
 }
 
 lazy val JUMPMICRO_DOT = "jumpmicro."
-// @feature end commonheader
+// @feature end commonfooter
 
 
 
@@ -648,7 +648,8 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   val ignoredModules = HashSet(
     "org.osgi/org.osgi.core",
     "org.osgi/org.osgi.compendium",
-    "default/" + projectName.toLowerCase() + "_2.11"
+    "default/" + projectName.toLowerCase() + "_2.11",
+    projectName.toLowerCase() + "/" + projectName.toLowerCase() + "_2.11"
   )
 
   // Some modules do not work in Karaf

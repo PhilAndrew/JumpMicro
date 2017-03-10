@@ -662,7 +662,8 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   val ignoredModules = HashSet(
     "org.osgi/org.osgi.core",
     "org.osgi/org.osgi.compendium",
-    "default/" + projectName.toLowerCase() + "_2.11"
+    "default/" + projectName.toLowerCase() + "_2.11",
+    projectName.toLowerCase() + "/" + projectName.toLowerCase() + "_2.11"
   )
 
   // Some modules do not work in Karaf
