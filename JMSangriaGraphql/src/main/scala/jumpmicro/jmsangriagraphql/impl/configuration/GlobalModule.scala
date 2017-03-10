@@ -47,15 +47,16 @@ object GlobalModule {
     val f = new File(configPath)
     if (f.exists()) {
       config = ConfigFactory.parseFile(f)
-      if (!config.hasPath("jumpmicro.nodeid")) {
-        val packageName = this.getClass.getPackage.getName
-        val thisPackage = packageName.substring(0, packageName.indexOf('.', packageName.indexOf('.')+1))
+      val packageName = this.getClass.getPackage.getName
+      val thisPackage = packageName.substring(0, packageName.indexOf('.', packageName.indexOf('.')+1))
+      val nodeIdKey = "jumpmicro.nodeid"
+      if (!config.hasPath(nodeIdKey)) {
         val v = s"$thisPackage.${UUID.random}"
         val jmFile = new File("jumpmicro.conf")
         if (jmFile.canWrite) {
           val write = new PrintWriter(new FileOutputStream(jmFile,true))
           write.println("")
-          write.println(s"jumpmicro.nodeid = $v")
+          write.println(s"$nodeIdKey = $v")
           write.flush(); write.close()
         } else {
           logger.error("The jumpmicro.conf file is not writable and we are trying to write the jumpmicro.nodeid configuration value. Please make the file writable to allow for this program to startup correctly.")
