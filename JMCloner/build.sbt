@@ -20,19 +20,23 @@ import sbt.Keys._
 lazy val \\ = File.separator
 
 def subPackagesOf(path: String): Seq[String] = {
-  def recursiveListFiles(f: File): Array[File] = {
-    val these = f.listFiles
-    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
-  }
-  val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
-  if (file.exists()) {
-    val allFiles = recursiveListFiles(file)
-    val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
-    val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
-      f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
+  def subPackagesOfImpl(prefix: String, path: String): Seq[String] = {
+    def recursiveListFiles(f: File): Array[File] = {
+      val these = f.listFiles
+      these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
     }
-    Seq(path) ++ result
-  } else Seq()
+    val file = new File(prefix + \\ + path.replace('.','/'))
+    if (file.exists()) {
+      val allFiles = recursiveListFiles(file)
+      val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
+      val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
+        f.getPath.replace(prefix + \\, "").replace("\\", ".")
+      }
+      Seq(path) ++ result
+    } else Seq()
+  }
+  val prefixs = Seq("." + \\ + "src" + \\ + "main" + \\ + "scala", "." + \\ + "src" + \\ + "main" + \\ + "java")
+  prefixs.flatMap(subPackagesOfImpl(_, path))
 }
 
 lazy val JUMPMICRO_DOT = "jumpmicro."
@@ -62,7 +66,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
-lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
+lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev") ++ subPackagesOf("org.http4s")
 
 lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
   "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
@@ -115,11 +119,16 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
-  OsgiDependency("Korolev",
-      Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
-      "org.http4s" %% "blaze-http" % "0.12.4"),
-    Seq(s"$projectName.http4s-websocket_2.11", s"$projectName.blaze-core_2.11", s"$projectName.blaze-http_2.11"),
-    Seq("org.log4s")),
+  OsgiDependency("Korolov",
+  Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
+    "biz.enef" %% "slogging" % "0.5.2",
+    "biz.enef" %% "slogging-slf4j" % "0.5.2",
+    "org.http4s" % "blaze-core_2.11" % "0.12.4",
+    "org.http4s" % "blaze-http_2.11" % "0.12.4"),
+  Seq(),
+  Seq("org.log4s", "org.http4s.blaze.http", "org.http4s.blaze.http.http20", "org.http4s.blaze.http.util", "org.http4s.blaze.http.websocket",
+    "org.http4s.blaze.channel", "org.http4s.blaze.channel.nio2",
+  "slogging")),
 
   OsgiDependency("Log4s",
     Seq("org.log4s" %% "log4s" % "1.3.4"),
