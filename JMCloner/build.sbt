@@ -104,11 +104,11 @@ val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
 lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
-                      "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
-                      "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
-                      "org.http4s/blaze-core_2.11",
-                      "org.http4s/blaze-http_2.11",
-                      "org.http4s/http4s-websocket_2.11")
+  "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
+  "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
+  "org.http4s/blaze-core_2.11",
+  "org.http4s/blaze-http_2.11",
+  "org.http4s/http4s-websocket_2.11")
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -120,15 +120,15 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("Korolov",
-  Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
-    "biz.enef" %% "slogging" % "0.5.2",
-    "biz.enef" %% "slogging-slf4j" % "0.5.2",
-    "org.http4s" % "blaze-core_2.11" % "0.12.4",
-    "org.http4s" % "blaze-http_2.11" % "0.12.4"),
-  Seq(),
-  Seq("org.log4s", "org.http4s.blaze.http", "org.http4s.blaze.http.http20", "org.http4s.blaze.http.util", "org.http4s.blaze.http.websocket",
-    "org.http4s.blaze.channel", "org.http4s.blaze.channel.nio2",
-  "slogging")),
+    Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
+      "biz.enef" %% "slogging" % "0.5.2",
+      "biz.enef" %% "slogging-slf4j" % "0.5.2",
+      "org.http4s" % "blaze-core_2.11" % "0.12.4",
+      "org.http4s" % "blaze-http_2.11" % "0.12.4"),
+    Seq(),
+    Seq("org.log4s", "org.http4s.blaze.http", "org.http4s.blaze.http.http20", "org.http4s.blaze.http.util", "org.http4s.blaze.http.websocket",
+      "org.http4s.blaze.channel", "org.http4s.blaze.channel.nio2",
+      "slogging")),
 
   OsgiDependency("Log4s",
     Seq("org.log4s" %% "log4s" % "1.3.4"),

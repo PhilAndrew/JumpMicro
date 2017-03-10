@@ -21,19 +21,23 @@ import sbt.Keys._
 lazy val \\ = File.separator
 
 def subPackagesOf(path: String): Seq[String] = {
-  def recursiveListFiles(f: File): Array[File] = {
-    val these = f.listFiles
-    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
-  }
-  val file = new File("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + path.replace('.','/'))
-  if (file.exists()) {
-    val allFiles = recursiveListFiles(file)
-    val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
-    val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
-      f.getPath.replace("." + \\ + "src" + \\ + "main" + \\ + "scala" + \\, "").replace("\\", ".")
+  def subPackagesOfImpl(prefix: String, path: String): Seq[String] = {
+    def recursiveListFiles(f: File): Array[File] = {
+      val these = f.listFiles
+      these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
     }
-    Seq(path) ++ result
-  } else Seq()
+    val file = new File(prefix + \\ + path.replace('.','/'))
+    if (file.exists()) {
+      val allFiles = recursiveListFiles(file)
+      val allNonEmptyDirectories = (for (f <- allFiles; if f.getParentFile.isDirectory) yield f.getParentFile).distinct
+      val result: Seq[String] = for (f <- allNonEmptyDirectories; if f.isDirectory) yield {
+        f.getPath.replace(prefix + \\, "").replace("\\", ".")
+      }
+      Seq(path) ++ result
+    } else Seq()
+  }
+  val prefixs = Seq("." + \\ + "src" + \\ + "main" + \\ + "scala", "." + \\ + "src" + \\ + "main" + \\ + "java")
+  prefixs.flatMap(subPackagesOfImpl(_, path))
 }
 
 lazy val JUMPMICRO_DOT = "jumpmicro."
