@@ -423,7 +423,6 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Compile Idris to Java classes
-
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
 
 compileIdris := {
@@ -701,8 +700,16 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
 
   def getJarFilesInBundles(mustBeFiles: Seq[Module]): Seq[File] = {
     for (f <- mustBeFiles;
-         jarFile <- f.jarFile) yield
-      new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
+         jarFile <- f.jarFile) yield {
+      val result = new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
+      if (result.exists()) result else {
+        val result2 = new File("." + \\ + "target" + \\ + "bundles" + \\ + f.id.name + ".jar")
+        if (result2.exists()==false) {
+          println("Error, the jar file is not found. " + result2)
+        }
+        result2
+      }
+    }
   }
 
   val modulesWithEvictedOnesRemoved = allModules.filter(! _.isEvicted)
@@ -748,7 +755,11 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   IO.createDirectory(karafDir)
   IO.createDirectory(karafKarDir)
 
-  for (j <- jarFilesInBundles) IO.copyFile(j, new File(karDirPath + "/" + j.getName))
+  def copyFile(path: File, dest: File) = {
+    if (path.exists()) IO.copyFile(path, dest) else println("ERRRORR##########")
+  }
+
+  for (j <- jarFilesInBundles) { copyFile(j, new File(karDirPath + "/" + j.getName)) }
   for (m <- mustBeFiles; if m.jarFile.isEmpty) {
     val file = new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar")
     IO.copyFile(file, new File(karDirPath + \\ + file.getName))
