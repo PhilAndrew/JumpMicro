@@ -106,6 +106,7 @@ val scalaMinorVersion = "8"
 scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 
 resolvers ++= Seq(
+//  "Local Maven" at Path.userHome.asFile.toURI.toURL + ".m2/repository",
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots"),
   // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
@@ -130,7 +131,8 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
   "org.http4s/http4s-websocket_2.11",
   "io.jvm.uuid/scala-uuid_2.11",
   "org.sangria-graphql/sangria-streaming-api_2.11",
-  "org.sangria-graphql/sangria-marshalling-api_2.11")
+  "org.sangria-graphql/sangria-marshalling-api_2.11"
+)
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -140,7 +142,18 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 // When should I use Import-Package and when should I use Require-Bundle?
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
+/*
+  "org.apache.httpcomponents/httpcore",
+  "org.apache.httpcomponents/httpclient"
 
+  OsgiDependency("Docker Java",
+    Seq("com.github.docker-java" % "docker-java" % "3.0.55",
+      "org.apache.httpcomponents" % "httpcore" % "4.4.5",
+      "org.apache.httpcomponents" % "httpclient" % "4.5"
+    ),
+    Seq("com.github.docker-java"),
+    Seq("com.github.dockerjava.core")),
+*/
   /*
   Sangria when using OSGI
   OsgiDependency("Sangria",
@@ -150,6 +163,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(),
     Seq("org.parboiled2", "sangria.streaming", "sangria.marshalling")),
    */
+
   OsgiDependency("Sangria",
     Seq("org.parboiled" %% "parboiled" % "2.1.3",
       "org.sangria-graphql" % "sangria-marshalling-api_2.11" % "1.0.0",
@@ -650,11 +664,14 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
     val opt: Option[Option[String]] = for (j <- m.jarFile) yield {
       val file: File = j
       val mf = new JarFile(file.getCanonicalPath).getManifest()
-      val sym = mf.getMainAttributes.getValue("Bundle-SymbolicName")
-      val symOption: Option[String] = if (sym==null) None else {
-        Some(sym).filterNot(_.isEmpty)
+      if (mf==null) None // No manifest, then wrap it
+      else {
+        val sym = mf.getMainAttributes.getValue("Bundle-SymbolicName")
+        val symOption: Option[String] = if (sym == null) None else {
+          Some(sym).filterNot(_.isEmpty)
+        }
+        symOption
       }
-      symOption
     }
     if (opt.isDefined) opt.get.isEmpty else false
   }
