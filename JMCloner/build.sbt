@@ -620,11 +620,14 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
     val opt: Option[Option[String]] = for (j <- m.jarFile) yield {
       val file: File = j
       val mf = new JarFile(file.getCanonicalPath).getManifest()
-      val sym = mf.getMainAttributes.getValue("Bundle-SymbolicName")
-      val symOption: Option[String] = if (sym==null) None else {
-        Some(sym).filterNot(_.isEmpty)
+      if (mf==null) None // No manifest, then wrap it
+      else {
+        val sym = mf.getMainAttributes.getValue("Bundle-SymbolicName")
+        val symOption: Option[String] = if (sym == null) None else {
+          Some(sym).filterNot(_.isEmpty)
+        }
+        symOption
       }
-      symOption
     }
     if (opt.isDefined) opt.get.isEmpty else false
   }
