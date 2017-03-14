@@ -3,12 +3,12 @@ package jumpmicro.jmsangriagraphql.impl
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import scaldi.Injectable
 import jumpmicro.jmsangriagraphql.JMSangriaGraphqlService
-import jumpmicro.jmsangriagraphql.impl.configuration.MicroConfiguration
 import jumpmicro.jmsangriagraphql.impl.idris.TestIdris
 import jumpmicro.jmsangriagraphql.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmsangriagraphql.impl.startup.StartupOsgi
 import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule}
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
+import jumpmicro.shared.util.configuration.MicroConfiguration
 import jumpmicro.shared.util.resourceshare._
 
 //: -------------------------------------------------------------------------------------

@@ -1,10 +1,10 @@
-package jumpmicro.jmsangriagraphql.impl.configuration
+package jumpmicro.shared.util.configuration
 
-import org.log4s._
 import jumpmicro.shared.model.MMicroConfig
-import org.slf4j.LoggerFactory
-import scala.concurrent.{Future, Promise}
-import scala.util.{Success, Try}
+import org.log4s._
+
+import scala.concurrent.Promise
+import scala.util.Success
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
