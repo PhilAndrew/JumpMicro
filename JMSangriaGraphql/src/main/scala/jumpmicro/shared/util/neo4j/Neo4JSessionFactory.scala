@@ -22,7 +22,7 @@ object Neo4JSessionFactory extends Injectable {
 
   def modelPackages = Seq("jumpmicro.shared.model")
 
-  private lazy val sessionFactory = {
+  private lazy val sessionFactory: SessionFactory = {
 
     Neo4JOSGI.modelPackagePath = "jumpmicro.shared.model"
 

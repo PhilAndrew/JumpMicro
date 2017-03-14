@@ -14,13 +14,13 @@ import scala.util.{Success, Try}
 class MicroConfiguration {
   private[this] val logger = getLogger
 
-  private val configurationLoaded: Promise[MMicroConfig] = Promise[MMicroConfig]()
+  private val configurationLoaded: Promise[Option[MMicroConfig]] = Promise[Option[MMicroConfig]]()
 
-  def configuration: Promise[MMicroConfig] = {
+  def configuration: Promise[Option[MMicroConfig]] = {
     configurationLoaded
   }
 
-  def setConfiguration(config: MMicroConfig) = {
+  def setConfiguration(config: Option[MMicroConfig]) = {
     configurationLoaded.complete(Success(config))
   }
 }

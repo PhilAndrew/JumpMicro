@@ -40,12 +40,11 @@ abstract class StartupOsgiBoilerplate extends Injectable {
       }
       if (nodeId.isSuccess) {
         val config = GlobalModule.loadConfigFromNeo4JBlocking(session2, nodeId.getOrElse(""))
-        //tx2.commit()
-        microConfiguration.setConfiguration(config)
+        microConfiguration.setConfiguration(Some(config))
       } else {
         logger.error("The node identifier for this MicroService has not been set, please make jumpmicro.conf writable so this service can add a value, then restart this MicroService.")
       }
-    }
+    } else microConfiguration.setConfiguration(None)
     //}
   }
 
