@@ -1,7 +1,7 @@
 package jumpmicro.shared.util.osgi
 
 import domino.capsule.Capsule
-import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule
+import jumpmicro.shared.util.global.CommonGlobalModule
 import jumpmicro.shared.util.resourceshare.ResourceShareService
 import org.log4s.getLogger
 
@@ -23,11 +23,11 @@ class OsgiCapsule extends Capsule {
     stopScaldi()
   }
 
-  private def startScaldi() = {
-    GlobalModule.injector = GlobalModule.loadDI()
+  def startScaldi() = {
+    CommonGlobalModule.injector = CommonGlobalModule.loadDI()
   }
 
   private def stopScaldi() = {
-    GlobalModule.injector.destroy()
+    CommonGlobalModule.injector.destroy()
   }
 }

@@ -11,6 +11,10 @@ import scala.concurrent.Future
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
   */
 object WebServer extends KorolevBlazeServer {
+  import State.effects._
+
+  val inputId = elementId
+
   private[this] val logger = getLogger
 
   def startWebServer(): Unit = {
@@ -50,6 +54,26 @@ object WebServer extends KorolevBlazeServer {
             ), 'h3('class /= "text-muted", "Project name")),
             'div('class /= "jumbotron",
               'h1('class /= "display-3", "Jumbotron heading"),
+
+              'form(
+                // Generate AddTodo action when 'Add' button clicked
+                eventWithAccess('submit) { access =>
+                  deferredTransition {
+                    access.property[String](inputId, 'value) map { value =>
+                      val todo = State.Todo(value, done = false)
+                      transition { case tState => null
+                        //tState.copy(todos = tState.todos :+ todo)
+                      }
+                    }
+                  }
+                },
+                'input(
+                  inputId,
+                  'type /= "text",
+                  'placeholder /= "What should be done?"
+                ),
+                'button("Add todo")),
+
               'p('class /= "lead", "Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus."),
               'p('a('class /= "btn btn-lg btn-success", 'href /= "#", 'role /= "button", "Sign up today"))),
             'div('class /= "row marketing",

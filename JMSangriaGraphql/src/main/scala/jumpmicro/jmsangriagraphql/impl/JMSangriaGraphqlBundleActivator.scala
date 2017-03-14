@@ -3,12 +3,16 @@ package jumpmicro.jmsangriagraphql.impl
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import scaldi.Injectable
 import jumpmicro.jmsangriagraphql.JMSangriaGraphqlService
+import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule
 import jumpmicro.jmsangriagraphql.impl.idris.TestIdris
 import jumpmicro.jmsangriagraphql.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmsangriagraphql.impl.startup.StartupOsgi
 import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule}
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
 import jumpmicro.shared.util.configuration.MicroConfiguration
+import jumpmicro.shared.util.global.CommonGlobalModule
+import jumpmicro.shared.util.global.CommonGlobalModule._
+
 import jumpmicro.shared.util.resourceshare._
 
 //: -------------------------------------------------------------------------------------
@@ -18,7 +22,12 @@ import jumpmicro.shared.util.resourceshare._
 
 class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with Injectable {
   whenBundleActive {
-    addCapsule(new OsgiCapsule())
+    CommonGlobalModule.injector = CommonGlobalModule.loadDI() :: new GlobalModule
+
+    addCapsule(new OsgiCapsule() {
+      override def startScaldi() = {
+      }
+    })
 
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
     }
@@ -32,7 +41,7 @@ class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with In
     new HelloWorldServiceImpl().providesService[JMSangriaGraphqlService]
 
     val config: MicroConfiguration = inject[MicroConfiguration]
-    StartupOsgi.startup(config, bundleContext, camelContext)
+    new StartupOsgi().startup(config, bundleContext, camelContext)
     onStop {
       camelContext.shutdown()
       system foreach (_.terminate())

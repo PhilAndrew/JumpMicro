@@ -27,3 +27,4 @@ exports =
  Fun helloIdris (ExportStatic "helloIdris") $
  Fun jmain (ExportStatic "main") $
  End
+

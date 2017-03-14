@@ -6,13 +6,12 @@ import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 import scaldi.Injectable
-import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule
-import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
-import jumpmicro.jmsangriagraphql.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
 import jumpmicro.shared.util.akkaosgi.{AkkaCamelContextProvider, MyOsgiActorSystemFactory}
 import jumpmicro.shared.util.configuration.MicroConfiguration
+import jumpmicro.shared.util.global.CommonGlobalModule
 import jumpmicro.shared.util.neo4j.Neo4JSessionFactory
 import jumpmicro.shared.util.osgi.OsgiGlobal
+import jumpmicro.shared.util.global.CommonGlobalModule._
 
 import scala.util.Try
 
@@ -24,9 +23,6 @@ import scala.util.Try
 abstract class StartupOsgiBoilerplate extends Injectable {
   private[this] val logger = getLogger
 
-  val startupAkkaActors = inject [StartupAkkaActors]
-  val startupCamelComponents = inject [StartupCamelComponents]
-  val startupCamelRoutes = inject [StartupCamelRoutes]
   val microConfiguration = inject [MicroConfiguration]
 
   def getActorSystemConfiguration(context: BundleContext): Config
@@ -41,7 +37,7 @@ abstract class StartupOsgiBoilerplate extends Injectable {
         inject[String](identified by "jumpmicro.nodeid")
       }
       if (nodeId.isSuccess) {
-        val config = GlobalModule.loadConfigFromNeo4JBlocking(session2, nodeId.getOrElse(""))
+        val config = CommonGlobalModule.loadConfigFromNeo4JBlocking(session2, nodeId.getOrElse(""))
         microConfiguration.setConfiguration(Some(config))
       } else {
         logger.error("The node identifier for this MicroService has not been set, please make jumpmicro.conf writable so this service can add a value, then restart this MicroService.")
@@ -49,6 +45,8 @@ abstract class StartupOsgiBoilerplate extends Injectable {
     } else microConfiguration.setConfiguration(None)
     //}
   }
+
+  def startupOverride(config: MicroConfiguration, bundleContext: BundleContext, camelContext: OsgiDefaultCamelContext)
 
   def startup(config: MicroConfiguration, bundleContext: BundleContext, camelContext: OsgiDefaultCamelContext) = {
 
@@ -60,19 +58,7 @@ abstract class StartupOsgiBoilerplate extends Injectable {
     loadNeo4JConfig()
     camelContext.setTracing(true)
 
-    startupCamelComponents.startup(camelContext)
-    AkkaCamelContextProvider.contextProvider = camelContext
-
-    val sysConfig: Config = getActorSystemConfiguration(bundleContext)
-    val actorFactory = MyOsgiActorSystemFactory(bundleContext, sysConfig)
-    val system = Some(actorFactory.createActorSystem(Option(getActorSystemName(bundleContext))))
-    //system foreach (addLogServiceListener(context, _))
-    //system foreach (configure(bundleContext, _))
-    val camel = CamelExtension(system.get)
-    //val producerTemplate = camel.template
-    if (! camelContext.isStarted) camelContext.start()
-    startupCamelRoutes.addCamelRoutes(camelContext)
-    startupAkkaActors.addActors(config, system.get, camel, camelContext)
+    startupOverride(config, bundleContext, camelContext)
   }
 
 }

@@ -6,6 +6,9 @@ import scaldi.Injectable
 import jumpmicro.jmsangriagraphql.impl.webserver.WebServer
 import jumpmicro.shared.util.osgi.OsgiGlobal
 import jumpmicro.jmsangriagraphql.impl.configuration.GlobalModule._
+import jumpmicro.shared.util.global.CommonGlobalModule
+import jumpmicro.shared.util.global.CommonGlobalModule._
+import jumpmicro.shared.util.global.CommonGlobalModule.injector
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
