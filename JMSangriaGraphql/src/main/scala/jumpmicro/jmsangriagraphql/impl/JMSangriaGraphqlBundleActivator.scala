@@ -22,10 +22,9 @@ import jumpmicro.shared.util.resourceshare._
 
 class JMSangriaGraphqlBundleActivator extends BundleActivatorBoilerplate with Injectable {
   whenBundleActive {
-    CommonGlobalModule.injector = CommonGlobalModule.loadDI() :: new GlobalModule
-
     addCapsule(new OsgiCapsule() {
       override def startScaldi() = {
+        CommonGlobalModule.injector = CommonGlobalModule.loadDI() :: new GlobalModule
       }
     })
 
