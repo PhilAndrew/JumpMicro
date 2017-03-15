@@ -1,8 +1,14 @@
 package jumpmicro.shared.model
 
-import java.time.{LocalDateTime, ZoneId, ZoneOffset}
+import org.neo4j.ogm.annotation.{GraphId, NodeEntity, Relationship}
+import java.lang.{Long => JLong}
+import java.util.{Set => JSet}
+import java.util.{HashSet => JHashSet}
+import java.lang.{String => JString}
+import java.time.{LocalDateTime, ZoneId}
 
-import org.neo4j.ogm.annotation.{GraphId, NodeEntity}
+import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -10,9 +16,13 @@ import org.neo4j.ogm.annotation.{GraphId, NodeEntity}
 //: -------------------------------------------------------------------------------------
 
 class MRegistryOsgiBundleJarFile extends MObject {
+  @BeanProperty
   var uuidValue: String = null
+  @BeanProperty
   var dateTimeCreatedMilliseconds: Long = 0L
+  @BeanProperty
   var dateTimeCreatedZone: String = null
+  @BeanProperty
   var nodeId: String = null
 
   def setDateTimeCreated(date: LocalDateTime) = {

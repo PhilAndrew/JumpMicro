@@ -2,6 +2,9 @@ package jumpmicro.jmscalajs.impl
 
 import java.util.concurrent.TimeUnit
 
+import jumpmicro.jmscalajs.impl.configuration.GlobalModule
+import jumpmicro.shared.util.configuration.MicroConfiguration
+
 //import com.codahale.metrics.{ConsoleReporter, MetricRegistry}
 import scaldi.Injectable
 
@@ -13,7 +16,6 @@ import scaldi.Injectable
 import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
 import jumpmicro.jmscalajs.JMScalaJsService
-import jumpmicro.jmscalajs.impl.configuration.MicroConfiguration
 import jumpmicro.jmscalajs.impl.idris.TestIdris
 import jumpmicro.jmscalajs.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmscalajs.impl.startup.StartupOsgi
@@ -21,6 +23,10 @@ import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule, Osgi
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
 import jumpmicro.shared.util.resourceshare.ResourceShareService
 import org.osgi.framework.{BundleActivator, BundleContext}
+import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
+import jumpmicro.shared.util.configuration.MicroConfiguration
+import jumpmicro.shared.util.global.CommonGlobalModule
+import jumpmicro.shared.util.global.CommonGlobalModule._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -57,7 +63,11 @@ class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectabl
   // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
     println("whenBundleActive in JMScalaJsBundleActivator")
-    addCapsule(new OsgiCapsule())
+    addCapsule(new OsgiCapsule() {
+      override def startScaldi() = {
+        CommonGlobalModule.injector = CommonGlobalModule.loadDI() :: new GlobalModule
+      }
+    })
 
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
       }

@@ -1,5 +1,8 @@
 package jumpmicro.jmcloner.impl.actor
 
+import jumpmicro.jmcloner.impl.configuration.GlobalModule._
+import jumpmicro.shared.util.global.CommonGlobalModule._
+
 import akka.camel.{CamelMessage, Consumer}
 import org.log4s._
 import scaldi.Injectable

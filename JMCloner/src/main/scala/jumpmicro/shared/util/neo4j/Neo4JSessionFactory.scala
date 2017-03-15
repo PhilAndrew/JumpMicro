@@ -1,18 +1,14 @@
 package jumpmicro.shared.util.neo4j
 
 import org.log4s._
-import org.neo4j.driver.v1.{AuthTokens, GraphDatabase}
 import org.neo4j.ogm.Neo4JOSGI
-import org.neo4j.ogm.annotation._
-import org.neo4j.ogm.config.{Configuration}
+import org.neo4j.ogm.config.Configuration
 import org.neo4j.ogm.drivers.bolt.driver.BoltDriver
-
-import scala.beans.BeanProperty
 import org.neo4j.ogm.session.Session
 import org.neo4j.ogm.session.SessionFactory
-import org.neo4j.ogm.transaction.Transaction
 import scaldi.Injectable
-import jumpmicro.jmcloner.impl.configuration.GlobalModule._
+import org.neo4j.ogm.exception.ConnectionException
+import jumpmicro.shared.util.global.CommonGlobalModule._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -22,11 +18,11 @@ import jumpmicro.jmcloner.impl.configuration.GlobalModule._
 trait Neo4JSessionFactory
 
 object Neo4JSessionFactory extends Injectable {
-  //val logger = Logger(classOf[Neo4JSessionFactory])
+  private[this] val logger = getLogger
 
   def modelPackages = Seq("jumpmicro.shared.model")
 
-  private lazy val sessionFactory = {
+  private lazy val sessionFactory: SessionFactory = {
 
     Neo4JOSGI.modelPackagePath = "jumpmicro.shared.model"
 
@@ -35,6 +31,8 @@ object Neo4JSessionFactory extends Injectable {
     val neo4Jpassword = inject [String] (identified by "neo4j.server.password")
 
     val configuration = new Configuration()
+    // Indexes http://neo4j.com/docs/ogm-manual/current/reference/#reference:indexing
+    configuration.setAutoIndex("assert")
     configuration.set("username", neo4Juser)
     configuration.set("password", neo4Jpassword)
 
@@ -42,11 +40,21 @@ object Neo4JSessionFactory extends Injectable {
     configuration.set("driver", "org.neo4j.ogm.drivers.bolt.driver.BoltDriver")
     configuration.set("URI", "bolt://" + neo4Juser + ":" + neo4Jpassword + "@" + neo4Jip + ":7687") // bolt port is 7687, http port is 7474
     import collection.JavaConverters._
-    new SessionFactory(configuration, modelPackages: _*)
+    val result = try {
+      new SessionFactory(configuration, modelPackages: _*)
+    } catch {
+      case ex: ConnectionException => {
+        logger.error("Failed to connect to the Neo4J database, however this MicroService will still continue to run without a connection.")
+        null
+      }
+      case _ => null
+    }
+    result
   }
 
   def getNeo4jSession(): Session = {
-    sessionFactory.openSession()
+    if (sessionFactory!=null)
+      sessionFactory.openSession()
+    else null
   }
 }
-

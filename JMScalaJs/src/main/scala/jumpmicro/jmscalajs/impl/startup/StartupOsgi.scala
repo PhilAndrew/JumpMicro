@@ -3,6 +3,7 @@ package jumpmicro.jmscalajs.impl.startup
 import akka.camel.CamelExtension
 import com.typesafe.config.{Config, ConfigFactory}
 import jumpmicro.shared.util.boilerplate.StartupOsgiBoilerplate
+import jumpmicro.shared.util.configuration.MicroConfiguration
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
 import org.osgi.framework.BundleContext
 
@@ -14,4 +15,6 @@ import org.osgi.framework.BundleContext
 object StartupOsgi extends StartupOsgiBoilerplate {
   def getActorSystemConfiguration(context: BundleContext): Config = ConfigFactory.empty
   def getActorSystemName(context: BundleContext): String = "ActorSystem"
+
+  override def startupOverride(config: MicroConfiguration, bundleContext: BundleContext, camelContext: OsgiDefaultCamelContext): Unit = null
 }

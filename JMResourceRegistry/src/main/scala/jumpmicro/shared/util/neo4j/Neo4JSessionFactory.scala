@@ -7,8 +7,8 @@ import org.neo4j.ogm.drivers.bolt.driver.BoltDriver
 import org.neo4j.ogm.session.Session
 import org.neo4j.ogm.session.SessionFactory
 import scaldi.Injectable
-import jumpmicro.jmresourceregistry.impl.configuration.GlobalModule._
 import org.neo4j.ogm.exception.ConnectionException
+import jumpmicro.shared.util.global.CommonGlobalModule._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -22,7 +22,7 @@ object Neo4JSessionFactory extends Injectable {
 
   def modelPackages = Seq("jumpmicro.shared.model")
 
-  private lazy val sessionFactory = {
+  private lazy val sessionFactory: SessionFactory = {
 
     Neo4JOSGI.modelPackagePath = "jumpmicro.shared.model"
 

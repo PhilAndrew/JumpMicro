@@ -1,6 +1,13 @@
 package jumpmicro.jmcloner.impl
 
+import jumpmicro.jmcloner.impl.configuration.GlobalModule._
+import jumpmicro.shared.util.global.CommonGlobalModule._
+
 import java.util.concurrent.TimeUnit
+
+import jumpmicro.jmcloner.impl.configuration.GlobalModule
+import jumpmicro.shared.util.configuration.MicroConfiguration
+import jumpmicro.shared.util.global.CommonGlobalModule
 
 //import com.codahale.metrics.{ConsoleReporter, MetricRegistry}
 import scaldi.Injectable
@@ -13,7 +20,6 @@ import scaldi.Injectable
 import scala.concurrent.ExecutionContext.Implicits.global
 import domino._
 import jumpmicro.jmcloner.JMClonerService
-import jumpmicro.jmcloner.impl.configuration.MicroConfiguration
 import jumpmicro.jmcloner.impl.idris.TestIdris
 import jumpmicro.jmcloner.impl.service.HelloWorldServiceImpl
 import jumpmicro.jmcloner.impl.startup.StartupOsgi
@@ -31,7 +37,11 @@ class JMClonerBundleActivator extends BundleActivatorBoilerplate with Injectable
   //val logger = Logger(classOf[JMClonerBundleActivator])
   // https://www.helgoboss.org/projects/domino/user-guide
   whenBundleActive {
-    addCapsule(new OsgiCapsule())
+    addCapsule(new OsgiCapsule() {
+      override def startScaldi() = {
+        CommonGlobalModule.injector = CommonGlobalModule.loadDI() :: new GlobalModule
+      }
+    })
     whenServicePresent[ResourceShareService] { resourceShareService: ResourceShareService => {
       }
     }

@@ -107,6 +107,7 @@ val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
   "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
   "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
+  "io.jvm.uuid/scala-uuid_2.11",
   "org.http4s/blaze-core_2.11",
   "org.http4s/blaze-http_2.11",
   "org.http4s/http4s-websocket_2.11")
@@ -119,6 +120,11 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 // When should I use Import-Package and when should I use Require-Bundle?
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
+
+  OsgiDependency("UUID",
+    Seq("io.jvm.uuid" %% "scala-uuid" % "0.2.2"),
+    Seq(),
+    Seq("io.jvm.uuid")),
 
   OsgiDependency("Korolov",
     Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",

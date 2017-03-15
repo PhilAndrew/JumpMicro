@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait Neo4JUtil
 
 object Neo4JUtil {
-  //val logger = Logger(classOf[Neo4JUtil])
+  private[this] val logger = getLogger
 
   def save(session: Session, obj: Any)(implicit ex: ExecutionContext): Future[_] = {
     Future {

@@ -1,8 +1,9 @@
 package jumpmicro.shared.util.osgi
 
 import domino.capsule.Capsule
-import jumpmicro.jmcloner.impl.configuration.GlobalModule
+import jumpmicro.shared.util.global.CommonGlobalModule
 import jumpmicro.shared.util.resourceshare.ResourceShareService
+import org.log4s.getLogger
 
 //: ----------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -10,6 +11,8 @@ import jumpmicro.shared.util.resourceshare.ResourceShareService
 //: ----------------------------------------------------------------------------------
 
 class OsgiCapsule extends Capsule {
+  private[this] val logger = getLogger
+
   protected var resourceShare: Option[ResourceShareService] = None
 
   def start() {
@@ -20,12 +23,11 @@ class OsgiCapsule extends Capsule {
     stopScaldi()
   }
 
-  private def startScaldi() = {
-    GlobalModule.injector = GlobalModule.loadDI()
+  def startScaldi() = {
+    CommonGlobalModule.injector = CommonGlobalModule.loadDI()
   }
 
   private def stopScaldi() = {
-    GlobalModule.injector.destroy()
+    CommonGlobalModule.injector.destroy()
   }
 }
-

@@ -15,6 +15,10 @@ import scala.concurrent.Future
 import scala.concurrent._
 //import universe.microservice.shared.service.BrowserService
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule._
+import jumpmicro.shared.util.configuration.MicroConfiguration
+import jumpmicro.shared.util.global.CommonGlobalModule
+import jumpmicro.shared.util.global.CommonGlobalModule._
+
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.

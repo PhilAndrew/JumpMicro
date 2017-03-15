@@ -3,14 +3,10 @@ package jumpmicro.shared.util.akkaosgi
 import language.existentials
 import java.net.URL
 import java.util.Enumeration
-
 import org.log4s._
 import org.osgi.framework.{Bundle, BundleContext}
-
 import scala.util.Try
 import org.osgi.framework.wiring.{BundleRevision, BundleWire, BundleWiring}
-import org.slf4j.LoggerFactory
-
 import scala.collection.JavaConverters._
 import scala.util.Success
 import scala.util.Failure

@@ -1,20 +1,23 @@
 package jumpmicro.jmcloner.impl.configuration
 
-import java.io.File
-import java.util
+import java.io.{File, FileOutputStream, PrintWriter}
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.log4s._
-import org.neo4j.ogm.model.Result
 import org.neo4j.ogm.session.Session
-import jumpmicro.jmcloner.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
-import jumpmicro.shared.model.MicroConfig
+import jumpmicro.shared.model.MMicroConfig
+import jumpmicro.shared.util.configuration.{ConfigurationUtil, MicroConfiguration}
 import jumpmicro.shared.util.osgi.OsgiGlobal
 import org.neo4j.ogm.exception.ConnectionException
-//import org.neo4j.driver.v1.{AuthTokens, Driver, GraphDatabase}
+
+import scala.util.{Failure, Success, Try}
 import scaldi._
+
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
+import io.jvm.uuid._
+import jumpmicro.jmcloner.impl.startup.{StartupAkkaActors, StartupCamelComponents, StartupCamelRoutes}
+import jumpmicro.shared.util.global.CommonGlobalModule
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -26,7 +29,6 @@ import acyclic.skipped
 class GlobalModule extends Module {
   private[this] val logger = getLogger
 
-  bind [OsgiGlobal] to new OsgiGlobal
   bind [StartupAkkaActors] to new StartupAkkaActors
   bind [StartupCamelComponents] to new StartupCamelComponents
   bind [StartupCamelRoutes] to new StartupCamelRoutes
@@ -34,54 +36,5 @@ class GlobalModule extends Module {
 }
 
 object GlobalModule {
-  private[this] val logger = getLogger
 
-  private var _config: Config = null
-
-  private def loadConfigFromFile(): Config = {
-    var config: Config = null
-
-    val configPath = scala.util.Properties.envOrElse("JUMPMICRO_CONFIG_PATH", "jumpmicro.conf")
-    val f = new File(configPath)
-    if (f.exists()) {
-      config = ConfigFactory.parseFile(f)
-    }
-    config
-  }
-
-  def loadConfigFromNeo4JBlocking(session: Session, nodeId: String): MicroConfig = {
-    var result: MicroConfig = null
-    try {
-      // Based on the node id, fetch records from Neo4J (jumpmicro.nodeid).
-      import collection.JavaConverters._
-      val query = new java.lang.String("MATCH (n:MicroConfig {nodeId:\"" + nodeId + "\"}) RETURN n")
-      val r: Result = session.query(query, new java.util.HashMap[String, Object]())
-      var found = false
-      val it = r.queryResults().iterator()
-      while (it.hasNext) {
-        val next = it.next()
-        logger.error(next.toString)
-        found = true
-      }
-      if (found) new MicroConfig(nodeId) else {
-        result = new MicroConfig(nodeId)
-        session.save(result)
-      }
-
-    } catch {
-      case ex: ConnectionException => {
-        logger.error("The Neo4J Database connection could not be established. This MicroService will continue to function without database access, however any further database access will fail.")
-        result = new MicroConfig(nodeId)
-      }
-    }
-    result
-  }
-
-  def loadDI() = {
-    _config = loadConfigFromFile()
-    TypesafeConfigInjector(_config) :: new GlobalModule
-  }
-
-  implicit var injector: MutableInjectorAggregation = null
 }
-

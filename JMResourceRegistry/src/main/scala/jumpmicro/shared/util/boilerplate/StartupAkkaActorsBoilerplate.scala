@@ -7,12 +7,13 @@ import akka.actor.{ActorRef, Props}
 import akka.camel.{Camel, CamelMessage}
 import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
-import jumpmicro.jmresourceregistry.impl.configuration.MicroConfiguration
 
-import scala.concurrent.{Future}
-import scala.concurrent.duration.{Duration}
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success, Try}
-import akka.actor.{ActorSystem}
+import akka.actor.ActorSystem
+import jumpmicro.shared.util.configuration.MicroConfiguration
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 //: -------------------------------------------------------------------------------------

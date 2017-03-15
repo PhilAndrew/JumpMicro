@@ -7,18 +7,14 @@ import akka.actor.{ActorRef, Props}
 import akka.camel.{Camel, CamelMessage}
 import org.log4s._
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext
-import org.slf4j.LoggerFactory
-import scaldi.Injectable
-import jumpmicro.jmcloner.impl.configuration.MicroConfiguration
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.{Deadline, Duration}
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success, Try}
-//remove if not needed
-import akka.actor.{ActorSystem}
+import akka.actor.ActorSystem
+import jumpmicro.shared.util.configuration.MicroConfiguration
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import scala.concurrent.duration._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -27,7 +23,7 @@ import scala.concurrent.duration._
 import acyclic.skipped
 
 trait StartupAkkaActorsBoilerplate {
-  //val logger = Logger(classOf[StartupAkkaActorsBoilerplate])
+  private[this] val logger = getLogger
 
   def akkaActors: Seq[Props]
 

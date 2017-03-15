@@ -3,7 +3,6 @@ package jumpmicro.shared.util.osgi
 import org.log4s._
 import org.apache.camel.CamelContext
 import org.osgi.framework.BundleContext
-import org.slf4j.LoggerFactory
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory
 //: -------------------------------------------------------------------------------------
 
 class OsgiGlobal {
-  //val logger = Logger(classOf[OsgiGlobal])
+  private[this] val logger = getLogger
 
   var bundleContext: BundleContext = null
   var camelContext: CamelContext = null
