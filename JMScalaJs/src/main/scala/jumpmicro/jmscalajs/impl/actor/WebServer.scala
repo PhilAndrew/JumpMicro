@@ -5,7 +5,6 @@ package jumpmicro.jmscalajs.impl.actor
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
-/*
 import akka.actor._
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
@@ -72,4 +71,4 @@ class WebServer(context: BundleContext)(implicit inj: Injector, system: ActorSys
     logger.info("Server online at http://localhost:8080/")
 
   }
-}*/
+}

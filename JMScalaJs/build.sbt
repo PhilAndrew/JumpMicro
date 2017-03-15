@@ -122,7 +122,7 @@ lazy val exportPackages = Seq()
 val slf4jVersion = "1.7.22"     // slf4j logging
 val camelVersion = "2.18.2"     // http://camel.apache.org/download.html
 val akkaVersion = "2.4.16"      // http://akka.io/downloads/
-val akkaHttpVersion = "10.0.3"  // Akka Http library
+val akkaHttpVersion = "10.0.4"  // Akka Http library
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
@@ -130,8 +130,6 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
   "io.jvm.uuid/scala-uuid_2.11",
   "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
   "org.scaldi/scaldi_2.11") // org.scaldi/scaldi_2.11/0.5.8
-
-
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -232,12 +230,12 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.typesafe.akka" %% "akka-osgi" % akkaVersion,
       //"com.typesafe.akka" %% "akka-actor" % akkaVersion,
       //"com.typesafe.akka" %% "akka-stream" % akkaVersion,
-      "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
-      //"com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
-      //"com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+      "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+      "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
     ),
     Seq("com.typesafe.akka.osgi"),
-    Seq() //Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
+    Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
   ),
 
   OsgiDependency("Neo4JDependency",

@@ -32,13 +32,13 @@ class StartWebServerActor extends Consumer with Injectable {
   val osgi = inject[OsgiGlobal]
 
   override def endpointUri: String = "direct:startWebServer"
-  //var webServer: WebServer = null
+  var webServer: WebServer = null
 
   override def receive: Receive = {
     case msg: CamelMessage => {
       implicit val system = context.system
-      //webServer = new WebServer(osgi.bundleContext)
-      //webServer.start()
+      webServer = new WebServer(osgi.bundleContext)
+      webServer.start()
     }
   }
 }
