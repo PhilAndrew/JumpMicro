@@ -3,6 +3,7 @@ import java.io.File
 import java.util.jar.JarFile
 
 import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
+import org.osgi.framework.Constants
 import osgifelix.{ManifestInstructions, OsgiDependency}
 
 import scala.annotation.tailrec
@@ -104,6 +105,27 @@ lazy val thisVersion = "1.0.0"
 
 version := thisVersion
 
+lazy val bundleLicense = "https://opensource.org/licenses/MIT"
+lazy val bundleName = "JumpMicro ScalaJs Example"
+lazy val bundleDescription = ""
+lazy val bundleDocURL = ""
+lazy val bundleCategory = "" // keywords,go,here
+lazy val bundleVendor = ""
+lazy val bundleContactAddress = ""
+lazy val bundleCopyright = ""
+
+additionalHeaders := Map("Bundle-License" -> bundleLicense,
+  "Bundle-Name" -> bundleName,
+  "Bundle-Description" -> bundleDescription,
+  "Bundle-DocURL" -> bundleDocURL,
+  "Bundle-Category" -> bundleCategory,
+  "Bundle-Vendor" -> bundleVendor,
+  "Bundle-ContactAddress" -> bundleContactAddress,
+  "Bundle-Copyright" -> bundleCopyright,
+  // Add boot delegation here? https://github.com/doolse/sbt-osgi-felix/pull/2
+  Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc"
+)
+
 val scalaMajorVersion = "2.11"
 val scalaMinorVersion = "8"
 
@@ -129,7 +151,12 @@ val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
   "io.jvm.uuid/scala-uuid_2.11",
   "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
-  "org.scaldi/scaldi_2.11") // org.scaldi/scaldi_2.11/0.5.8
+  "org.scaldi/scaldi_2.11",
+  "com.typesafe.akka/akka-http_2.11",
+  "com.typesafe.akka/akka-http-core_2.11",
+  "com.typesafe.akka/akka-parsing_2.11",
+  "com.lihaoyi/scalatags_2.11",
+  "com.lihaoyi/sourcecode_2.11") // org.scaldi/scaldi_2.11/0.5.8
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -152,7 +179,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
     "ScalaTagsDependency",
     // sbt dependencys
-    Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
+    Seq("com.lihaoyi" %% "scalatags" % "0.6.1",
+      "com.lihaoyi" %% "sourcecode" % "0.1.3"),
     // bundle requirements
     Seq(),
     // package requirements
@@ -210,14 +238,14 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq()
   ),
 
-  OsgiDependency("MonixCoreDependency",
+  /*OsgiDependency("MonixCoreDependency",
     Seq(  // Monix https://monix.io/
       //"io.monix" %% "monix" % "2.2.1",
       "io.monix" %% "monix-cats" % "2.2.1"
     ),
     Seq(), // @todo Monix is untested to work
     Seq()
-  ),
+  ),*/
 
   OsgiDependency("AkkaCamelDependency",
     Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
@@ -232,7 +260,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       //"com.typesafe.akka" %% "akka-stream" % akkaVersion,
       "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
+      "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
+      "com.typesafe.akka" %% "akka-parsing" % akkaHttpVersion
     ),
     Seq("com.typesafe.akka.osgi"),
     Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
@@ -362,6 +391,15 @@ lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 osgiSettings
 
 defaultSingleProjectSettings
+
+/*
+sun.misc.*;resolution:=optional
+*/
+
+osgiRepositoryRules := Seq(
+  rewrite("akka-http-core_2.11", imports =
+    """akka,akka.actor;version="[2.4,3)",akka.dispatch;version="[2.4,3)",akka.event;version="[2.4,3)",akka.io;version="[2.4,3)",akka.japi;version="[2.4,3)",akka.japi.function;version="[2.4,3)",akka.parboiled2;version="[10.0,11)",akka.parboiled2.support;version="[10.0,11)",akka.parboiled2.util;version="[10.0,11)",akka.shapeless;version="[10.0,11)",akka.stream;version="[2.4,3)",akka.stream.actor;version="[2.4,3)",akka.stream.impl;version="[2.4,3)",akka.stream.impl.fusing;version="[2.4,3)",akka.stream.impl.io;version="[2.4,3)",akka.stream.javadsl;version="[2.4,3)",akka.stream.scaladsl;version="[2.4,3)",akka.stream.stage;version="[2.4,3)",akka.util;version="[2.4,3)",com.typesafe.config;version="[1.3,2)",com.typesafe.sslconfig.akka;version="[2.4,3)",com.typesafe.sslconfig.akka.util;version="[2.4,3)",com.typesafe.sslconfig.ssl;version="[0.2,1)",com.typesafe.sslconfig.util;version="[0.2,1)",javax.net.ssl,org.reactivestreams;version="[1.0,2)",scala;version="[2.11,3)",scala.collection;version="[2.11,3)",scala.collection.convert;version="[2.11,3)",scala.collection.generic;version="[2.11,3)",scala.collection.immutable;version="[2.11,3)",scala.collection.mutable;version="[2.11,3)",scala.collection.parallel;version="[2.11,3)",scala.collection.parallel.immutable;version="[2.11,3)",scala.compat.java8;version="[0.7,1)",scala.concurrent;version="[2.11,3)",scala.concurrent.duration;version="[2.11,3)",scala.math;version="[2.11,3)",scala.reflect;version="[2.11,3)",scala.runtime;version="[2.11,3)",scala.util;version="[2.11,3)",scala.util.control;version="[2.11,3)",scala.util.matching;version="[2.11,3)",sun.misc;resolution:=optional""")
+)
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
 //fork in run := true
