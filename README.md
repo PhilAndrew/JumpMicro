@@ -1,12 +1,14 @@
-# JumpMicro Microservice [![License][licenseImg]][licenseLink] 
+# JumpMicro Microservice for Scala/Java [![License][licenseImg]][licenseLink] 
 
 [licenseImg]: https://img.shields.io/github/license/PhilAndrew/JumpMicro.svg
 [licenseImg2]: https://img.shields.io/:license-mit-blue.svg
 [licenseLink]: LICENSE
 
-JumpMicro is Scala Microservice **by convention**, a standard way of writing Microservices by following a set of conventions and examples which lead to the production of a microservice. Neither a library or a framework, a way of doing things.
+JumpMicro is Scala Microservice by convention, not a library but a standard way of writing Microservices by following examples which lead to the production of a microservice. JumpMicro uses [OSGi](https://en.wikipedia.org/wiki/OSGi) to allow for code to be reloaded at runtime and as such many MicroServices can run in one OSGi container efficiently.
 
 ## What do you need to setup?
+
+You need Java, Scala, SBT build tool.
 
 JMScalaJs wants to use a Neo4J database if it is available as that is the default database for storage, but not required to run. Refer to the file jumpmicro.conf for connection settings. 
 
