@@ -11,6 +11,7 @@ import jumpmicro.shared.util.osgi.{BundleActivatorBoilerplate, OsgiCapsule}
 import jumpmicro.jmresourceregistry.impl.configuration.GlobalModule._
 import jumpmicro.shared.util.configuration.MicroConfiguration
 import jumpmicro.shared.util.global.CommonGlobalModule
+import jumpmicro.shared.util.global.CommonGlobalModule._
 import jumpmicro.shared.util.resourceshare._
 
 //: -------------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ class JMResourceRegistryBundleActivator extends BundleActivatorBoilerplate with 
     new HelloWorldServiceImpl().providesService[JMResourceRegistryService]
 
     val config: MicroConfiguration = inject[MicroConfiguration]
-    StartupOsgi.startup(config, bundleContext, camelContext)
+    new StartupOsgi().startup(config, bundleContext, camelContext)
     onStop {
       camelContext.shutdown()
       system foreach (_.terminate())

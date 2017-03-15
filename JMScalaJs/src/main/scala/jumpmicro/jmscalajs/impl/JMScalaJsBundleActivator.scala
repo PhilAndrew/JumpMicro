@@ -87,7 +87,7 @@ class JMScalaJsBundleActivator extends BundleActivatorBoilerplate with Injectabl
     camelContext = new OsgiDefaultCamelContext(bundleContext)
     osgiGlobal.camelContext = camelContext
 
-    StartupOsgi.startup(config, bundleContext, camelContext)
+    new StartupOsgi().startup(config, bundleContext, camelContext)
 
     /*
      whenServicePresent[OtherService] { os =>

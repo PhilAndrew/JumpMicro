@@ -53,7 +53,7 @@ class JMClonerBundleActivator extends BundleActivatorBoilerplate with Injectable
     org.neo4j.ogm.Neo4JOGM.setBundleContext(bundleContext)
     camelContext = new OsgiDefaultCamelContext(bundleContext)
     osgiGlobal.camelContext = camelContext
-    StartupOsgi.startup(config, bundleContext, camelContext)
+    new StartupOsgi().startup(config, bundleContext, camelContext)
     new HelloWorldServiceImpl().providesService[JMClonerService]
     onStop {
       system foreach (_.terminate())
