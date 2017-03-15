@@ -121,7 +121,7 @@ lazy val exportPackages = Seq()
 
 val slf4jVersion = "1.7.22"     // slf4j logging
 val camelVersion = "2.18.2"     // http://camel.apache.org/download.html
-val akkaVersion = "2.4.16"      // http://akka.io/downloads/
+val akkaVersion = "2.4.17"      // http://akka.io/downloads/
 val akkaHttpVersion = "10.0.4"  // Akka Http library
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
