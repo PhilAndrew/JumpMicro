@@ -133,6 +133,10 @@ Use IntelliJ IDEA with the following plugins enabled, enable them in `File / Set
 
 Creation of a new MicroService is done by copying the code of another existing MicroService. In the normal case this would be the copying of a MicroService which acts as a template for a new MicroService, an example is a ScalaJS oriented MicroService whos job is to produce Javascript from ScalaJS code for a particular application. Also it is easier to copy existing code which is close to what you want rather than developing new code.
 
+## Copying of code?
+
+So copying of code is considered bad, so after copying and you find some code is common to more than one Microservice you can then place your common code in the package jumpmicro.shared, for example there are jumpmicro.shared.bean, jumpmicro.shared.model, jumpmicro.shared.util packages.
+
 ## Potentially useful libraries
 
 * [Project Reactor](https://github.com/sinwe/reactor-core-scala)
