@@ -65,7 +65,7 @@ It has the following features:
 * [Apache Camel](http://camel.apache.org/) and its [components](https://camel.apache.org/components.html).
 * Supports [Akka Actors](http://akka.io/), [Akka Streams](http://akka.io/), [Monix](https://github.com/monix/monix), [Apache Camel](http://camel.apache.org/) in Akka Actors.
 * For data storage the default is [Neo4J](https://neo4j.com/) Graph database using the [Cypher query language](https://neo4j.com/developer/cypher-query-language/).
-* [Neo4j OGM](https://github.com/neo4j/neo4j-ogm) as the Object to Graph database mapper with a modified version for OSGi [Neo4J OGM OSGi](https://github.com/dkrizic/neo4j-ogm-osgi-demo).
+* [Neo4j OGM](https://github.com/neo4j/neo4j-ogm) as the Object to Graph database mapper with a modified version for OSGi which uses Java Reflection to parse annotations [Neo4J OGM OSGi](https://github.com/PhilAndrew/neo4j-ogm-osgi).
 * [Dropwizard Metrics](http://metrics.dropwizard.io/) for recording Metrics of the running application to ensure health of your application using [Metrics-Scala](https://github.com/erikvanoosten/metrics-scala) for  metrics recording, [documentation here](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Manual.md) with documentation for [Akka Actors](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Actors.md), [Futures](https://github.com/erikvanoosten/metrics-scala/blob/master/docs/Futures.md), [all docs](https://github.com/erikvanoosten/metrics-scala/tree/master/docs) and [3rd party libraries](http://metrics.dropwizard.io/3.1.0/manual/third-party/).
 * [Korolev](https://github.com/fomkin/korolev) web framework, Single-page applications running on the server side
 * Can run in a Docker container.
