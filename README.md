@@ -40,7 +40,7 @@ The normal build steps to get it to Karaf as
 
     > sbt osgiBundle
     
-3. Build features file for Karaf and deploy it to Karaf
+3. Build features file for Karaf and deploy it to Karaf, for the deployment you need to have set the right environment variables for this to locate Karaf, KARAF_HOME, KARAF_DEPLOY, KARAF_JAR_DIRECTORY.
 
     > sbt karafBuild karafDeploy
 
