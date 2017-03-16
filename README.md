@@ -50,6 +50,8 @@ The normal build steps to get it to Karaf as
 | ------------------------ |:----------------------------------------------------------------------------:|
 | JMScalaJs                | Akka Http server with ScalaJS running in webpage http://localhost:8080/test/ |
 | JMCloner                 | Allow creation of a new MicroService by copying one to another<br>After sbt run the visit http://localhost:8181/        |
+| JMSangriaGraphql         | Demonstration of Sangria GraphQL<br>After sbt run the visit http://localhost:8181/ |
+| JMResourceRegistry       | A common resource registry OSGi service used by the other OSGi services |
 
 ## Features    
   
