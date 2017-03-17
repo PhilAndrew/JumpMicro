@@ -377,6 +377,175 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 // @feature start commonfooter
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
+
+//Revised from hibernate search util
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.channels.FileChannel
+import java.util.Arrays
+
+//remove if not needed
+import scala.collection.JavaConversions._
+
+// http://www.java2s.com/Tutorial/Java/0180__File/Utilityclassforsynchronizingfilesdirectories.htm
+
+lazy val FAT_PRECISION: Int = 2000
+
+// 16 MB
+lazy val DEFAULT_COPY_BUFFER_SIZE: Long = 16 * 1024 * 1024
+
+def copyFile(srcFile: File, destFile: File, chunkSize: Long): Unit = {
+  var is: FileInputStream = null
+  var os: FileOutputStream = null
+  try {
+    is = new FileInputStream(srcFile)
+    val iChannel: FileChannel = is.getChannel
+    os = new FileOutputStream(destFile, false)
+    val oChannel: FileChannel = os.getChannel
+    var doneBytes: Long = 0L
+    var todoBytes: Long = srcFile.length
+    while (todoBytes != 0L) {
+      val iterationBytes: Long = Math.min(todoBytes, chunkSize)
+      val transferredLength: Long =
+        oChannel.transferFrom(iChannel, doneBytes, iterationBytes)
+      if (iterationBytes != transferredLength) {
+        throw new IOException(
+          "Error during file transfer: expected " + iterationBytes +
+            " bytes, only " +
+            transferredLength +
+            " bytes copied.")
+      }
+      doneBytes += transferredLength
+      todoBytes -= transferredLength
+    }
+  } finally {
+    if (is != null) {
+      is.close()
+    }
+    if (os != null) {
+      os.close()
+    }
+  }
+  val successTimestampOp: Boolean =
+    destFile.setLastModified(srcFile.lastModified())
+  if (!successTimestampOp) {
+    println(
+      "Could not change timestamp for {}. Index synchronization may be slow. " +
+        destFile)
+  }
+}
+
+def delete(file: File): Unit = {
+  if (file.isDirectory) {
+    for (subFile <- file.listFiles()) {
+      delete(subFile)
+    }
+  }
+  if (file.exists()) {
+    if (!file.delete()) {
+      println("Could not delete {}" + file)
+    }
+  }
+}
+
+def areInSync(source: File, destination: File): Boolean =
+  if (source.isDirectory) {
+    if (!destination.exists()) {
+      false
+    } else if (!destination.isDirectory) {
+      throw new IOException(
+        "Source and Destination not of the same type:" + source.getCanonicalPath +
+          " , " +
+          destination.getCanonicalPath)
+    }
+    val sources: Array[String] = source.list()
+    val srcNames: java.util.Set[String] =
+      new java.util.HashSet[String](Arrays.asList(sources: _*))
+    val dests: Array[String] = destination.list()
+    // check for files in destination and not in source
+    for (fileName <- dests if !srcNames.contains(fileName)) {
+      false
+    }
+    var inSync: Boolean = true
+    for (fileName <- sources) {
+      val srcFile: File = new File(source, fileName)
+      val destFile: File = new File(destination, fileName)
+      if (!areInSync(srcFile, destFile)) {
+        inSync = false
+        //break
+      }
+    }
+    inSync
+  } else {
+    if (destination.exists() && destination.isFile) {
+      val sts: Long = source.lastModified() / FAT_PRECISION
+      val dts: Long = destination.lastModified() / FAT_PRECISION
+      sts == dts
+    } else {
+      false
+    }
+  }
+
+def synchronize(source: File, destination: File, smart: Boolean): Unit = {
+  synchronize(source, destination, smart, DEFAULT_COPY_BUFFER_SIZE)
+}
+
+def synchronize(source: File,
+                destination: File,
+                smart: Boolean,
+                chunkSizeIn: Long): Unit = {
+  var chunkSize: Long = chunkSizeIn
+  if (chunkSize <= 0) {
+    println("Chunk size must be positive: using default value.")
+    chunkSize = DEFAULT_COPY_BUFFER_SIZE
+  }
+  if (source.isDirectory) {
+    if (!destination.exists()) {
+      if (!destination.mkdirs()) {
+        throw new IOException("Could not create path " + destination)
+      }
+    } else if (!destination.isDirectory) {
+      throw new IOException(
+        "Source and Destination not of the same type:" + source.getCanonicalPath +
+          " , " +
+          destination.getCanonicalPath)
+    }
+    val sources: Array[String] = source.list()
+    val srcNames: java.util.Set[String] =
+      new java.util.HashSet[String](Arrays.asList(sources: _*))
+    val dests: Array[String] = destination.list()
+    //delete files not present in source
+    for (fileName <- dests if !srcNames.contains(fileName)) {
+      delete(new File(destination, fileName))
+    }
+    //copy each file from source
+    for (fileName <- sources) {
+      val srcFile: File = new File(source, fileName)
+      val destFile: File = new File(destination, fileName)
+      synchronize(srcFile, destFile, smart, chunkSize)
+    }
+  } else {
+    if (destination.exists() && destination.isDirectory) {
+      delete(destination)
+    }
+    if (destination.exists()) {
+      val sts: Long = source.lastModified() / FAT_PRECISION
+      val dts: Long = destination.lastModified() / FAT_PRECISION
+      //do not copy if smart and same timestamp and same length
+      if (!smart || sts == 0 || sts != dts || source.length != destination.length) {
+        copyFile(source, destination, chunkSize)
+      }
+    } else {
+      copyFile(source, destination, chunkSize)
+    }
+  }
+}
+
+
+
+
 // General sbt settings
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
