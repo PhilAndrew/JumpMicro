@@ -463,6 +463,57 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
+// Synchronize all MicroServices
+
+val jmSyncTask = TaskKey[Unit]("jmSync", "Synchronize all JumpMicro Microservices")
+
+jmSyncTask := {
+  // All directories in sub-directory
+  val allSubFiles = new File("..").listFiles().toSeq
+  val allSubDirs: Seq[File] = for (f <- allSubFiles
+       if f.isDirectory) yield f
+  // Keep a file called .lastsynctime to keep track of the last time a sync happened and all calculations are based upon
+  // the last modified time of all files.
+  // Sync means
+  // 1. Modified files case: If a file or directory is modified in (a) at a newer time than the one in (b)
+  // IF .lastsynctime exists
+  //    ???
+  //  ELSE
+  //    ???
+  // 2. Newly created files case: If a file or directory exists in (a) but does not exist in (b)
+  // IF .lastsynctime exists
+  //    IF the newly created file is after .lastsynctime modified time THEN
+  //      Copy the newly created file to (b)
+  //    ELSE
+  //      This means the file was deleted in (b), so delete the file in (a)
+  // ELSE
+  //    The file was either created or deleted
+  // 3. Deleted files case: If a file or directory does not exist in (a) but does exist in (b)
+  // IF .lastsynctime exists
+  //    ???
+  // ELSE
+  //    ???
+
+  //      Files which do not exist in directory (a) but do exist in directory (b) AND the file which exists in (b) is NOT modified after .lastsynctime
+  // Files which exist in one (a) but not the other (b) AND are created after .lastsynctime get copied over from (a) to (b)
+  // ELSE IF .lastsynctime does not exist then ??? do what?
+  "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"
+}
+
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
+// Copy shared source
+
+lazy val copySharedSrc = taskKey[Unit]("Copy Shared Src")
+
+copySharedSrc := {
+  val sharedDir = new File("src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")
+  IO.delete(sharedDir)
+  IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
+}
+
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
 // Compile Idris to Java classes
 
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
@@ -529,7 +580,7 @@ cleanFiles += file("target" + \\ + "idrisclass")
 
 //unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
 
-compile in Compile <<= (compile in Compile).dependsOn(compileIdris)
+compile in Compile <<= (compile in Compile).dependsOn(copySharedSrc).dependsOn(compileIdris)
 
 // @feature end idris
 

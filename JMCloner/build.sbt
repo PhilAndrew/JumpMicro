@@ -421,6 +421,18 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 
 // @feature idris directory src/main/idris
 
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
+// Copy shared source
+
+lazy val copySharedSrc = taskKey[Unit]("Copy Shared Src")
+
+copySharedSrc := {
+  val sharedDir = new File("src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")
+  IO.delete(sharedDir)
+  IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
+}
+
 // @feature start idris
 
 // ***********************************************************************************************************************************************
@@ -491,7 +503,7 @@ cleanFiles += file("target" + \\ + "idrisclass")
 
 //unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
 
-compile in Compile <<= (compile in Compile).dependsOn(compileIdris)
+compile in Compile <<= (compile in Compile).dependsOn(copySharedSrc).dependsOn(compileIdris)
 
 // @feature end idris
 
