@@ -1,5 +1,6 @@
 // @feature start commonheader
-import java.io.File
+import java.io.FileInputStream
+import java.security.MessageDigest
 import java.util.jar.JarFile
 
 import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
@@ -22,14 +23,17 @@ import sbt.Keys._
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
-lazy val \\ = File.separator
+lazy val \\ = java.io.File.separator
+
+def recursiveListFiles(f: File): Array[File] = {
+  if (f.exists()) {
+    val these = f.listFiles
+    these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
+  } else Array[File]()
+}
 
 def subPackagesOf(path: String): Seq[String] = {
   def subPackagesOfImpl(prefix: String, path: String): Seq[String] = {
-    def recursiveListFiles(f: File): Array[File] = {
-      val these = f.listFiles
-      these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
-    }
     val file = new File(prefix + \\ + path.replace('.','/'))
     if (file.exists()) {
       val allFiles = recursiveListFiles(file)
@@ -378,174 +382,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 
-//Revised from hibernate search util
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
-import java.nio.channels.FileChannel
-import java.util.Arrays
-
-//remove if not needed
-import scala.collection.JavaConversions._
-
-// http://www.java2s.com/Tutorial/Java/0180__File/Utilityclassforsynchronizingfilesdirectories.htm
-
-lazy val FAT_PRECISION: Int = 2000
-
-// 16 MB
-lazy val DEFAULT_COPY_BUFFER_SIZE: Long = 16 * 1024 * 1024
-
-def copyFile(srcFile: File, destFile: File, chunkSize: Long): Unit = {
-  var is: FileInputStream = null
-  var os: FileOutputStream = null
-  try {
-    is = new FileInputStream(srcFile)
-    val iChannel: FileChannel = is.getChannel
-    os = new FileOutputStream(destFile, false)
-    val oChannel: FileChannel = os.getChannel
-    var doneBytes: Long = 0L
-    var todoBytes: Long = srcFile.length
-    while (todoBytes != 0L) {
-      val iterationBytes: Long = Math.min(todoBytes, chunkSize)
-      val transferredLength: Long =
-        oChannel.transferFrom(iChannel, doneBytes, iterationBytes)
-      if (iterationBytes != transferredLength) {
-        throw new IOException(
-          "Error during file transfer: expected " + iterationBytes +
-            " bytes, only " +
-            transferredLength +
-            " bytes copied.")
-      }
-      doneBytes += transferredLength
-      todoBytes -= transferredLength
-    }
-  } finally {
-    if (is != null) {
-      is.close()
-    }
-    if (os != null) {
-      os.close()
-    }
-  }
-  val successTimestampOp: Boolean =
-    destFile.setLastModified(srcFile.lastModified())
-  if (!successTimestampOp) {
-    println(
-      "Could not change timestamp for {}. Index synchronization may be slow. " +
-        destFile)
-  }
-}
-
-def delete(file: File): Unit = {
-  if (file.isDirectory) {
-    for (subFile <- file.listFiles()) {
-      delete(subFile)
-    }
-  }
-  if (file.exists()) {
-    if (!file.delete()) {
-      println("Could not delete {}" + file)
-    }
-  }
-}
-
-def areInSync(source: File, destination: File): Boolean =
-  if (source.isDirectory) {
-    if (!destination.exists()) {
-      false
-    } else if (!destination.isDirectory) {
-      throw new IOException(
-        "Source and Destination not of the same type:" + source.getCanonicalPath +
-          " , " +
-          destination.getCanonicalPath)
-    }
-    val sources: Array[String] = source.list()
-    val srcNames: java.util.Set[String] =
-      new java.util.HashSet[String](Arrays.asList(sources: _*))
-    val dests: Array[String] = destination.list()
-    // check for files in destination and not in source
-    for (fileName <- dests if !srcNames.contains(fileName)) {
-      false
-    }
-    var inSync: Boolean = true
-    for (fileName <- sources) {
-      val srcFile: File = new File(source, fileName)
-      val destFile: File = new File(destination, fileName)
-      if (!areInSync(srcFile, destFile)) {
-        inSync = false
-        //break
-      }
-    }
-    inSync
-  } else {
-    if (destination.exists() && destination.isFile) {
-      val sts: Long = source.lastModified() / FAT_PRECISION
-      val dts: Long = destination.lastModified() / FAT_PRECISION
-      sts == dts
-    } else {
-      false
-    }
-  }
-
-def synchronize(source: File, destination: File, smart: Boolean): Unit = {
-  synchronize(source, destination, smart, DEFAULT_COPY_BUFFER_SIZE)
-}
-
-def synchronize(source: File,
-                destination: File,
-                smart: Boolean,
-                chunkSizeIn: Long): Unit = {
-  var chunkSize: Long = chunkSizeIn
-  if (chunkSize <= 0) {
-    println("Chunk size must be positive: using default value.")
-    chunkSize = DEFAULT_COPY_BUFFER_SIZE
-  }
-  if (source.isDirectory) {
-    if (!destination.exists()) {
-      if (!destination.mkdirs()) {
-        throw new IOException("Could not create path " + destination)
-      }
-    } else if (!destination.isDirectory) {
-      throw new IOException(
-        "Source and Destination not of the same type:" + source.getCanonicalPath +
-          " , " +
-          destination.getCanonicalPath)
-    }
-    val sources: Array[String] = source.list()
-    val srcNames: java.util.Set[String] =
-      new java.util.HashSet[String](Arrays.asList(sources: _*))
-    val dests: Array[String] = destination.list()
-    //delete files not present in source
-    for (fileName <- dests if !srcNames.contains(fileName)) {
-      delete(new File(destination, fileName))
-    }
-    //copy each file from source
-    for (fileName <- sources) {
-      val srcFile: File = new File(source, fileName)
-      val destFile: File = new File(destination, fileName)
-      synchronize(srcFile, destFile, smart, chunkSize)
-    }
-  } else {
-    if (destination.exists() && destination.isDirectory) {
-      delete(destination)
-    }
-    if (destination.exists()) {
-      val sts: Long = source.lastModified() / FAT_PRECISION
-      val dts: Long = destination.lastModified() / FAT_PRECISION
-      //do not copy if smart and same timestamp and same length
-      if (!smart || sts == 0 || sts != dts || source.length != destination.length) {
-        copyFile(source, destination, chunkSize)
-      }
-    } else {
-      copyFile(source, destination, chunkSize)
-    }
-  }
-}
-
-
-
-
 // General sbt settings
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
@@ -637,36 +473,193 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 val jmSyncTask = TaskKey[Unit]("jmSync", "Synchronize all JumpMicro Microservices")
 
 jmSyncTask := {
+  val lastSyncFile = new File(".lastsync")
+  def touchLastSync() = {
+    IO.touch(lastSyncFile)
+  }
+
+  // http://www.codejava.net/coding/how-to-calculate-md5-and-sha-hash-values-in-java
+
+  def convertByteArrayToHexString(arrayBytes: Array[Byte]): String = {
+    val stringBuffer: StringBuffer = new StringBuffer()
+    for (i <- 0 until arrayBytes.length) {
+      stringBuffer.append(
+        java.lang.Integer
+          .toString((arrayBytes(i) & 0xff) + 0x100, 16)
+          .substring(1))
+    }
+    stringBuffer.toString
+  }
+
+  def hashFile(file: File, algorithm: String): String = {
+    // @todo Handle exceptions
+    val digest: MessageDigest = MessageDigest.getInstance(algorithm)
+    try {
+      digest.update(IO.readBytes(file))
+    } catch {
+      case ex: java.io.FileNotFoundException => {  }
+    }
+    val hashedBytes: Array[Byte] = digest.digest()
+    convertByteArrayToHexString(hashedBytes)
+  }
+
+  def md5File(f: File): String = {
+    if (f.isDirectory)
+      "directory"
+    else
+      hashFile(f, "MD5")
+  }
+
+  def directoryHash(d: File, filesHashed: Seq[(File, String)]): String = {
+    // Get all files in directory
+    val filesInDirectoryHash: Seq[String] = for (f <- filesHashed
+         if f._1.getCanonicalPath.startsWith(d.getCanonicalPath)) yield f._2
+    val allStrings = filesInDirectoryHash.mkString("")
+
+    val digest: MessageDigest = MessageDigest.getInstance("MD5")
+    digest.update(allStrings.toCharArray.map(_.toByte))
+    val hashedBytes: Array[Byte] = digest.digest()
+    convertByteArrayToHexString(hashedBytes)
+  }
+
+  // The key is the relative path and the hash
+  def toMap(a: Seq[(File, String, String, Long)]): Map[String, (File, String, String, Long)] = {
+    a.map((z) => (z._2 + z._3, (z._1, z._2, z._3, z._4))).toMap
+  }
+
+  def intersection(a: Seq[(File, String, String, Long)], b: Seq[(File, String, String, Long)]): Seq[(File, String, String, Long)] = {
+    val aMap = toMap(a)
+    val bMap = toMap(b)
+    val result = for (inA <- aMap; inB <- bMap.get(inA._1)) yield inB
+    result.toSeq
+  }
+
+  // The symmetric difference is a NOT of intersection
+  def symmetricDiff(intersectionOf: Seq[(File, String, String, Long)], a: Seq[(File, String, String, Long)], b: Seq[(File, String, String, Long)]): Map[String, (File, String, String, Long)] = {
+    val aMap = toMap(a)
+    val bMap = toMap(b)
+    val interMap = toMap(intersectionOf)
+    val inANotInter = for (inA <- aMap; if interMap.contains(inA._1) == false) yield inA
+    val inBNotInter = for (inB <- bMap; if interMap.contains(inB._1) == false) yield inB
+    inANotInter ++ inBNotInter
+  }
+
+  def updateFiles(lastModifiedDate: Option[Long],
+                   firstDate: Long, secondDate: Long,
+                   firstHash: String, secondHash: String,
+                   firstFileSize: Long, secondFileSize: Long,
+                   firstFile: File, secondFile: File) = {
+    val fileContentsEqual = (firstHash == secondHash) && (firstFileSize == secondFileSize)
+    val sameModifiedDate = firstDate == secondDate
+    val firstNewerThanSecondDate = firstDate > secondDate
+    val secondNewerThanFirstDate = secondDate > firstDate
+    val firstAfterLastModifiedDate = if (lastModifiedDate.isDefined) firstDate > lastModifiedDate.get else false
+    val secondAfterLastModifiedDate = if (lastModifiedDate.isDefined) secondDate > lastModifiedDate.get else false
+    val hashEqual = firstHash == secondHash
+    // Now actions
+    if (fileContentsEqual && hashEqual) {
+      // Do no action
+    } else if (firstAfterLastModifiedDate && !secondAfterLastModifiedDate) {
+      // Files are not equal and first was modified most recently, copy first over second
+      IO.copyFile(firstFile, secondFile, true)
+    } else if (!firstAfterLastModifiedDate && secondAfterLastModifiedDate) {
+      // Mirror of first case
+      IO.copyFile(secondFile, firstFile, true)
+    } else if (firstNewerThanSecondDate) {
+      IO.copyFile(firstFile, secondFile, true)
+    } else if (secondNewerThanFirstDate) {
+      IO.copyFile(secondFile, firstFile, true)
+    } else {
+    }
+  }
+
+  val lastModified: Option[Long] = if (lastSyncFile.exists()) Some(lastSyncFile.lastModified()) else None
+  touchLastSync() // @todo Should this be at the start or end of sync
+
   // All directories in sub-directory
   val allSubFiles = new File("..").listFiles().toSeq
   val allSubDirs: Seq[File] = for (f <- allSubFiles
-       if f.isDirectory) yield f
-  // Keep a file called .lastsynctime to keep track of the last time a sync happened and all calculations are based upon
+       if (f.isDirectory && (f.getName.startsWith(".") == false))) yield f
+  // Keep a file called .lastsync to keep track of the last time a sync happened and all calculations are based upon
   // the last modified time of all files.
+  // The process is as follows.
+  // 1. Fetch all .lastsync from each sub-directory and mark the created and modified files
   // Sync means
   // 1. Modified files case: If a file or directory is modified in (a) at a newer time than the one in (b)
-  // IF .lastsynctime exists
-  //    ???
-  //  ELSE
-  //    ???
+  //  Copy or merge the contents of file in (a) to the file in (b)
   // 2. Newly created files case: If a file or directory exists in (a) but does not exist in (b)
   // IF .lastsynctime exists
-  //    IF the newly created file is after .lastsynctime modified time THEN
+  //    IF the newly created file is after .lastsync modified time THEN
   //      Copy the newly created file to (b)
   //    ELSE
   //      This means the file was deleted in (b), so delete the file in (a)
   // ELSE
-  //    The file was either created or deleted
+  //    The file was either created or deleted, we should assume creation so Copy the newly created file to (b)
   // 3. Deleted files case: If a file or directory does not exist in (a) but does exist in (b)
-  // IF .lastsynctime exists
-  //    ???
-  // ELSE
-  //    ???
+  // This is just the inverse of 2. so case 2. covers this
 
-  //      Files which do not exist in directory (a) but do exist in directory (b) AND the file which exists in (b) is NOT modified after .lastsynctime
-  // Files which exist in one (a) but not the other (b) AND are created after .lastsynctime get copied over from (a) to (b)
-  // ELSE IF .lastsynctime does not exist then ??? do what?
-  "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"
+  // Build up the data about the file system
+  val subDirsAndContainedFiles: Seq[(File, Seq[File])] = for (f <- allSubDirs) yield
+    (f, recursiveListFiles(new File(f.getCanonicalPath + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")).toSeq)
+
+  val filesHashed: Seq[(File, String)] = for (f <- subDirsAndContainedFiles; g: File <- f._2) yield (g, md5File(g))
+  val dirsHashed: Seq[(File, String)] = for (d <- subDirsAndContainedFiles) yield {
+    val d2: File = d._1
+    val z: String = directoryHash(d2, filesHashed)
+    (d2, z)
+  }
+  // If all directories have the same contents then no action, this is the most simple case
+  val test = dirsHashed.head._2
+  val allDirsEqual = dirsHashed.forall(_._2 == test)
+  if (allDirsEqual) {
+    println("All directories are equal so no synchronization will take place")
+  } else {
+    println("Some directory is different, so some synchronization can take place")
+    if (lastModified.isDefined)
+      println("A last modified file exists")
+    else
+      println("No last modified file exists")
+
+    // Lets try to sync this directory with JMShared by comparing all the directories first
+    val jmSharedDir = new File(".." + \\ + "JMShared")
+    val jmSangriaDir = new File(".." + \\ + "JMSangriaGraphql")
+    val jmSharedDirFiles = filesHashed.filter(_._1.getCanonicalPath.startsWith(jmSharedDir.getCanonicalPath))
+    val jmSangriaGraphqlDirFiles = filesHashed.filter(_._1.getCanonicalPath.startsWith(jmSangriaDir.getCanonicalPath))
+
+    // File then relative path then MD5 then Updated time
+    val aSharedDirFiles: Seq[(File, String, String, Long)] = for (f <- jmSharedDirFiles) yield (f._1, f._1.getCanonicalPath.stripPrefix(jmSharedDir.getCanonicalPath), f._2, f._1.lastModified())
+    val bSangriaGraphqlDirFiles: Seq[(File, String, String, Long)] = for (f <- jmSangriaGraphqlDirFiles) yield (f._1, f._1.getCanonicalPath.stripPrefix(jmSangriaDir.getCanonicalPath), f._2, f._1.lastModified())
+
+    // Given a and b, apply the logic for sync
+    // 1. All files and directories which are exactly the same ignore, this can narrow the set to consider
+    val theSame = intersection(aSharedDirFiles, bSangriaGraphqlDirFiles)
+    val aMap = toMap(aSharedDirFiles)
+    val bMap = toMap(bSangriaGraphqlDirFiles)
+    val notTheSame = symmetricDiff(theSame, aSharedDirFiles, bSangriaGraphqlDirFiles)
+
+    println("Displaying files not the same")
+    for (n <- notTheSame) {
+      println(n._2._1.length())
+      println(n._2._1.getCanonicalPath)
+    }
+
+    // For those files which are different then group them together and consider their differences
+    val grouped = notTheSame.groupBy(_._2._2).values.toSeq
+    for (g <- grouped) {
+      val listG = g.values.toSeq
+      val first = listG(0)
+      val second = listG(1)
+
+      updateFiles(lastModifiedDate = lastModified,
+        firstDate = first._4, secondDate = second._4,
+        firstHash = first._3, secondHash = second._3,
+        firstFileSize = first._1.length(), secondFileSize = second._1.length(),
+        firstFile = first._1, secondFile = second._1)
+    }
+  }
+
+  lastSyncFile.delete()
+  lastSyncFile.createNewFile()
 }
 
 // ***********************************************************************************************************************************************
