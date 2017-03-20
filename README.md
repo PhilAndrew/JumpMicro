@@ -157,6 +157,12 @@ Why OSGI? [https://www.osgi.org/developer/benefits-of-using-osgi/](https://www.o
  
 [Java modules](https://en.wikipedia.org/wiki/Java_Module_System) deferred to a Java 9 release in 2017 looks like a new and good idea but OSGi, although boring, works. I'm happy to move to Java Modules once I understand it. 
 
+## FAQ: Shouldn't MicroServices be smaller?
+
+I am of the opinion that a MicroService should be a bounded context and that the size in code is not so important but the abstractions are more important.
+
+Consider the video [Implementing Microservices with Scala and Akka - by Vaughn Vernon](https://www.youtube.com/watch?v=19rbbQ46LB4)
+
 ## FAQ: Why Neo4J vs other databases?
 
 Graphs are portable data structures and can be easily moved from one database to another, to and from a web browser and also processed in memory. Their schema is their structure, where-as databases have schemas and it is relatively costly to move data of differing schemas around.
