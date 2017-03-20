@@ -462,10 +462,6 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 */
 // @feature end scalajs
 
-// @feature idris directory src/main/idris
-
-// @feature start idris
-
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Synchronize all MicroServices
@@ -573,6 +569,40 @@ jmSyncTask := {
     }
   }
 
+  def syncDirs(fromDir: File, toDir: File, filesHashed: Seq[(File, String)], lastModified: Option[Long]) = {
+    // Lets try to sync this directory with JMShared by comparing all the directories first
+    val jmSharedDir = toDir; //new File(".." + \\ + "JMShared")
+    val jmSangriaDir = fromDir; //new File(".." + \\ + "JMSangriaGraphql")
+    val jmSharedDirFiles = filesHashed.filter(_._1.getCanonicalPath.startsWith(jmSharedDir.getCanonicalPath))
+    val jmSangriaGraphqlDirFiles = filesHashed.filter(_._1.getCanonicalPath.startsWith(jmSangriaDir.getCanonicalPath))
+
+    // File, relative path, MD5, last modified date/time
+    val aSharedDirFiles: Seq[(File, String, String, Long)] = for (f <- jmSharedDirFiles) yield (f._1, f._1.getCanonicalPath.stripPrefix(jmSharedDir.getCanonicalPath), f._2, f._1.lastModified())
+    val bSangriaGraphqlDirFiles: Seq[(File, String, String, Long)] = for (f <- jmSangriaGraphqlDirFiles) yield (f._1, f._1.getCanonicalPath.stripPrefix(jmSangriaDir.getCanonicalPath), f._2, f._1.lastModified())
+
+    // Given a and b, apply the logic for sync
+    // 1. All files and directories which are exactly the same ignore, this can narrow the set to consider
+    val theSame = intersection(aSharedDirFiles, bSangriaGraphqlDirFiles)
+    val aMap = toMap(aSharedDirFiles)
+    val bMap = toMap(bSangriaGraphqlDirFiles)
+    val notTheSame = symmetricDiff(theSame, aSharedDirFiles, bSangriaGraphqlDirFiles)
+
+    // For those files which are different then group them together and consider their differences
+    val grouped = notTheSame.groupBy(_._2._2).values.toSeq
+    for (g <- grouped) {
+      val listG = g.values.toSeq
+      val first = listG(0)
+      val second = listG(1)
+
+      updateFiles(lastModifiedDate = lastModified,
+        firstDate = first._4, secondDate = second._4,
+        firstHash = first._3, secondHash = second._3,
+        firstFileSize = first._1.length(), secondFileSize = second._1.length(),
+        firstFile = first._1, secondFile = second._1)
+    }
+
+  }
+
   val lastModified: Option[Long] = if (lastSyncFile.exists()) Some(lastSyncFile.lastModified()) else None
   touchLastSync() // @todo Should this be at the start or end of sync
 
@@ -602,8 +632,10 @@ jmSyncTask := {
   val subDirsAndContainedFiles: Seq[(File, Seq[File])] = for (f <- allSubDirs) yield
     (f, recursiveListFiles(new File(f.getCanonicalPath + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")).toSeq)
 
-  val filesHashed: Seq[(File, String)] = for (f <- subDirsAndContainedFiles; g: File <- f._2) yield (g, md5File(g))
-  val dirsHashed: Seq[(File, String)] = for (d <- subDirsAndContainedFiles) yield {
+  // All files in all directories located in JumpMicro, files only
+  val filesHashed: Seq[(File, String)] = for (f <- subDirsAndContainedFiles; g: File <- f._2; if g.isFile) yield (g, md5File(g))
+  // These are all the directories located in JumpMicro
+  val dirsHashed: Seq[(File, String)] = for (d <- subDirsAndContainedFiles; if d._1.isDirectory) yield {
     val d2: File = d._1
     val z: String = directoryHash(d2, filesHashed)
     (d2, z)
@@ -612,7 +644,7 @@ jmSyncTask := {
   val test = dirsHashed.head._2
   val allDirsEqual = dirsHashed.forall(_._2 == test)
   if (allDirsEqual) {
-    println("All directories are equal so no synchronization will take place")
+    println("All JumpMicro MicroService directories are equal so no synchronization will take place")
   } else {
     println("Some directory is different, so some synchronization can take place")
     if (lastModified.isDefined)
@@ -620,41 +652,16 @@ jmSyncTask := {
     else
       println("No last modified file exists")
 
-    // Lets try to sync this directory with JMShared by comparing all the directories first
-    val jmSharedDir = new File(".." + \\ + "JMShared")
-    val jmSangriaDir = new File(".." + \\ + "JMSangriaGraphql")
-    val jmSharedDirFiles = filesHashed.filter(_._1.getCanonicalPath.startsWith(jmSharedDir.getCanonicalPath))
-    val jmSangriaGraphqlDirFiles = filesHashed.filter(_._1.getCanonicalPath.startsWith(jmSangriaDir.getCanonicalPath))
-
-    // File then relative path then MD5 then Updated time
-    val aSharedDirFiles: Seq[(File, String, String, Long)] = for (f <- jmSharedDirFiles) yield (f._1, f._1.getCanonicalPath.stripPrefix(jmSharedDir.getCanonicalPath), f._2, f._1.lastModified())
-    val bSangriaGraphqlDirFiles: Seq[(File, String, String, Long)] = for (f <- jmSangriaGraphqlDirFiles) yield (f._1, f._1.getCanonicalPath.stripPrefix(jmSangriaDir.getCanonicalPath), f._2, f._1.lastModified())
-
-    // Given a and b, apply the logic for sync
-    // 1. All files and directories which are exactly the same ignore, this can narrow the set to consider
-    val theSame = intersection(aSharedDirFiles, bSangriaGraphqlDirFiles)
-    val aMap = toMap(aSharedDirFiles)
-    val bMap = toMap(bSangriaGraphqlDirFiles)
-    val notTheSame = symmetricDiff(theSame, aSharedDirFiles, bSangriaGraphqlDirFiles)
-
-    println("Displaying files not the same")
-    for (n <- notTheSame) {
-      println(n._2._1.length())
-      println(n._2._1.getCanonicalPath)
+    // 1. Sync the changed directory(s) to JMShared
+    for (fromDir <- allSubDirs.filter(_.getName != "JMShared")) {
+      val toDir = new File(".." + \\ + "JMShared")
+      syncDirs(fromDir, toDir, filesHashed, lastModified)
     }
 
-    // For those files which are different then group them together and consider their differences
-    val grouped = notTheSame.groupBy(_._2._2).values.toSeq
-    for (g <- grouped) {
-      val listG = g.values.toSeq
-      val first = listG(0)
-      val second = listG(1)
-
-      updateFiles(lastModifiedDate = lastModified,
-        firstDate = first._4, secondDate = second._4,
-        firstHash = first._3, secondHash = second._3,
-        firstFileSize = first._1.length(), secondFileSize = second._1.length(),
-        firstFile = first._1, secondFile = second._1)
+    // 2. Sync JMShared back out to all to all others where different
+    for (toDir <- allSubDirs.filter(_.getName != "JMShared")) {
+      val fromDir = new File(".." + \\ + "JMShared")
+      syncDirs(fromDir, toDir, filesHashed, lastModified)
     }
   }
 
@@ -673,6 +680,10 @@ copySharedSrc := {
   IO.delete(sharedDir)
   IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
 }
+
+// @feature idris directory src/main/idris
+
+// @feature start idris
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
