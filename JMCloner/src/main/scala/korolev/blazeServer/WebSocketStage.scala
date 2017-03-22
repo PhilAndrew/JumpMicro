@@ -7,14 +7,11 @@ import org.http4s.blaze.pipeline._
 import org.http4s.blaze.util.Execution.trampoline
 import org.http4s.blaze.pipeline.stages.SerializingStage
 import org.http4s.websocket.WebsocketBits.WebSocketFrame
-import org.log4s.getLogger
 
 import scala.util.Failure
 import scala.util.Success
 
 trait WebSocketStage extends TailStage[WebSocketFrame] {
-
-  private[this] val logger = getLogger
 
   def name: String = "WebSocket Stage"
 

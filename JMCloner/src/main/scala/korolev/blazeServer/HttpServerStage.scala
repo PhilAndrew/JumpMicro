@@ -20,13 +20,9 @@ import java.nio.ByteBuffer
 
 import org.http4s.blaze.http.{Headers, HttpResponse, HttpService, WSResponse}
 import org.http4s.blaze.util.BufferTools
-import org.log4s.getLogger
 
 class HttpServerStage(maxReqBody: Long, maxNonbody: Int)(handleRequest: HttpService)
   extends Http1ServerParser(maxNonbody, maxNonbody, 5*1024) with TailStage[ByteBuffer] {
-
-  private[this] val logger = getLogger
-
   import HttpServerStage._
 
   private implicit def ec = trampoline

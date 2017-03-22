@@ -2,11 +2,12 @@ package korolev.blazeServer
 
 import java.net.InetAddress
 import java.security.KeyStore
+import java.util.concurrent.Executors
 import javax.net.ssl.{KeyManagerFactory, SSLContext}
 
 import org.http4s.blaze.util.BogusKeystore
 
-import scala.concurrent.ExecutionContextExecutorService
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
 
 /**
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
@@ -28,7 +29,11 @@ case class BlazeServerConfig(
 
 object BlazeServerConfig {
 
-  val default = BlazeServerConfig()
+  val default = {
+    implicit val ec: ExecutionContextExecutorService = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(10))
+    //import scala.concurrent.ExecutionContext.Implicits.global
+    BlazeServerConfig()
+  }
 
   def bogusSslContext: SSLContext = {
     val ksStream = BogusKeystore.asInputStream()

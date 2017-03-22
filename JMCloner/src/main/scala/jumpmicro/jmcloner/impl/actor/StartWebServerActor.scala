@@ -1,8 +1,9 @@
 package jumpmicro.jmcloner.impl.actor
 
+import java.util.concurrent.Executors
+
 import jumpmicro.jmcloner.impl.configuration.GlobalModule._
 import jumpmicro.shared.util.global.CommonGlobalModule._
-
 import akka.camel.{CamelMessage, Consumer}
 import org.log4s._
 import scaldi.Injectable
@@ -38,7 +39,12 @@ class StartWebServerActor extends Consumer with Injectable {
       //webServer = new WebServer(osgi.bundleContext)
       //webServer.start()
 
-      WebServer.start()
+      //scala.concurrent.ExecutionContext.global.prepare()
+
+
+      val webServer = new WebServer()
+      webServer.start()
+
       logger.info("HTTP Server for korolev started at http://localhost:8181/")
     }
   }

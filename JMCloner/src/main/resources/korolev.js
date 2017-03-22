@@ -6,6 +6,7 @@
       addHandler = null,
       removeHandler = null,
       scheduledAddHandlerItems = [],
+      formDataProgressHandler = null,
       renderNum = 0,
       rootListeners = [],
       listenFun = null,
@@ -48,6 +49,9 @@
       },
       RegisterGlobalAddHandler: function(f) {
         addHandler = f;
+      },
+      RegisterFormDataProgressHandler: function(f) {
+        formDataProgressHandler = f;
       },
       RegisterGlobalRemoveHandler: function(f) {
         removeHandler = f;
@@ -145,6 +149,25 @@
         console.log(path);
         if (path !== global.location.pathname)
           global.history.pushState(path, '', path);
+      },
+      UploadForm: function(id, descriptor) {
+        var form = els[id];
+        var formData = new FormData(form);
+        var request = new XMLHttpRequest();
+        var deviceId = getCookie('device');
+        var uri = KorolevServerRootPath +
+          'bridge' +
+          '/' + deviceId +
+          '/' + KorolevSessionId +
+          '/form-data' +
+          '/' + descriptor;
+        request.open("POST", uri, true);
+        request.upload.onprogress = function(event) {
+          var arg = [descriptor, event.loaded, event.total].join(':');
+          formDataProgressHandler(arg);
+        }
+        request.send(formData);
+        return;
       }
     }
   })();
@@ -168,6 +191,7 @@
       console.log('Try to open connection to ' + uri + ' using WebSocket');
       ws = new WebSocket(uri);
       ws.addEventListener('open', onOpen);
+      global.Korolev.connection = ws;
       Bridge.webSocket(ws).catch(function(errorEvent) {
         // Try to reconnect after 2s
         setTimeout(initializeBridgeLongPolling, 1);
@@ -238,6 +262,7 @@
       }
 
       var fakeWs = global.document.createDocumentFragment()
+      global.Korolev.connection = fakeWs;
       fakeWs.send = function(message) {
         lpPublish(fakeWs, message);
       }

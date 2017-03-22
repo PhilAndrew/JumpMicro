@@ -3,171 +3,263 @@ package korolev
 import java.util.concurrent.atomic.AtomicInteger
 
 import bridge.JSAccess
-import org.log4s._
-import korolev.Effects.{Access, ElementId}
-import korolev.Async.AsyncOps
-//import slogging.LazyLogging
+import korolev.Effects.{Access, ElementId, FormDataDownloader}
+import korolev.Async.{AsyncOps, Promise}
+import korolev.StateManager.Transition
+import korolev.util.AtomicReference
+import org.log4s.getLogger
 
-import scala.language.higherKinds
-import scala.util.{Failure, Success}
+import scala.collection.mutable
+import scala.language.{higherKinds, postfixOps}
+import scala.util.{Failure, Random, Success, Try}
 
-trait Korolev
+abstract class Korolev[F[+ _]: Async, S, M] {
+  def stateManager: StateManager[F, S]
+  def jsAccess: JSAccess[F]
+  def resolveFormData(descriptor: String, formData: Try[FormData]): Unit
+}
 
 /**
   * @author Aleksey Fomkin <aleksey.fomkin@gmail.com>
   */
-object Korolev extends EventPropagation {
-
-  private[this] val logger = getLogger
+object Korolev {
 
   import VDom._
   import Change._
 
-  def apply[F[+_]: Async, S, M](
-                           localDux: Dux[F, S],
-                           jsAccess: JSAccess[F],
-                           initialState: S,
-                           render: Render[S],
-                           router: Router[F, S, S],
-                           messageHandler: PartialFunction[M, Unit],
-                           fromScratch: Boolean): Dux[F, S] = {
+  trait MutableMapFactory {
+    def apply[K, V]: mutable.Map[K, V]
+  }
 
-    // This event type should be listen on client side
-    @volatile var enabledEvents = Set('submit)
-    @volatile var elementIds = Map.empty[Effects.ElementId, String]
-    @volatile var events = Map.empty[String, Effects.Event[F, S, M]]
+  object defaultMutableMapFactory extends MutableMapFactory {
+    def apply[K, V]: mutable.Map[K, V] =
+      mutable.Map.empty
+  }
 
-    val currentRenderNum = new AtomicInteger(0)
+  def apply[F[+ _]: Async, S, M](sm: StateManager[F, S],
+                                 ja: JSAccess[F],
+                                 initialState: S,
+                                 render: Render[S],
+                                 router: Router[F, S, S],
+                                 messageHandler: PartialFunction[M, Unit],
+                                 fromScratch: Boolean,
+                                 createMutableMap: MutableMapFactory = defaultMutableMapFactory): Korolev[F, S, M] =
+    new Korolev[F, S, M] with EventPropagation {
+      private[this] val logger = getLogger
 
-    // Prepare frontend
-    jsAccess.global.getAndSaveAs("Korolev", "@Korolev")
-    val client = jsAccess.obj("@Korolev")
+      // Public properties
+      val stateManager = sm
+      val jsAccess = ja
 
-    def updateMisc(renderResult: VDom.Node) = {
+      def resolveFormData(descriptor: String, formData: Try[FormData]): Unit = {
+        formDataPromises.get(descriptor) foreach { promise =>
+          promise.complete(formData)
+        }
+        // Remove promise and onProgress handler
+        // when formData loading is complete
+        formDataProgressTransitions.remove(descriptor)
+        formDataPromises.remove(descriptor)
+      }
 
-      val misc = collectMisc(Id(0), renderResult)
+      def updateMisc(renderResult: VDom.Node): Unit = {
+        val misc = collectMisc(Id(0), renderResult)
 
-      events = {
-        val xs = misc.collect {
+        events() = misc.collect {
           case (id, event: Effects.Event[_, _, _]) =>
             val typedEvent = event.asInstanceOf[Effects.Event[F, S, M]]
             s"$id:${event.`type`.name}:${event.phase}" -> typedEvent
-        }
-        xs.toMap
-      }
+        } toMap
 
-      events.values foreach { event =>
-        val `type` = event.`type`
-        if (!enabledEvents.contains(`type`)) {
-          enabledEvents = enabledEvents + `type`
-          Async[F].run(client.call("ListenEvent", `type`.name, false)) {
-            case Success(_) => // do nothing
-            case Failure(e) => logger.error(e)("Error occurred when invoking ListenEvent")
+        delays() = {
+          // Remove finished delays
+          val actualDelays = delays() filter {
+            case (_, delay) => !delay.finished
+          } toMap
+          val updatedDelays = misc collect {
+            case (id, delay: Effects.Delay[_, _]) =>
+              actualDelays.get(id) match {
+                case None =>
+                  // This is new delays. Stat it
+                  val typedDelay = delay.asInstanceOf[Effects.Delay[F, S]]
+                  typedDelay.start(stateManager.apply)
+                  id -> typedDelay
+                case Some(typedDelay) =>
+                  // Return old delay
+                  id -> typedDelay
+              }
           }
+          val updatedDelaysMap = updatedDelays.toMap
+          // Stop all non-finished delays
+          // which was removed from tree
+          actualDelays foreach {
+            case (id, delay) =>
+              if (!updatedDelaysMap.contains(id))
+                delay.cancel()
+          }
+          updatedDelays
         }
-      }
 
-      elementIds = {
-        val xs = misc.collect {
-          case (id, eId: Effects.ElementId) => eId -> id.toString
-        }
-        xs.toMap
-      }
-    }
-
-    val browserAccess = new Access[F, M] {
-      def property[T](eId: ElementId, propName: Symbol): F[T] = elementIds.get(eId) match {
-        case Some(id) =>
-          val future = client.call[T]("ExtractProperty", id, propName.name)
-          jsAccess.flush()
-          future
-        case None =>
-          Async[F].fromTry(Failure(new Exception("No element matched for accessor")))
-      }
-
-      def publish(message: M): F[Unit] = {
-        Async[F].pure(messageHandler(message))
-      }
-    }
-
-    val initialization = Async[F] sequence {
-      Seq(
-        jsAccess.registerCallbackAndFlush[String] { pathString =>
-          val path = Router.Path.fromString(pathString)
-          val maybeState = router.toState.lift(localDux.state, path)
-          maybeState foreach { asyncState =>
-            val unit = Async[F].flatMap(asyncState)(localDux.update)
-            Async[F].run(unit) {
+        events().values foreach { event =>
+          val `type` = event.`type`
+          if (!enabledEvents().contains(`type`)) {
+            enabledEvents.transform(_ + `type`)
+            Async[F].run(client.call("ListenEvent", `type`.name, false)) {
               case Success(_) => // do nothing
-              case Failure(e) => logger.error(e)("Error occurred when updating state")
+              case Failure(e) =>
+                logger.error(e)("Error occurred when invoking ListenEvent")
             }
           }
-        } flatMap { historyCallback =>
-          client.callAndFlush[Unit]("RegisterHistoryHandler", historyCallback)
-        },
-        jsAccess.registerCallbackAndFlush[String] { targetAndType =>
-          val Array(renderNum, target, tpe) = targetAndType.split(':')
-          if (currentRenderNum.get == renderNum.toInt)
-            propagateEvent(events, localDux.apply, browserAccess, Id(target), tpe)
-        } flatMap { eventCallback =>
-          client.callAndFlush[Unit]("RegisterGlobalEventHandler", eventCallback)
-        },
-        client.callAndFlush[Unit]("SetRenderNum", 0),
-        if (fromScratch) client.callAndFlush("CleanRoot") else Async[F].unit
-      )
-    }
+        }
 
-    Async[F].run(initialization) {
-      case Success(_) =>
-        logger.trace("Korolev initialization complete")
-        val renderOpt = render.lift
+        elementIds() = misc.collect {
+          case (id, eId: Effects.ElementId) =>
+            eId -> id.toString
+        } toMap
+      }
 
-        @volatile var lastRender =
-          if (fromScratch) VDom.Node("body", Nil, Nil, Nil)
-          else renderOpt(initialState).get
+      // This event type should be listen on client side
+      val enabledEvents = AtomicReference(Set('submit))
+      val elementIds = AtomicReference(Map.empty[Effects.ElementId, String])
+      val events = AtomicReference(Map.empty[String, Effects.Event[F, S, M]])
+      val delays = AtomicReference(Seq.empty[(Id, Effects.Delay[F, S])])
+      val currentRenderNum = new AtomicInteger(0)
+      val formDataPromises = createMutableMap[String, Promise[F, FormData]]
+      val formDataProgressTransitions = createMutableMap[String, (Int, Int) => Transition[S]]
 
-        updateMisc(lastRender)
+      val client = {
+        // Prepare frontend
+        jsAccess.global.getAndSaveAs("Korolev", "@Korolev")
+        jsAccess.obj("@Korolev")
+      }
 
-        val onState: S => Unit = { state =>
+      val browserAccess = new Access[F, S, M] {
 
-          // Set page url if router exists
-          router.
-            fromState.lift(state).
-            foreach(path => client.call("ChangePageUrl", path.toString))
-
-          client.call("SetRenderNum", currentRenderNum.incrementAndGet())
-
-          renderOpt(state) match {
-            case Some(newRender) =>
-              val changes = VDom.changes(lastRender, newRender)
-              updateMisc(newRender)
-              lastRender = newRender
-
-              changes foreach {
-                case Create(id, childId, tag) =>
-                  client.call("Create", id.toString, childId.toString, tag)
-                case CreateText(id, childId, text) =>
-                  client.call("CreateText", id.toString, childId.toString, text)
-                case Remove(id, childId) =>
-                  client.call("Remove", id.toString, childId.toString)
-                case SetAttr(id, name, value, isProperty) =>
-                  client.call("SetAttr", id.toString, name, value, isProperty)
-                case RemoveAttr(id, name, isProperty) =>
-                  client.call("RemoveAttr", id.toString, name, isProperty)
-                case _ =>
-              }
+        def property[T](eId: ElementId, propName: Symbol): F[T] =
+          elementIds().get(eId) match {
+            case Some(id) =>
+              val future = client.call[T]("ExtractProperty", id, propName.name)
               jsAccess.flush()
+              future
             case None =>
-              logger.warn(s"Render is nod defined for ${state.getClass.getSimpleName}")
+              Async[F].fromTry(
+                Failure(new Exception("No element matched for accessor")))
+          }
+
+        def downloadFormData(eId: ElementId): FormDataDownloader[F, S] = new FormDataDownloader[F, S] {
+
+          val descriptor = Random.alphanumeric.take(5).mkString
+
+          def start(): F[FormData] = elementIds().get(eId) match {
+            case Some(id) =>
+              val promise = Async[F].promise[FormData]
+              val future = client.call[Unit]("UploadForm", id, descriptor)
+              formDataPromises.put(descriptor, promise)
+              jsAccess.flush()
+              future.flatMap(_ => promise.future)
+            case None =>
+              Async[F].fromTry(
+                Failure(new Exception("No element matched for accessor")))
+          }
+          def onProgress(f: (Int, Int) => Transition[S]): this.type = {
+            formDataProgressTransitions.put(descriptor, f)
+            this
           }
         }
 
-        localDux.subscribe(onState)
-        if (fromScratch) onState(initialState)
-        else jsAccess.flush()
-      case Failure(e) => logger.error(e)("Error occurred on event callback registration")
-    }
+        def publish(message: M): F[Unit] = {
+          Async[F].pure(messageHandler(message))
+        }
+      }
 
-    localDux
-  }
+      val initialization = Async[F] sequence {
+        Seq(
+          // History callback
+          jsAccess.registerCallbackAndFlush[String] { pathString =>
+            val path = Router.Path.fromString(pathString)
+            val maybeState = router.toState.lift(stateManager.state, path)
+            maybeState foreach { asyncState =>
+              val unit = Async[F].flatMap(asyncState)(stateManager.update)
+              Async[F].run(unit) {
+                case Success(_) => // do nothing
+                case Failure(e) =>
+                  logger.error(e)("Error occurred when updating state")
+              }
+            }
+          } flatMap { historyCallback =>
+            client.callAndFlush[Unit]("RegisterHistoryHandler", historyCallback)
+          },
+          // Event callback
+          jsAccess.registerCallbackAndFlush[String] { targetAndType =>
+            val Array(renderNum, target, tpe) = targetAndType.split(':')
+            if (currentRenderNum.get == renderNum.toInt)
+              propagateEvent(events(), stateManager.apply, browserAccess, Id(target), tpe)
+          } flatMap { eventCallback =>
+            client.callAndFlush[Unit]("RegisterGlobalEventHandler", eventCallback)
+          },
+          // FormData progress callback
+          jsAccess.registerCallbackAndFlush[String] { descriptorLoadedTotal =>
+            val Array(descriptor, loaded, total) = descriptorLoadedTotal.split(':')
+            formDataProgressTransitions.get(descriptor) foreach { f =>
+              stateManager(f(loaded.toInt, total.toInt))
+            }
+          } flatMap { callback =>
+            client.callAndFlush[Unit]("RegisterFormDataProgressHandler", callback)
+          },
+          client.callAndFlush[Unit]("SetRenderNum", 0),
+          if (fromScratch) client.callAndFlush("CleanRoot") else Async[F].unit
+        )
+      }
+
+      Async[F].run(initialization) {
+        case Success(_) =>
+          logger.trace("Korolev initialization complete")
+          val renderOpt = render.lift
+
+          @volatile var lastRender =
+            if (fromScratch) VDom.Node("body", Nil, Nil, Nil)
+            else renderOpt(initialState).get
+
+          updateMisc(lastRender)
+
+          val onState: S => Unit = { state =>
+            // Set page url if router exists
+            router.fromState
+              .lift(state)
+              .foreach(path => client.call("ChangePageUrl", path.toString))
+
+            client.call("SetRenderNum", currentRenderNum.incrementAndGet())
+
+            renderOpt(state) match {
+              case Some(newRender) =>
+                val changes = VDom.changes(lastRender, newRender)
+                updateMisc(newRender)
+                lastRender = newRender
+
+                changes foreach {
+                  case Create(id, childId, tag) =>
+                    client.call("Create", id.toString, childId.toString, tag)
+                  case CreateText(id, childId, text) =>
+                    client.call("CreateText", id.toString, childId.toString, text)
+                  case Remove(id, childId) =>
+                    client.call("Remove", id.toString, childId.toString)
+                  case SetAttr(id, name, value, isProperty) =>
+                    client.call("SetAttr", id.toString, name, value, isProperty)
+                  case RemoveAttr(id, name, isProperty) =>
+                    client.call("RemoveAttr", id.toString, name, isProperty)
+                  case _ =>
+                }
+                jsAccess.flush()
+              case None =>
+                logger.warn(
+                  s"Render is nod defined for ${state.getClass.getSimpleName}")
+            }
+          }
+
+          stateManager.subscribe(onState)
+          if (fromScratch) onState(initialState)
+          else jsAccess.flush()
+        case Failure(e) =>
+          logger.error(e)("Error occurred on event callback registration")
+      }
+    }
 }

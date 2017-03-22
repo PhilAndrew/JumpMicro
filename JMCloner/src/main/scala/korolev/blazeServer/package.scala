@@ -3,10 +3,9 @@ package korolev
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousChannelGroup
-import java.nio.charset.StandardCharsets
-import java.util.concurrent.Executors
 
 import korolev.server.{KorolevServiceConfig, MimeTypes, Request => KorolevRequest, Response => KorolevResponse}
+import korolev.util.Scheduler
 import org.http4s.blaze.channel._
 import org.http4s.blaze.channel.nio2.NIO2SocketServerGroup
 import org.http4s.blaze.http.{HttpResponse, HttpService, Response, WSResponse}
@@ -14,7 +13,8 @@ import org.http4s.blaze.pipeline.stages.SSLStage
 import org.http4s.blaze.pipeline.{Command, LeafBuilder}
 import org.http4s.websocket.WebsocketBits._
 
-import scala.concurrent.{ExecutionContext, Promise}
+import scala.concurrent.Promise
+import scala.concurrent.duration._
 import scala.language.higherKinds
 
 /**
@@ -22,19 +22,16 @@ import scala.language.higherKinds
   */
 package object blazeServer {
 
-  implicit val defaultExecutor = ExecutionContext.
-    fromExecutorService(Executors.newWorkStealingPool())
-
   def blazeService[F[+_]: Async, S, M]: BlazeServiceBuilder[F, S, M] =
     new BlazeServiceBuilder(server.mimeTypes)
 
   def blazeService[F[+_]: Async, S, M](mimeTypes: MimeTypes): BlazeServiceBuilder[F, S, M] =
-    new BlazeServiceBuilder(server.mimeTypes)
+    new BlazeServiceBuilder(mimeTypes)
 
   def blazeService[F[+_]: Async, S, M](
     config: KorolevServiceConfig[F, S, M],
     mimeTypes: MimeTypes
-  ): HttpService = {
+  )(implicit scheduler: Scheduler[F]): HttpService = {
 
     val korolevServer = korolev.server.korolevService(mimeTypes, config)
 
@@ -54,7 +51,6 @@ package object blazeServer {
         }
       }
 
-
       val korolevRequest = KorolevRequest(
         path = Router.Path.fromString(path),
         params,
@@ -71,8 +67,9 @@ package object blazeServer {
           val l = body.remaining()
           val bytes = new Array[Byte](l)
           if (l > 0) body.get(bytes)
-          new String(bytes, StandardCharsets.UTF_8)
-        }
+          ByteBuffer.wrap(bytes)
+        },
+        headers = headers
       )
 
       val responseF = Async[F].map(korolevServer(korolevRequest)) {
@@ -80,22 +77,31 @@ package object blazeServer {
           val array = streamOpt match {
             case Some(stream) =>
               val array = new Array[Byte](stream.available)
-              stream.read(array)
+              var offset = 0
+              while (stream.available > 0) {
+                offset += stream.read(array, offset, stream.available)
+              }
               array
             case None =>
               Array.empty[Byte]
           }
           HttpResponse(status.code, status.phrase, responseHeaders, ByteBuffer.wrap(array))
         case KorolevResponse.WebSocket(publish, subscribe, destroy) =>
-          // TODO handle disconnect on failure
           val stage = new WebSocketStage {
-            def onDirtyDisconnect(e: Throwable): Unit = destroy()
+            val stopHeartbeat = scheduler.schedule(5.seconds) {
+              channelWrite(Ping())
+            }
+            def destroyAndStopTimer(): Unit = {
+              stopHeartbeat()
+              destroy()
+            }
+            def onDirtyDisconnect(e: Throwable): Unit = destroyAndStopTimer()
             def onMessage(msg: WebSocketFrame): Unit = msg match {
               case Text(incomingMessage, _) => publish(incomingMessage)
-              case Binary(_, _) => // ignore
               case Close(_) =>
-                destroy()
+                destroyAndStopTimer()
                 sendOutboundCommand(Command.Disconnect)
+              case _ => // ignore
             }
             override protected def stageStartup(): Unit = {
               super.stageStartup()
