@@ -356,7 +356,7 @@ osgiSettings
 defaultSingleProjectSettings
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
-//fork in run := true
+//fork in run := false
 
 cancelable in Global := true
 
@@ -391,14 +391,16 @@ initialize := {
 }
 
 // Copy paste detector https://github.com/sbt/cpd4sbt
-enablePlugins(CopyPasteDetector)
+// @todo Commented out because slow
+//enablePlugins(CopyPasteDetector)
 
+// @todo Commented out because slow
 // Acyclic, prevents circular dependencies.
 // https://github.com/lihaoyi/acyclic
 
-autoCompilerPlugins := true
+//autoCompilerPlugins := true
 
-addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
+//addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
 // END - Acyclic, prevents circular dependencies.
 
 // @feature start scalajs
@@ -436,9 +438,9 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 lazy val copySharedSrc = taskKey[Unit]("Copy Shared Src")
 
 copySharedSrc := {
-  val sharedDir = new File("src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")
-  IO.delete(sharedDir)
-  IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
+  //val sharedDir = new File("src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")
+  //IO.delete(sharedDir)
+  //IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
 }
 
 // @feature start idris

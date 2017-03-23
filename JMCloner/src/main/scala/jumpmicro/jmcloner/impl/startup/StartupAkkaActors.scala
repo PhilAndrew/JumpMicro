@@ -1,7 +1,7 @@
 package jumpmicro.jmcloner.impl.startup
 
 import akka.actor.{ActorRef, Props}
-import jumpmicro.jmcloner.impl.actor.StartWebServerActor
+import jumpmicro.jmcloner.impl.actor.{StartWebServerActor}
 import jumpmicro.shared.util.boilerplate.StartupAkkaActorsBoilerplate
 //remove if not needed
 import scala.concurrent.ExecutionContext.Implicits.global

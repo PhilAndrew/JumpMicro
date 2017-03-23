@@ -14,7 +14,7 @@ resolvers += Resolver.bintrayRepo("philandrew", "sbt-plugins")
 
 // Chose one of the following
 
-//addSbtPlugin("org.philandrew" % "sbt-osgi-felix-p" % "1.0.13")
+//addSbtPlugin("org.philandrew" % "sbt-osgi-felix-p" % "1.0.14")
 
 
 lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix-p.git#1a918f07160a1919d535c2aa3f566327cd4f5165")
@@ -40,8 +40,9 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.14")
 
 //addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % sys.props.getOrElse("plugin.version", sys.error("'plugin.version' environment variable is not set")))
 
+// @todo Commented out because slow
 // Copy paste detector https://github.com/sbt/cpd4sbt
-addSbtPlugin("de.johoop" % "cpd4sbt" % "1.2.0")
+//addSbtPlugin("de.johoop" % "cpd4sbt" % "1.2.0")
 
 // Clippy helps to show better Scala error messages https://scala-clippy.org/
 addSbtPlugin("com.softwaremill.clippy" % "plugin-sbt" % "0.5.0")

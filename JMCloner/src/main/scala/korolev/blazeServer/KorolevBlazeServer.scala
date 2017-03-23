@@ -1,5 +1,6 @@
 package korolev.blazeServer
 
+import org.http4s.blaze.channel.ServerChannel
 import org.http4s.blaze.http.HttpService
 import slogging._
 
@@ -13,10 +14,10 @@ abstract class KorolevBlazeServer(config: BlazeServerConfig = BlazeServerConfig.
   implicit executionContext: ExecutionContextExecutorService
 ) {
   def service: HttpService
-  def start(): Unit = {
+  def start(): ServerChannel = {
     // activate SLF4J backend
     //LoggerConfig.factory = SLF4JLoggerFactory()
-    runServer(service, config)
+    runServer(service, config.copy(doNotBlockCurrentThread = true))
   }
   /*def main(args: Array[String]): Unit = {
     // activate SLF4J backend

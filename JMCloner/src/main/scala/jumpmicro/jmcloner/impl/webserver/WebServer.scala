@@ -1,9 +1,9 @@
-package jumpmicro.jmcloner.impl.actor
+package jumpmicro.jmcloner.impl.webserver
 
 import korolev._
-import korolev.server._
 import korolev.blazeServer._
 import korolev.execution._
+import korolev.server._
 
 import scala.concurrent.Future
 
@@ -81,7 +81,7 @@ class WebServer extends KorolevBlazeServer {
             'input(
               inputId,
               'type /= "text",
-              'placeholder /= "What should be done?"
+              'placeholder /= "What should be done???"
             ),
             'button("Add todo")
           )
