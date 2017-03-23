@@ -28,7 +28,7 @@ class WebServer extends KorolevBlazeServer {
     render = {
       case state =>
         'body(
-          'div("Super TODO tracker"),
+          'div("Super TODO tracker - this project is still in development and JMCloner does not yet clone projects"),
           'div(
             state.todos.keys map { name =>
               'span(
