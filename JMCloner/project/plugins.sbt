@@ -17,7 +17,7 @@ resolvers += Resolver.bintrayRepo("philandrew", "sbt-plugins")
 //addSbtPlugin("org.philandrew" % "sbt-osgi-felix-p" % "1.0.14")
 
 
-lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix-p.git#1a918f07160a1919d535c2aa3f566327cd4f5165")
+lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix-p.git#2ffefa558a8afdfe056690ff14f6576b51c619b9")
 
 lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin)
 
