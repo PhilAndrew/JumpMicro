@@ -7,9 +7,6 @@ import akka.actor.{ActorRef, ActorSystem}
 import jumpmicro.jmcloner.impl.configuration.GlobalModule._
 import jumpmicro.shared.util.global.CommonGlobalModule._
 import akka.camel.{CamelMessage, Consumer}
-import com.beachape.filemanagement.Messages.RegisterCallback
-import com.beachape.filemanagement.MonitorActor
-import com.beachape.filemanagement.RegistryTypes.Callback
 import org.log4s._
 import scaldi.Injectable
 import org.neo4j.ogm.session.Neo4jSession
@@ -20,7 +17,7 @@ import jumpmicro.jmcloner.impl.configuration.GlobalModule
 import jumpmicro.jmcloner.impl.idris.TestIdris.getClass
 import jumpmicro.jmcloner.impl.webserver.WebServer
 import jumpmicro.shared.util.akkaosgi.MyBundleDelegatingClassLoader
-import jumpmicro.shared.util.osgi.{HotSwappableClass, OsgiGlobal}
+import jumpmicro.shared.util.osgi.{OsgiGlobal}
 import org.http4s.blaze.channel.ServerChannel
 
 import scala.concurrent.ExecutionContext.Implicits.global
