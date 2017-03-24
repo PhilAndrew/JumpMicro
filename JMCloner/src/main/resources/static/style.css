@@ -77,3 +77,24 @@ body {
         border-bottom: 0;
     }
 }
+
+/* Korolov */
+
+.todos {
+    height: 250px;
+    overflow-y: scroll;
+}
+
+.checkbox {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #666666;
+    border-radius: 2px;
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+.checkbox__checked {
+    background-color: #888888;
+}

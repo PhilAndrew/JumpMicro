@@ -28,64 +28,86 @@ class WebServer extends KorolevBlazeServer {
     render = {
       case state =>
         'body(
-          'div("Super TODO tracker - this project is still in development and JMCloner does not yet clone projects"),
-          'div(
-            state.todos.keys map { name =>
-              'span(
-                event('click) {
-                  immediateTransition { case s =>
-                    s.copy(selectedTab = name)
-                  }
-                },
-                'style /= "margin-left: 10px",
-                if (name == state.selectedTab) 'strong(name)
-                else name
-              )
-            }
-          ),
-          'div('class /= "todos",
-            (state.todos(state.selectedTab) zipWithIndex) map {
-              case (todo, i) =>
-                'div(
-                  'div(
-                    'class /= {
-                      if (!todo.done) "checkbox"
-                      else "checkbox checkbox__checked"
-                    },
-                    // Generate transition when clicking checkboxes
+          'div('class /= "container",
+            'div('class /= "header clearfix",
+              'nav(
+                'ul('class /= "nav nav-pills float-right",
+                  'li('class /= "nav-item",
+                    'a('class /= "nav-link active", 'href /= "#", "Home")),
+                  'li('class /= "nav-item",
+                    'a('class /= "nav-link", 'href /= "#", "Test")),
+                  'li('class /= "nav-item",
+                    'a('class /= "nav-link", 'href /= "#", "Test2"))
+                )
+              ), 'h3('class /= "text-muted", "Project name")),
+            'div('class /= "jumbotron",
+              'h1('class /= "display-3", "Jumbotron heading"),
+
+              'div(
+                state.todos.keys map { name =>
+                  'span(
                     event('click) {
                       immediateTransition { case s =>
-                        val todos = s.todos(s.selectedTab)
-                        val updated = todos.updated(i, todos(i).copy(done = !todo.done))
-                        s.copy(todos = s.todos + (s.selectedTab -> updated))
+                        s.copy(selectedTab = name)
+                      }
+                    },
+                    'style /= "margin-left: 10px",
+                    if (name == state.selectedTab) 'strong(name)
+                    else name
+                  )
+                }
+              ),
+              'div('class /= "todos",
+                (state.todos(state.selectedTab) zipWithIndex) map {
+                  case (todo, i) =>
+                    'div(
+                      'div(
+                        'class /= {
+                          if (!todo.done) "checkbox"
+                          else "checkbox checkbox__checked"
+                        }
+                      ),
+                      // Generate transition when clicking checkboxes
+                      event('click) {
+                        immediateTransition { case s =>
+                          val todos = s.todos(s.selectedTab)
+                          val updated = todos.updated(i, todos(i).copy(done = !todo.done))
+                          s.copy(todos = s.todos + (s.selectedTab -> updated))
+                        }
+                      }
+                      ,
+                      if (!todo.done) 'span(todo.text)
+                      else 'strike(todo.text)
+
+                    )
+                }
+              ),
+              'form(
+                // Generate AddTodo action when 'Add' button clicked
+                eventWithAccess('submit) { access =>
+                  deferredTransition {
+                    access.property[String](inputId, 'value) map { value =>
+                      val todo = State.Todo(value, done = false)
+                      transition { case s =>
+                        s.copy(todos = s.todos + (s.selectedTab -> (s.todos(s.selectedTab) :+ todo)))
                       }
                     }
-                  ),
-                  if (!todo.done) 'span(todo.text)
-                  else 'strike(todo.text)
-                )
-            }
-          ),
-          'form(
-            // Generate AddTodo action when 'Add' button clicked
-            eventWithAccess('submit) { access =>
-              deferredTransition {
-                access.property[String](inputId, 'value) map { value =>
-                  val todo = State.Todo(value, done = false)
-                  transition { case s =>
-                    s.copy(todos = s.todos + (s.selectedTab -> (s.todos(s.selectedTab) :+ todo)))
                   }
-                }
-              }
-            },
-            'input(
-              inputId,
-              'type /= "text",
-              'placeholder /= "What should be done???"
-            ),
-            'button("Add todo")
+                },
+                'input(
+                  inputId,
+                  'type /= "text",
+                  'placeholder /= "What should be done???"
+                ),
+                'button("Add todo")
+              )
+
+
+            )
           )
         )
+
+
     },
     serverRouter = {
       ServerRouter(
