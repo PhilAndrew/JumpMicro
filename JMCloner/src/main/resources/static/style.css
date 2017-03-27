@@ -99,3 +99,11 @@ body {
 .checkbox__checked {
     background-color: #888888;
 }
+
+.todos {
+    text-align: left;
+}
+
+.todos input {
+    margin-right: 10px;
+}

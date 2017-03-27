@@ -14,12 +14,9 @@ class WebServer extends KorolevBlazeServer {
   object MyStorage {
     def getStateByDeviceId(deviceId: StateStorage.DeviceId): Future[State] = Future {
       val dirs = new java.io.File(".." + java.io.File.separator).listFiles().toSeq.filter(_.isDirectory).filter(_.getName.startsWith("JM")).toSeq
-      State(selectedTab = "Tab1",
-      todos = Map(
-        "Tab1" -> dirs.map(f => Todo(f.getName, done = false)).toVector,
-        "Tab2" -> State.Todo(7),
-        "Tab3" -> State.Todo(2)
-      ))
+      State(
+      todos = dirs.map(f => Todo(f.getName, done = false)).toVector
+      )
     }
   }
 
@@ -47,31 +44,13 @@ class WebServer extends KorolevBlazeServer {
               'nav(
                 'ul('class /= "nav nav-pills float-right",
                   'li('class /= "nav-item",
-                    'a('class /= "nav-link active", 'href /= "#", "Home")),
-                  'li('class /= "nav-item",
-                    'a('class /= "nav-link", 'href /= "#", "Test")),
-                  'li('class /= "nav-item",
-                    'a('class /= "nav-link", 'href /= "#", "Test2"))
+                    'a('class /= "nav-link active", 'href /= "#", "Home"))
                 )
-              ), 'h3('class /= "text-muted", "Project name")),
+              ), 'h3('class /= "text-muted", "JMCloner")),
             'div('class /= "jumbotron",
               'h3('class /= "", "JumpMicro Cloner"),
-              'div(
-                state.todos.keys map { name =>
-                  'span(
-                    event('click) {
-                      immediateTransition { case s =>
-                        s.copy(selectedTab = name)
-                      }
-                    },
-                    'style /= "margin-left: 10px",
-                    if (name == state.selectedTab) 'strong(name)
-                    else name
-                  )
-                }
-              ),
               'div('class /= "todos",
-                (state.todos(state.selectedTab) zipWithIndex) map {
+                (state.todos zipWithIndex) map {
                   case (todo, i) =>
                     'div(
                       'div(
@@ -83,9 +62,11 @@ class WebServer extends KorolevBlazeServer {
                       // Generate transition when clicking checkboxes
                       event('click) {
                         immediateTransition { case s =>
-                          val todos = s.todos(s.selectedTab)
-                          val updated = todos.updated(i, todos(i).copy(done = !todo.done))
-                          s.copy(todos = s.todos + (s.selectedTab -> updated))
+                          val todos = s.todos
+                          val updated = for (t <- todos.zipWithIndex) yield {
+                            if (t._2 == i) t._1.copy(done = true) else t._1.copy(done = false)
+                          }
+                          s.copy(todos = updated)
                         }
                       },
                      'span(todo.text) //  if (!todo.done)
@@ -100,7 +81,7 @@ class WebServer extends KorolevBlazeServer {
                     access.property[String](inputId, 'value) map { value =>
                       val todo = State.Todo(value, done = false)
                       transition { case s =>
-                        s.copy(todos = s.todos + (s.selectedTab -> (s.todos(s.selectedTab) :+ todo)))
+                       s.copy(todos = s.todos :+ todo)
                       }
                     }
                   }
@@ -108,30 +89,31 @@ class WebServer extends KorolevBlazeServer {
                 'input(
                   inputId,
                   'type /= "text",
-                  'placeholder /= "What should be done???"
+                  'placeholder /= "New MicroService Name"
                 ),
-                'button("Add todo")
+                'button("Clone MicroService")
               )
             )
           )
         )
 
 
-    },
+    }
+,
     serverRouter = {
       ServerRouter(
         dynamic = (_, _) => Router(
           fromState = {
-            case State(tab, _) =>
-              Root / tab.toLowerCase
+            case State(_) =>
+              Root
           },
           toState = {
             case (s, Root) =>
-              val u = s.copy(selectedTab = s.todos.keys.head)
-              Future.successful(u)
-            case (s, Root / name) =>
+              //val u = s.copy(selectedTab = s.todos.keys.head)
+              Future.successful(s)
+            /*case (s, Root / name) =>
               val key = s.todos.keys.find(_.toLowerCase == name)
-              Future.successful(key.fold(s)(k => s.copy(selectedTab = k)))
+              Future.successful(key.fold(s)(k => s.copy(selectedTab = k)))*/
           }
         ),
         static = (deviceId) => Router(
@@ -140,8 +122,9 @@ class WebServer extends KorolevBlazeServer {
               storage.initial(deviceId)
             case (_, Root / name) =>
               storage.initial(deviceId) map { s =>
-                val key = s.todos.keys.find(_.toLowerCase == name)
-                key.fold(s)(k => s.copy(selectedTab = k))
+                //val key = s.todos.keys.find(_.toLowerCase == name)
+                //key.fold(s)(k => s.copy(selectedTab = k))
+                s
               }
           }
         )
@@ -150,14 +133,7 @@ class WebServer extends KorolevBlazeServer {
   )
 }
 
-case class State(
-                  selectedTab: String = "Tab1",
-                  todos: Map[String, Vector[State.Todo]] = Map(
-                    "Tab1" -> State.Todo(5),
-                    "Tab2" -> State.Todo(7),
-                    "Tab3" -> State.Todo(2)
-                  )
-                )
+case class State(todos: Vector[State.Todo] = State.Todo(5))
 
 object State {
   val effects = Effects[Future, State, Any]
