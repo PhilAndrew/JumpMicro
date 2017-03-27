@@ -117,9 +117,7 @@ scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 resolvers ++= Seq(
 //  "Local Maven" at Path.userHome.asFile.toURI.toURL + ".m2/repository",
   Resolver.sonatypeRepo("releases"),
-  Resolver.sonatypeRepo("snapshots"),
-  // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
-  Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
+  Resolver.sonatypeRepo("snapshots"))
 
 lazy val exportPackages = Seq()
 

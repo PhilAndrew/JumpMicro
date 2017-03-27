@@ -117,9 +117,7 @@ scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
-  Resolver.sonatypeRepo("snapshots"),
-  // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
-  Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
+  Resolver.sonatypeRepo("snapshots"))
 
 lazy val exportPackages = Seq(JUMPMICRO_DOT + "shared.resourceshare")
 
