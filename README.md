@@ -14,7 +14,17 @@ JMScalaJs wants to use a Neo4J database if it is available as that is the defaul
 
 ## How to get started
 
-Go to the JMScalaJs directory and
+You must firstly install [Neo4J OGM OSGi](https://github.com/PhilAndrew/neo4j-ogm-osgi) so that it is available for build.
+
+    > git clone git@github.com:PhilAndrew/neo4j-ogm-osgi.git
+    
+    > cd neo4j-ogm-osgi
+    
+    > sbt publishLocal
+    
+Then git clone this repo    
+
+Go to the JMScalaJs directory inside JumpMicro and
 
     > sbt run
 
