@@ -77,8 +77,8 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
 
-lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
-  "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
+// @todo It seems to not be used, remove it?
+lazy val resourcePackages: Seq[String] = Seq() // "js", "static.bootstrap.css", "static.bootstrap.js", "static.jquery", "static.tether.dist.css", "static.tether.dist.js"
 
 val projectName = "JMCloner"
 name := projectName
@@ -97,9 +97,9 @@ scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
-  Resolver.sonatypeRepo("snapshots"),
+  Resolver.sonatypeRepo("snapshots")
   // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
-  Resolver.bintrayIvyRepo(owner = "philandrew", repo = "org.philandrew"))
+  )
 
 lazy val exportPackages = Seq()
 
@@ -137,7 +137,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   OsgiDependency("Korolov",
     Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
       "biz.enef" %% "slogging" % "0.5.2",
-      "biz.enef" %% "slogging-slf4j" % "0.5.2",
+      // If this is included then it does not work in Karaf due to Karafs logging "biz.enef" %% "slogging-slf4j" % "0.5.2",
       "org.http4s" % "blaze-core_2.11" % "0.12.4",
       "org.http4s" % "blaze-http_2.11" % "0.12.4"),
     Seq(),
@@ -997,7 +997,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
 
   for (j <- jarFilesInBundles) { copyFile(j, new File(karDirPath + "/" + j.getName)) }
   for (m <- mustBeFiles; if m.jarFile.isEmpty) {
-    val file = new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar")
+    val file = new File("." + \\ + "target" + \\ + "bundles" + \\ + m.id.name + ".jar")
     IO.copyFile(file, new File(karDirPath + \\ + file.getName))
   }
 

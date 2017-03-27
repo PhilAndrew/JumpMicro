@@ -8,16 +8,7 @@ addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
 
 //lazy val concatPlugin = uri("https://github.com/ground5hark/sbt-concat.git#342acc34195438799b8a278fda94b126238aae17")
 
-///*
-
-resolvers += Resolver.bintrayRepo("philandrew", "sbt-plugins")
-
-// Chose one of the following
-
-//addSbtPlugin("org.philandrew" % "sbt-osgi-felix-p" % "1.0.14")
-
-
-lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix-p.git#2ffefa558a8afdfe056690ff14f6576b51c619b9")
+lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix-p.git#8de84e6d019ed853076e72a70b69f3203060b058")
 
 lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin)
 
