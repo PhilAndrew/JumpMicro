@@ -427,7 +427,7 @@ initialize := {
 }
 
 // Copy paste detector https://github.com/sbt/cpd4sbt
-enablePlugins(CopyPasteDetector)
+//enablePlugins(CopyPasteDetector)
 
 // Acyclic, prevents circular dependencies.
 // https://github.com/lihaoyi/acyclic
