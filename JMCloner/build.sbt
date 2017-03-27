@@ -77,9 +77,6 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 lazy val privatePackages: Seq[String] = subPackagesOf("bridge") ++ subPackagesOf("korolev")
 
-// @todo It seems to not be used, remove it?
-lazy val resourcePackages: Seq[String] = Seq() // "js", "static.bootstrap.css", "static.bootstrap.js", "static.jquery", "static.tether.dist.css", "static.tether.dist.js"
-
 val projectName = "JMCloner"
 name := projectName
 
@@ -98,7 +95,6 @@ scalaVersion := scalaMajorVersion + "." + scalaMinorVersion
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
-  // This bintray repo is for Neo4J OGM OSGi https://github.com/PhilAndrew/neo4j-ogm-osgi
   )
 
 lazy val exportPackages = Seq()
@@ -706,9 +702,9 @@ compileIdris := {
       // Copy classes from idrisclass to target/scala-2.11/classes
       //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
       //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
-      IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
+      IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-" + scalaMajorVersion + \\ + "classes"), true, true)
       IO.delete(new File("target" + \\ + "idrisclass"))
-      IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + projectName.toLowerCase))
+      IO.delete(new File("target" + \\ + "scala-" + scalaMajorVersion + \\ + "classes" + \\ + projectName.toLowerCase))
     }
   }
 
@@ -740,7 +736,7 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
 // The rule is simple, if a new package is created in this project, at least you must add it to the private packages.
-privatePackage := privatePackages ++ resourcePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
+privatePackage := privatePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
   subPackagesOf(JUMPMICRO_DOT + "shared") ++ Seq(
   JUMPMICRO_DOT + name.value.toString.toLowerCase,
   "mmhelloworld.idrisjvmruntime",
@@ -870,8 +866,8 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   val ignoredModules = HashSet(
     "org.osgi/org.osgi.core",
     "org.osgi/org.osgi.compendium",
-    "default/" + projectName.toLowerCase() + "_2.11",
-    projectName.toLowerCase() + "/" + projectName.toLowerCase() + "_2.11"
+    "default/" + projectName.toLowerCase() + "_" + scalaMajorVersion,
+    projectName.toLowerCase() + "/" + projectName.toLowerCase() + "_" + scalaMajorVersion
   )
 
   // Some modules do not work in Karaf
@@ -979,7 +975,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
         })
         }
         {
-        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + thisVersion + ".jar").getCanonicalPath }</bundle>
+        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-" + scalaMajorVersion + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + thisVersion + ".jar").getCanonicalPath }</bundle>
         }
       </feature>
     </features>
@@ -992,7 +988,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   IO.createDirectory(karafKarDir)
 
   def copyFile(path: File, dest: File) = {
-    if (path.exists()) IO.copyFile(path, dest) else println("ERRRORR##########")
+    if (path.exists()) IO.copyFile(path, dest) else println("Error in copying file, the source file does not exist " + path.getCanonicalPath)
   }
 
   for (j <- jarFilesInBundles) { copyFile(j, new File(karDirPath + "/" + j.getName)) }
