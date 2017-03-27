@@ -1,24 +1,28 @@
 // @feature start commonheader
-import java.io.FileInputStream
+import java.io.File
 import java.security.MessageDigest
 import java.util.jar.JarFile
 
 import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
-import org.osgi.framework.Constants
 import osgifelix.{ManifestInstructions, OsgiDependency}
+import sbt.File
 
 import scala.annotation.tailrec
 import scala.collection.immutable.HashSet
 import scala.xml.XML
+import com.typesafe.sbt.osgi.OsgiKeys._
+import org.osgi.framework.Constants
+import osgifelix.OsgiFelixPlugin.autoImport._
+import sbt.Keys._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
-import com.typesafe.sbt.osgi.OsgiKeys._
-import osgifelix.OsgiFelixPlugin.autoImport._
-import sbt.Keys._
+osgiSettings
+
+defaultSingleProjectSettings
 
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
@@ -50,6 +54,7 @@ def subPackagesOf(path: String): Seq[String] = {
 
 lazy val JUMPMICRO_DOT = "jumpmicro."
 // @feature end commonheader
+
 
 
 
@@ -385,10 +390,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 // General sbt settings
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
-
-osgiSettings
-
-defaultSingleProjectSettings
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
 //fork in run := true

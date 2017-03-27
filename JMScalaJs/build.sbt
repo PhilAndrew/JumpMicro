@@ -4,26 +4,28 @@ import java.security.MessageDigest
 import java.util.jar.JarFile
 
 import net.virtualvoid.sbt.graph.{Module, ModuleGraph, ModuleId}
-import org.osgi.framework.Constants
 import osgifelix.{ManifestInstructions, OsgiDependency}
 import sbt.File
 
 import scala.annotation.tailrec
 import scala.collection.immutable.HashSet
 import scala.xml.XML
+import com.typesafe.sbt.osgi.OsgiKeys._
+import org.osgi.framework.Constants
+import osgifelix.OsgiFelixPlugin.autoImport._
+import sbt.Keys._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
+osgiSettings
+
+defaultSingleProjectSettings
 
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
-
-import com.typesafe.sbt.osgi.OsgiKeys._
-import osgifelix.OsgiFelixPlugin.autoImport._
-import sbt.Keys._
 
 lazy val \\ = java.io.File.separator
 
@@ -130,9 +132,9 @@ additionalHeaders := Map("Bundle-License" -> bundleLicense,
   "Bundle-Category" -> bundleCategory,
   "Bundle-Vendor" -> bundleVendor,
   "Bundle-ContactAddress" -> bundleContactAddress,
-  "Bundle-Copyright" -> bundleCopyright,
+  "Bundle-Copyright" -> bundleCopyright
   // Add boot delegation here? https://github.com/doolse/sbt-osgi-felix/pull/2
-  Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc"
+  //Constants.FRAMEWORK_BOOTDELEGATION -> "sun.misc"
 )
 
 val scalaMajorVersion = "2.11"
@@ -352,8 +354,10 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   )*/
 )
 
-
-
+osgiRepositoryRules := Seq(
+  rewrite("akka-http-core_2.11", imports =
+    """akka,akka.actor;version="[2.4,3)",akka.dispatch;version="[2.4,3)",akka.event;version="[2.4,3)",akka.io;version="[2.4,3)",akka.japi;version="[2.4,3)",akka.japi.function;version="[2.4,3)",akka.parboiled2;version="[10.0,11)",akka.parboiled2.support;version="[10.0,11)",akka.parboiled2.util;version="[10.0,11)",akka.shapeless;version="[10.0,11)",akka.stream;version="[2.4,3)",akka.stream.actor;version="[2.4,3)",akka.stream.impl;version="[2.4,3)",akka.stream.impl.fusing;version="[2.4,3)",akka.stream.impl.io;version="[2.4,3)",akka.stream.javadsl;version="[2.4,3)",akka.stream.scaladsl;version="[2.4,3)",akka.stream.stage;version="[2.4,3)",akka.util;version="[2.4,3)",com.typesafe.config;version="[1.3,2)",com.typesafe.sslconfig.akka;version="[2.4,3)",com.typesafe.sslconfig.akka.util;version="[2.4,3)",com.typesafe.sslconfig.ssl;version="[0.2,1)",com.typesafe.sslconfig.util;version="[0.2,1)",javax.net.ssl,org.reactivestreams;version="[1.0,2)",scala;version="[2.11,3)",scala.collection;version="[2.11,3)",scala.collection.convert;version="[2.11,3)",scala.collection.generic;version="[2.11,3)",scala.collection.immutable;version="[2.11,3)",scala.collection.mutable;version="[2.11,3)",scala.collection.parallel;version="[2.11,3)",scala.collection.parallel.immutable;version="[2.11,3)",scala.compat.java8;version="[0.7,1)",scala.concurrent;version="[2.11,3)",scala.concurrent.duration;version="[2.11,3)",scala.math;version="[2.11,3)",scala.reflect;version="[2.11,3)",scala.runtime;version="[2.11,3)",scala.util;version="[2.11,3)",scala.util.control;version="[2.11,3)",scala.util.matching;version="[2.11,3)",sun.misc;resolution:=optional""")
+)
 
 
 
@@ -397,21 +401,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
-osgiSettings
-
-defaultSingleProjectSettings
-
-/*
-sun.misc.*;resolution:=optional
-*/
-
-osgiRepositoryRules := Seq(
-  rewrite("akka-http-core_2.11", imports =
-    """akka,akka.actor;version="[2.4,3)",akka.dispatch;version="[2.4,3)",akka.event;version="[2.4,3)",akka.io;version="[2.4,3)",akka.japi;version="[2.4,3)",akka.japi.function;version="[2.4,3)",akka.parboiled2;version="[10.0,11)",akka.parboiled2.support;version="[10.0,11)",akka.parboiled2.util;version="[10.0,11)",akka.shapeless;version="[10.0,11)",akka.stream;version="[2.4,3)",akka.stream.actor;version="[2.4,3)",akka.stream.impl;version="[2.4,3)",akka.stream.impl.fusing;version="[2.4,3)",akka.stream.impl.io;version="[2.4,3)",akka.stream.javadsl;version="[2.4,3)",akka.stream.scaladsl;version="[2.4,3)",akka.stream.stage;version="[2.4,3)",akka.util;version="[2.4,3)",com.typesafe.config;version="[1.3,2)",com.typesafe.sslconfig.akka;version="[2.4,3)",com.typesafe.sslconfig.akka.util;version="[2.4,3)",com.typesafe.sslconfig.ssl;version="[0.2,1)",com.typesafe.sslconfig.util;version="[0.2,1)",javax.net.ssl,org.reactivestreams;version="[1.0,2)",scala;version="[2.11,3)",scala.collection;version="[2.11,3)",scala.collection.convert;version="[2.11,3)",scala.collection.generic;version="[2.11,3)",scala.collection.immutable;version="[2.11,3)",scala.collection.mutable;version="[2.11,3)",scala.collection.parallel;version="[2.11,3)",scala.collection.parallel.immutable;version="[2.11,3)",scala.compat.java8;version="[0.7,1)",scala.concurrent;version="[2.11,3)",scala.concurrent.duration;version="[2.11,3)",scala.math;version="[2.11,3)",scala.reflect;version="[2.11,3)",scala.runtime;version="[2.11,3)",scala.util;version="[2.11,3)",scala.util.control;version="[2.11,3)",scala.util.matching;version="[2.11,3)",sun.misc;resolution:=optional""")
-)
-
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
-//fork in run := true
+//fork in run := false
 
 cancelable in Global := true
 
@@ -446,14 +437,16 @@ initialize := {
 }
 
 // Copy paste detector https://github.com/sbt/cpd4sbt
-enablePlugins(CopyPasteDetector)
+// @todo Commented out because slow
+//enablePlugins(CopyPasteDetector)
 
+// @todo Commented out because slow
 // Acyclic, prevents circular dependencies.
 // https://github.com/lihaoyi/acyclic
 
-autoCompilerPlugins := true
+//autoCompilerPlugins := true
 
-addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
+//addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.7")
 // END - Acyclic, prevents circular dependencies.
 
 // @feature start scalajs
@@ -483,6 +476,20 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 // @feature end scalajs
 
 // @feature idris directory src/main/idris
+
+// ***********************************************************************************************************************************************
+// ***********************************************************************************************************************************************
+// Copy shared source
+
+lazy val copySharedSrc = taskKey[Unit]("Copy Shared Src")
+
+copySharedSrc := {
+  //val sharedDir = new File("src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")
+  //IO.delete(sharedDir)
+  //IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
+}
+
+// @feature start idris
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
@@ -693,21 +700,8 @@ jmSyncTask := {
 
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
-// Copy shared source
-
-lazy val copySharedSrc = taskKey[Unit]("Copy Shared Src")
-
-copySharedSrc := {
-  val sharedDir = new File("src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared")
-  IO.delete(sharedDir)
-  IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
-}
-
-// @feature start idris
-
-// ***********************************************************************************************************************************************
-// ***********************************************************************************************************************************************
 // Compile Idris to Java classes
+
 lazy val compileIdris = taskKey[Unit]("Compile Idris")
 
 compileIdris := {
@@ -758,9 +752,9 @@ compileIdris := {
       // Copy classes from idrisclass to target/scala-2.11/classes
       //IO.delete(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
       //IO.createDirectory(new File("target" + File.separator + "idrisclass" + File.separator + "main"))
-      IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-2.11" + \\ + "classes"), true, true)
+      IO.copyDirectory(new File("target" + \\ + "idrisclass"), new File("target" + \\ + "scala-" + scalaMajorVersion + \\ + "classes"), true, true)
       IO.delete(new File("target" + \\ + "idrisclass"))
-      IO.delete(new File("target" + \\ + "scala-2.11" + \\ + "classes" + \\ + projectName.toLowerCase))
+      IO.delete(new File("target" + \\ + "scala-" + scalaMajorVersion + \\ + "classes" + \\ + projectName.toLowerCase))
     }
   }
 
@@ -792,13 +786,10 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
 // Packages which are to be inside the OSGi component must be listed here as private packages.
 // They are not exposed as public packages but are implementation packages inside of the bundle.
 // The rule is simple, if a new package is created in this project, at least you must add it to the private packages.
-privatePackage := privatePackages ++ resourcePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
+privatePackage := privatePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
   subPackagesOf(JUMPMICRO_DOT + "shared") ++ Seq(
   JUMPMICRO_DOT + name.value.toString.toLowerCase,
-  "mmhelloworld.idrisjvmruntime",
-  "Decidable",
-  "Prelude",
-  "main"
+  "mmhelloworld.idrisjvmruntime"
 )
 
 lazy val moduleDeps: Seq[ModuleID] = dependencys.flatten
@@ -922,8 +913,8 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   val ignoredModules = HashSet(
     "org.osgi/org.osgi.core",
     "org.osgi/org.osgi.compendium",
-    "default/" + projectName.toLowerCase() + "_2.11",
-    projectName.toLowerCase() + "/" + projectName.toLowerCase() + "_2.11"
+    "default/" + projectName.toLowerCase() + "_" + scalaMajorVersion,
+    projectName.toLowerCase() + "/" + projectName.toLowerCase() + "_" + scalaMajorVersion
   )
 
   // Some modules do not work in Karaf
@@ -1031,7 +1022,7 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
         })
         }
         {
-        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + thisVersion + ".jar").getCanonicalPath }</bundle>
+        <bundle>file:/{ new File("." + \\ + "target" + \\ + "scala-" + scalaMajorVersion + \\ + projectName.toLowerCase() + "_" + scalaMajorVersion + "-" + thisVersion + ".jar").getCanonicalPath }</bundle>
         }
       </feature>
     </features>
@@ -1044,12 +1035,12 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
   IO.createDirectory(karafKarDir)
 
   def copyFile(path: File, dest: File) = {
-    if (path.exists()) IO.copyFile(path, dest) else println("ERRRORR##########")
+    if (path.exists()) IO.copyFile(path, dest) else println("Error in copying file, the source file does not exist " + path.getCanonicalPath)
   }
 
   for (j <- jarFilesInBundles) { copyFile(j, new File(karDirPath + "/" + j.getName)) }
   for (m <- mustBeFiles; if m.jarFile.isEmpty) {
-    val file = new File("." + \\ + "target" + \\ + "scala-2.11" + \\ + m.id.name + "-" + m.id.version + ".jar")
+    val file = new File("." + \\ + "target" + \\ + "bundles" + \\ + m.id.name + ".jar")
     IO.copyFile(file, new File(karDirPath + \\ + file.getName))
   }
 

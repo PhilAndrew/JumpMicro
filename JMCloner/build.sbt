@@ -10,15 +10,19 @@ import sbt.File
 import scala.annotation.tailrec
 import scala.collection.immutable.HashSet
 import scala.xml.XML
+import com.typesafe.sbt.osgi.OsgiKeys._
+import org.osgi.framework.Constants
+import osgifelix.OsgiFelixPlugin.autoImport._
+import sbt.Keys._
 
 //: -------------------------------------------------------------------------------------
 //: Copyright © 2017 Philip Andrew https://github.com/PhilAndrew  All Rights Reserved.
 //: Released under the MIT License, refer to the project website for licence information.
 //: -------------------------------------------------------------------------------------
 
-import com.typesafe.sbt.osgi.OsgiKeys._
-import osgifelix.OsgiFelixPlugin.autoImport._
-import sbt.Keys._
+osgiSettings
+
+defaultSingleProjectSettings
 
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
@@ -346,10 +350,6 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 // General sbt settings
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
-
-osgiSettings
-
-defaultSingleProjectSettings
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
 //fork in run := false
