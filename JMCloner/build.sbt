@@ -70,7 +70,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 
 
-
+// [jumpmicro.shared, jumpmicro.shared.util, Decidable, Prelude, main]
 
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
@@ -739,10 +739,7 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
 privatePackage := privatePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
   subPackagesOf(JUMPMICRO_DOT + "shared") ++ Seq(
   JUMPMICRO_DOT + name.value.toString.toLowerCase,
-  "mmhelloworld.idrisjvmruntime",
-  "Decidable",
-  "Prelude",
-  "main"
+  "mmhelloworld.idrisjvmruntime"
 )
 
 lazy val moduleDeps: Seq[ModuleID] = dependencys.flatten
