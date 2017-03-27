@@ -8,21 +8,21 @@ addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
 
 //lazy val concatPlugin = uri("https://github.com/ground5hark/sbt-concat.git#342acc34195438799b8a278fda94b126238aae17")
 
-///*
-
-resolvers += Resolver.bintrayRepo("philandrew", "sbt-plugins")
-
-/*resolvers += Resolver.url(
-  "bintray-sbt-plugin-releases",
-  url("http://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
-  Resolver.ivyStylePatterns)
-*/
-
-//addSbtPlugin("sbt-plugins" % "sbt-osgi-felix-p" % "1.0.12")
-
-lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix-p.git#2ffefa558a8afdfe056690ff14f6576b51c619b9")
+lazy val sbtOsgiFelixPlugin = uri("https://github.com/PhilAndrew/sbt-osgi-felix-p.git#8de84e6d019ed853076e72a70b69f3203060b058")
 
 lazy val root = project.in(file(".")).dependsOn(sbtOsgiFelixPlugin)
+
+
+
+
+
+
+
+
+
+
+
+
 
 //addSbtPlugin("org.doolse" % "sbt-osgi-felix" % "1.0.10-PHILIP")
 
@@ -31,8 +31,9 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.14")
 
 //addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % sys.props.getOrElse("plugin.version", sys.error("'plugin.version' environment variable is not set")))
 
+// @todo Commented out because slow
 // Copy paste detector https://github.com/sbt/cpd4sbt
-addSbtPlugin("de.johoop" % "cpd4sbt" % "1.2.0")
+//addSbtPlugin("de.johoop" % "cpd4sbt" % "1.2.0")
 
 // Clippy helps to show better Scala error messages https://scala-clippy.org/
 addSbtPlugin("com.softwaremill.clippy" % "plugin-sbt" % "0.5.0")
