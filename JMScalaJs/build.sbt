@@ -789,7 +789,10 @@ exportPackage := Seq(JUMPMICRO_DOT + name.value.toString.toLowerCase,
 privatePackage := privatePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.toString.toLowerCase + ".impl") ++
   subPackagesOf(JUMPMICRO_DOT + "shared") ++ Seq(
   JUMPMICRO_DOT + name.value.toString.toLowerCase,
-  "mmhelloworld.idrisjvmruntime"
+  "mmhelloworld.idrisjvmruntime",
+  "Decidable",
+  "Prelude",
+  "main"
 )
 
 lazy val moduleDeps: Seq[ModuleID] = dependencys.flatten
