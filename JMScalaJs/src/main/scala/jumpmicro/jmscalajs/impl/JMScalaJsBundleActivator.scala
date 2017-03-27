@@ -2,6 +2,7 @@ package jumpmicro.jmscalajs.impl
 
 import java.util.concurrent.TimeUnit
 
+import jumpmicro.jmscalajs.JMScalaJsService
 import jumpmicro.jmscalajs.impl.configuration.GlobalModule
 import jumpmicro.shared.util.configuration.MicroConfiguration
 
