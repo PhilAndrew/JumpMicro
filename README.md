@@ -88,6 +88,8 @@ It has the following features:
 
 ## Compile with Idris
 
+Idris is not required for JumpMicro to work, however Idris is a nice language with dependent types which, when type checks, usually produces correct code.
+
 There is example Idris code in each MicroService in ```src/main/idris``` which can be compiled, in order for it to compile you need to install the [Idris language](https://www.idris-lang.org/) and [Idris-JVM](https://github.com/mmhelloworld/idris-jvm). Idris-JVM will start a server when you run its setup which allows it to compile Idris files to JVM classes. 
 
 ## SBT commands
