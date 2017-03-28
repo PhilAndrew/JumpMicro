@@ -196,9 +196,10 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.scala-lang.modules" %% "scala-xml" % "1.0.4", // Required by camel-scala
       "org.apache.camel" % "camel-scala" % camelVersion),
     Seq(),
+    Seq(),
     Seq("org.apache.camel.camel-core-osgi",
       "org.apache.camel.camel-scala"
-    ), Seq()
+    )
   ),
 
   OsgiDependency("MonixCoreDependency",
@@ -212,8 +213,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("AkkaCamelDependency",
     Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
-    Seq(),
-    Seq("com.typesafe.akka.camel"), Seq()
+    Seq(), Seq("com.typesafe.akka.camel"), Seq()
   ),
 
   OsgiDependency("AkkaDependency",
@@ -226,7 +226,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     ),
     Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl"),
-    Seq("com.typesafe.akka.osgi"), Seq()
+    Seq(), Seq("com.typesafe.akka.osgi")
   ),
 
   OsgiDependency("Neo4JDependency",
@@ -259,10 +259,11 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     //"org.apache.camel.camel-ssh",
     //"org.apache.camel.camel-jsch",),)
     Seq(),
+    Seq(),
     Seq("org.apache.camel.camel-exec",
       //"org.apache.camel.camel-ssh",
       "org.apache.camel.camel-ftp",
-      "org.apache.camel.camel-stream"), Seq()
+      "org.apache.camel.camel-stream")
   ),
 
   OsgiDependency("CatsDependency",
@@ -359,7 +360,7 @@ osgiRepositoryRules := Seq(
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
-lazy val karafDepsMustBeJarFiles = OsgiDependencies.map(_.mustBeJarFilesForKaraf).flatten
+lazy val karafDepsMustBeJarFiles: Seq[String] = OsgiDependencies.map(_.mustBeJarFilesForKaraf).flatten
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
 //fork in run := false
