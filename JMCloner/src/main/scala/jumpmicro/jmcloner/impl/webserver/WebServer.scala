@@ -29,14 +29,18 @@ object WebServer {
     from.renameTo(to)
   }
 
+  def filterSource(f: File): Boolean = {
+    f.extension == Some(".idr") || f.extension == Some(".scala") || f.extension == Some(".java")
+  }
+
   def replaceStringInFiles(inPath: File, from: String, to: String) = {
-    for (file <- inPath.listRecursively.filter(f => f.extension == Some(".idr") || f.extension == Some(".scala") || f.extension == Some(".java"))) {
+    for (file <- inPath.listRecursively.filter(filterSource)) {
       replaceStringInFile(file, from, to)
     }
   }
 
   def renameFiles(inPath: File, from: String, to: String) = {
-    for (file <- inPath.listRecursively.filter(f => f.extension == Some(".idr") || f.extension == Some(".scala") || f.extension == Some(".java"))) {
+    for (file <- inPath.listRecursively.filter(filterSource)) {
       if (file.name.contains(from)) {
         val newName = file.name.replace(from, to)
         file.renameTo(newName)
@@ -128,7 +132,7 @@ class WebServer extends KorolevBlazeServer {
               'h3('class /= "", "JumpMicro Cloner"),
               'div('class /= "todos",
                 if (state.inProgress) {
-                  "Please wait, project being cloned ..."
+                  "Please wait, project being copied ..."
                 } else
                 (state.projects zipWithIndex) map {
                   case (todo, i) =>
@@ -158,6 +162,7 @@ class WebServer extends KorolevBlazeServer {
                 eventWithAccess('submit) { access =>
                   immediateTransition { case s => {
                     // @todo Need to clear out the form, see https://github.com/fomkin/korolev/issues/98
+                    // @todo Need form validation
                     s.copy(projects = Vector(), cloneButtonEnabled = false, inProgress = true)
                   }
                   }.deferredTransition {
