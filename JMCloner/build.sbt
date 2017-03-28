@@ -118,7 +118,8 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
   "io.jvm.uuid/scala-uuid_2.11",
   "org.http4s/blaze-core_2.11",
   "org.http4s/blaze-http_2.11",
-  "org.http4s/http4s-websocket_2.11")
+  "org.http4s/http4s-websocket_2.11",
+  "com.github.pathikrit/better-files_2.11")
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
