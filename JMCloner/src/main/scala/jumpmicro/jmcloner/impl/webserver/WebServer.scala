@@ -56,7 +56,7 @@ object WebServer {
 
     val fromLower = from.toLowerCase
     val toLower = to.toLowerCase
-    //val glob = "*.{scala,java,idr}"
+
     replaceStringInFiles(toPath, "jumpmicro." + fromLower, "jumpmicro." + toLower)
     replaceStringInFiles(toPath, from, to)
 
@@ -66,7 +66,7 @@ object WebServer {
     renameFolder(File(toPath.pathAsString + / + "src" + / + "main" + / + "idris" + / + "jumpmicro" + / + fromLower), toLower)
   }
 
-  def cloneMicroService(state: State, to: String) = {
+  def cloneMicroService(state: State, to: String): Future[_] = Future {
     state.todos.find(_.done).headOption.foreach(todo => {
       val from = todo.text
       cloneMicroService2(from, to)
@@ -78,12 +78,15 @@ class WebServer extends KorolevBlazeServer {
 
   import State.effects._
   object MyStorage {
-    def getStateByDeviceId(deviceId: StateStorage.DeviceId): Future[State] = Future {
+
+    def futureInitialState = Future {
       val dirs = new java.io.File(".." + java.io.File.separator).listFiles().toSeq.filter(_.isDirectory).filter(_.getName.startsWith("JM")).toSeq
       State(
-      todos = dirs.map(f => Todo(f.getName, done = false)).toVector
+        todos = dirs.map(f => Todo(f.getName, done = false)).toVector
       )
     }
+
+    def getStateByDeviceId(deviceId: StateStorage.DeviceId): Future[State] = futureInitialState
   }
 
   val storage = StateStorage.forDeviceId[Future, State] { deviceId =>
@@ -144,16 +147,15 @@ class WebServer extends KorolevBlazeServer {
                 // Generate AddTodo action when 'Add' button clicked
                 eventWithAccess('submit) { access =>
                   deferredTransition {
-                    access.property[String](inputId, 'value) map { value =>
-                      /*val todo = State.Todo(value, done = false)
-                      transition { case s =>
-                       s.copy(todos = s.todos :+ todo)
-                      }*/
-                      WebServer.cloneMicroService(state, value)
-                      transition { case s => {
-                        state
-                      }
-                      }
+                    access.property[String](inputId, 'value) flatMap { value =>
+                      WebServer.cloneMicroService(state, value).flatMap{ _ => {
+                        MyStorage.futureInitialState
+                      }}.flatMap(_ => {
+                        Future { transition { case s => {
+                          State(Vector())
+                        }
+                        } }
+                      })
                     }
                   }
                 },
