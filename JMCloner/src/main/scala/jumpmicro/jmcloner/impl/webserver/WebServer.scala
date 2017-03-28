@@ -5,8 +5,74 @@ import korolev._
 import korolev.blazeServer._
 import korolev.execution._
 import korolev.server._
+import better.files._
+import java.io.{File => JFile}
 
 import scala.concurrent.Future
+import scala.io.Codec
+
+object WebServer {
+
+  private def copyFolder(fromPath: File, toPath: File) = {
+    fromPath.copyTo(toPath)
+  }
+
+  def replaceStringInFile(file: File, find: String, replace: String) = {
+    val lines: Seq[String] = (for (line <- file.lines(Codec.UTF8)) yield {
+      line.replace(find, replace)
+    }).toSeq
+    file.delete()
+    file.createIfNotExists().appendLines(lines: _*)(File.OpenOptions.append, Codec.UTF8)
+  }
+
+  def renameFolder(from: File, to: String) = {
+    from.renameTo(to)
+  }
+
+  def replaceStringInFiles(inPath: File, from: String, to: String) = {
+    for (file <- inPath.listRecursively.filter(f => f.extension == Some(".idr") || f.extension == Some(".scala") || f.extension == Some(".java"))) {
+      replaceStringInFile(file, from, to)
+    }
+  }
+
+  def renameFiles(inPath: File, from: String, to: String) = {
+    for (file <- inPath.listRecursively.filter(f => f.extension == Some(".idr") || f.extension == Some(".scala") || f.extension == Some(".java"))) {
+      if (file.name.contains(from)) {
+        val newName = file.name.replace(from, to)
+        file.renameTo(newName)
+      }
+    }
+  }
+
+  private def cloneMicroService2(from: String, to: String) = {
+    val fromPath = File(".." + / + from)
+    val toPath = File(".." + / + to)
+
+    copyFolder(fromPath, toPath)
+
+    val fromReplace = s"""val projectName = "$from""""
+    val toReplace = s"""val projectName = "$to""""
+    replaceStringInFile(File(toPath.pathAsString + / + "build.sbt"), fromReplace, toReplace)
+
+    val fromLower = from.toLowerCase
+    val toLower = to.toLowerCase
+    //val glob = "*.{scala,java,idr}"
+    replaceStringInFiles(toPath, "jumpmicro." + fromLower, "jumpmicro." + toLower)
+    replaceStringInFiles(toPath, from, to)
+
+    renameFiles(toPath, from, to)
+
+    renameFolder(File(toPath.pathAsString + / + "src" + / + "main" + / + "scala" + / + "jumpmicro" + / + fromLower), toLower)
+    renameFolder(File(toPath.pathAsString + / + "src" + / + "main" + / + "idris" + / + "jumpmicro" + / + fromLower), toLower)
+  }
+
+  def cloneMicroService(state: State, to: String) = {
+    state.todos.find(_.done).headOption.foreach(todo => {
+      val from = todo.text
+      cloneMicroService2(from, to)
+    })
+  }
+}
 
 class WebServer extends KorolevBlazeServer {
 
@@ -79,9 +145,14 @@ class WebServer extends KorolevBlazeServer {
                 eventWithAccess('submit) { access =>
                   deferredTransition {
                     access.property[String](inputId, 'value) map { value =>
-                      val todo = State.Todo(value, done = false)
+                      /*val todo = State.Todo(value, done = false)
                       transition { case s =>
                        s.copy(todos = s.todos :+ todo)
+                      }*/
+                      WebServer.cloneMicroService(state, value)
+                      transition { case s => {
+                        state
+                      }
                       }
                     }
                   }

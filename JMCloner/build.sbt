@@ -129,6 +129,11 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 // http://stackoverflow.com/questions/1865819/when-should-i-use-import-package-and-when-should-i-use-require-bundle
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
+  OsgiDependency("Better files",
+    Seq("com.github.pathikrit" %% "better-files" % "2.17.1"),
+    Seq(),
+    Seq("better.files")),
+
   OsgiDependency("UUID",
     Seq("io.jvm.uuid" %% "scala-uuid" % "0.2.2"),
     Seq(),
@@ -302,6 +307,10 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   )*/
 )
 
+osgiRepositoryRules := Seq(
+  rewrite("better-files_2.11", imports =
+    """javax.xml.bind,scala,scala.collection,scala.collection.generic,scala.collection.immutable,scala.collection.mutable,scala.collection.parallel,scala.io,scala.math,scala.reflect,scala.runtime,scala.util,scala.util.control""")
+)
 
 
 
