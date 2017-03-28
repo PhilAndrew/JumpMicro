@@ -44,6 +44,12 @@ object WebServer {
     }
   }
 
+  def cleanProject(toPath: File) = {
+    val targetFolder = File(toPath.pathAsString + / + "target")
+    targetFolder.delete(true)
+    targetFolder.createDirectory()
+  }
+
   private def cloneMicroService2(from: String, to: String) = {
     val fromPath = File(".." + / + from)
     val toPath = File(".." + / + to)
@@ -64,6 +70,8 @@ object WebServer {
 
     renameFolder(File(toPath.pathAsString + / + "src" + / + "main" + / + "scala" + / + "jumpmicro" + / + fromLower), toLower)
     renameFolder(File(toPath.pathAsString + / + "src" + / + "main" + / + "idris" + / + "jumpmicro" + / + fromLower), toLower)
+
+    cleanProject(toPath)
   }
 
   def cloneMicroService(state: State, to: String): Future[_] = Future {
@@ -119,6 +127,9 @@ class WebServer extends KorolevBlazeServer {
             'div('class /= "jumbotron",
               'h3('class /= "", "JumpMicro Cloner"),
               'div('class /= "todos",
+                if (state.inProgress) {
+                  "Please wait, project being cloned ..."
+                } else
                 (state.projects zipWithIndex) map {
                   case (todo, i) =>
                     'div(
@@ -147,7 +158,7 @@ class WebServer extends KorolevBlazeServer {
                 eventWithAccess('submit) { access =>
                   immediateTransition { case s => {
                     // @todo Need to clear out the form, see https://github.com/fomkin/korolev/issues/98
-                    s.copy(cloneButtonEnabled = false)
+                    s.copy(projects = Vector(), cloneButtonEnabled = false, inProgress = true)
                   }
                   }.deferredTransition {
                     access.property[String](inputId, 'value) flatMap { value =>
@@ -180,7 +191,7 @@ class WebServer extends KorolevBlazeServer {
       ServerRouter(
         dynamic = (_, _) => Router(
           fromState = {
-            case State(_, _) =>
+            case State(_, _, _) =>
               Root
           },
           toState = {
@@ -210,7 +221,8 @@ class WebServer extends KorolevBlazeServer {
 }
 
 case class State(projects: Vector[State.JumpMicroProject] = State.JumpMicroProject(0),
-                 cloneButtonEnabled: Boolean = true)
+                 cloneButtonEnabled: Boolean = true,
+                 inProgress: Boolean = false)
 
 object State {
   val effects = Effects[Future, State, Any]
