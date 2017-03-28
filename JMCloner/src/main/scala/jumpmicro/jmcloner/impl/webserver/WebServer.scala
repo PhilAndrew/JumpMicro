@@ -1,6 +1,6 @@
 package jumpmicro.jmcloner.impl.webserver
 
-import jumpmicro.jmcloner.impl.webserver.State.Todo
+import jumpmicro.jmcloner.impl.webserver.State.JumpMicroProject
 import korolev._
 import korolev.blazeServer._
 import korolev.execution._
@@ -67,7 +67,7 @@ object WebServer {
   }
 
   def cloneMicroService(state: State, to: String): Future[_] = Future {
-    state.todos.find(_.done).headOption.foreach(todo => {
+    state.projects.find(_.isSelected).headOption.foreach(todo => {
       val from = todo.text
       cloneMicroService2(from, to)
     })
@@ -82,7 +82,7 @@ class WebServer extends KorolevBlazeServer {
     def futureInitialState = Future {
       val dirs = new java.io.File(".." + java.io.File.separator).listFiles().toSeq.filter(_.isDirectory).filter(_.getName.startsWith("JM")).toSeq
       State(
-        todos = dirs.map(f => Todo(f.getName, done = false)).toVector
+        projects = dirs.map(f => JumpMicroProject(f.getName, isSelected = false)).toVector
       )
     }
 
@@ -119,34 +119,37 @@ class WebServer extends KorolevBlazeServer {
             'div('class /= "jumbotron",
               'h3('class /= "", "JumpMicro Cloner"),
               'div('class /= "todos",
-                (state.todos zipWithIndex) map {
+                (state.projects zipWithIndex) map {
                   case (todo, i) =>
                     'div(
                       'div(
                         'class /= {
-                          if (!todo.done) "checkbox"
+                          if (!todo.isSelected) "checkbox"
                           else "checkbox checkbox__checked"
                         }
                       ),
                       // Generate transition when clicking checkboxes
                       event('click) {
                         immediateTransition { case s =>
-                          val todos = s.todos
+                          val todos = s.projects
                           val updated = for (t <- todos.zipWithIndex) yield {
-                            if (t._2 == i) t._1.copy(done = true) else t._1.copy(done = false)
+                            if (t._2 == i) t._1.copy(isSelected = true) else t._1.copy(isSelected = false)
                           }
-                          s.copy(todos = updated)
+                          s.copy(projects = updated)
                         }
                       },
-                     'span(todo.text) //  if (!todo.done)
-                      //else 'strike(todo.text)
+                     'span(todo.text)
                     )
                 }
               ),
               'form(
                 // Generate AddTodo action when 'Add' button clicked
                 eventWithAccess('submit) { access =>
-                  deferredTransition {
+                  immediateTransition { case s => {
+                    // @todo Need to clear out the form, see https://github.com/fomkin/korolev/issues/98
+                    s.copy(cloneButtonEnabled = false)
+                  }
+                  }.deferredTransition {
                     access.property[String](inputId, 'value) flatMap { value =>
                       WebServer.cloneMicroService(state, value).flatMap{ _ => {
                         MyStorage.futureInitialState
@@ -164,7 +167,7 @@ class WebServer extends KorolevBlazeServer {
                   'type /= "text",
                   'placeholder /= "New MicroService Name"
                 ),
-                'button("Clone MicroService")
+                'button(if (state.cloneButtonEnabled) None else Some('disabled /= "true"), "Clone MicroService")
               )
             )
           )
@@ -177,7 +180,7 @@ class WebServer extends KorolevBlazeServer {
       ServerRouter(
         dynamic = (_, _) => Router(
           fromState = {
-            case State(_) =>
+            case State(_, _) =>
               Root
           },
           toState = {
@@ -206,14 +209,15 @@ class WebServer extends KorolevBlazeServer {
   )
 }
 
-case class State(todos: Vector[State.Todo] = State.Todo(5))
+case class State(projects: Vector[State.JumpMicroProject] = State.JumpMicroProject(0),
+                 cloneButtonEnabled: Boolean = true)
 
 object State {
   val effects = Effects[Future, State, Any]
-  case class Todo(text: String, done: Boolean)
-  object Todo {
-    def apply(n: Int): Vector[Todo] = (0 to n).toVector map {
-      i => Todo(s"This is TODO #$i", done = false)
+  case class JumpMicroProject(text: String, isSelected: Boolean)
+  object JumpMicroProject {
+    def apply(n: Int): Vector[JumpMicroProject] = (0 to n).toVector map {
+      i => JumpMicroProject(s"This is TODO #$i", isSelected = false)
     }
   }
 }
