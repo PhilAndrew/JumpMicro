@@ -112,15 +112,6 @@ val akkaHttpVersion = "10.0.3"  // Akka Http library
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
-lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
-  "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
-  "org.scaldi/scaldi_2.11", // org.scaldi/scaldi_2.11/0.5.8
-  "io.jvm.uuid/scala-uuid_2.11",
-  "org.http4s/blaze-core_2.11",
-  "org.http4s/blaze-http_2.11",
-  "org.http4s/http4s-websocket_2.11",
-  "com.github.pathikrit/better-files_2.11")
-
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
 // the SBT dependency such as "com.lihaoyi" %% "scalatags" % "0.6.1" but we also need to specify what
@@ -132,13 +123,16 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("Better files",
     Seq("com.github.pathikrit" %% "better-files" % "2.17.1"),
-    Seq(),
-    Seq("better.files")),
+    Seq("better.files"),
+    Seq("com.github.pathikrit/better-files_2.11"),
+    Seq()),
 
   OsgiDependency("UUID",
     Seq("io.jvm.uuid" %% "scala-uuid" % "0.2.2"),
-    Seq(),
-    Seq("io.jvm.uuid")),
+    Seq("io.jvm.uuid"),
+    Seq("io.jvm.uuid/scala-uuid_2.11"),
+    Seq()
+  ),
 
   OsgiDependency("Korolov",
     Seq("org.eclipse.jetty.alpn" % "alpn-api" % "1.1.3.v20160715",
@@ -146,15 +140,19 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       // If this is included then it does not work in Karaf due to Karafs logging "biz.enef" %% "slogging-slf4j" % "0.5.2",
       "org.http4s" % "blaze-core_2.11" % "0.12.4",
       "org.http4s" % "blaze-http_2.11" % "0.12.4"),
-    Seq(),
     Seq("org.log4s", "org.http4s.blaze.http", "org.http4s.blaze.http.http20", "org.http4s.blaze.http.util", "org.http4s.blaze.http.websocket",
       "org.http4s.blaze.channel", "org.http4s.blaze.channel.nio2",
-      "slogging")),
+      "slogging"),
+    Seq("org.http4s/blaze-core_2.11",
+      "org.http4s/blaze-http_2.11",
+      "org.http4s/http4s-websocket_2.11"),
+    Seq()
+  ),
 
   OsgiDependency("Log4s",
     Seq("org.log4s" %% "log4s" % "1.3.4"),
-    Seq(),
-    Seq("org.log4s")),
+    Seq("org.log4s"),
+    Seq(), Seq()),
 
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
@@ -162,10 +160,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     "ScalaTagsDependency",
     // sbt dependencys
     Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
-    // bundle requirements
-    Seq(),
     // package requirements
-    Seq("scalatags", "scalatags.text")
+    Seq("scalatags", "scalatags.text"),
+    Seq(), Seq()
   ),
 
   OsgiDependency("DeclarativeServicesDependency",
@@ -180,7 +177,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       //  "org.apache.felix" % "org.apache.felix.scr.ds-annotations" % "1.2.8",
     ),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
   OsgiDependency("DominoOsgiDependency",
@@ -188,8 +185,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       // https://www.helgoboss.org/projects/domino/user-guide
       "com.github.domino-osgi" % "domino_2.11" % "1.1.1"
     ),
-    Seq(),
-    Seq("domino")
+    Seq("domino"),
+    Seq(), Seq()
   ),
 
   OsgiDependency("CamelCoreDependency",
@@ -198,10 +195,10 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       // Scala DSL for Camel
       "org.scala-lang.modules" %% "scala-xml" % "1.0.4", // Required by camel-scala
       "org.apache.camel" % "camel-scala" % camelVersion),
+    Seq(),
     Seq("org.apache.camel.camel-core-osgi",
       "org.apache.camel.camel-scala"
-    ),
-    Seq()
+    ), Seq()
   ),
 
   OsgiDependency("MonixCoreDependency",
@@ -210,13 +207,13 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "io.monix" %% "monix-cats" % "2.2.1"
     ),
     Seq(), // @todo Monix is untested to work
-    Seq()
+    Seq(), Seq()
   ),
 
   OsgiDependency("AkkaCamelDependency",
     Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
-    Seq("com.typesafe.akka.camel"),
-    Seq()
+    Seq(),
+    Seq("com.typesafe.akka.camel"), Seq()
   ),
 
   OsgiDependency("AkkaDependency",
@@ -228,13 +225,12 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     ),
-    Seq("com.typesafe.akka.osgi"),
-    Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
+    Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl"),
+    Seq("com.typesafe.akka.osgi"), Seq()
   ),
 
   OsgiDependency("Neo4JDependency",
     Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.39"),
-    Seq(),
     Seq("org.neo4j.ogm",
       "org.neo4j.ogm.compiler",
       "org.neo4j.ogm.config",
@@ -242,13 +238,15 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.neo4j.ogm.transaction",
       "org.neo4j.ogm.drivers.bolt.driver",
       "org.neo4j.ogm.service",
-      "org.neo4j.ogm.annotation")
+      "org.neo4j.ogm.annotation"),
+    Seq("universe/neo4j-ogm-osgi_2.11"),
+    Seq()
   ),
 
   OsgiDependency("ScaldiDependency",
     // Scala Dependency Injection
     // http://scaldi.org/
-    Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq(), Seq("scaldi")
+    Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq("scaldi"), Seq("org.scaldi/scaldi_2.11"), Seq()
   ),
 
   OsgiDependency("CamelDependency",
@@ -260,11 +258,11 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     // If adding other camel package then add it here like the following:
     //"org.apache.camel.camel-ssh",
     //"org.apache.camel.camel-jsch",),)
+    Seq(),
     Seq("org.apache.camel.camel-exec",
       //"org.apache.camel.camel-ssh",
       "org.apache.camel.camel-ftp",
-      "org.apache.camel.camel-stream"),
-    Seq()
+      "org.apache.camel.camel-stream"), Seq()
   ),
 
   OsgiDependency("CatsDependency",
@@ -272,7 +270,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     // Un-tested to work
     Seq("org.typelevel" %% "cats-core" % catsVersion),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
   OsgiDependency("ShapelessDependency",
@@ -283,7 +281,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.scala-lang" % "scala-compiler" % "2.11.8",
       "com.chuusai" %% "shapeless" % shapelessVersion),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
   OsgiDependency("ConfigDependency",
@@ -291,13 +289,13 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.github.kxbmap" %% "configs" % "0.4.4"
     ),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
   OsgiDependency("Acylic",
     Seq("com.lihaoyi" %% "acyclic" % "0.1.7"),
-    Seq(),
-    Seq("acyclic"))
+    Seq("acyclic"), Seq(), Seq()
+    )
   // https://github.com/erikvanoosten/metrics-scala
   /*OsgiDependency("MetricsScalaDependency",
     Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
@@ -360,6 +358,8 @@ osgiRepositoryRules := Seq(
 // General sbt settings
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
+
+lazy val karafDepsMustBeJarFiles = OsgiDependencies.map(_.mustBeJarFilesForKaraf).flatten
 
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
 //fork in run := false
