@@ -213,7 +213,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
 
   OsgiDependency("AkkaCamelDependency",
     Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
-    Seq(), Seq("com.typesafe.akka.camel"), Seq()
+    Seq(), Seq(), Seq("com.typesafe.akka.camel")
   ),
 
   OsgiDependency("AkkaDependency",
