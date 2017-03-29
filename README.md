@@ -208,10 +208,11 @@ Why OSGI? [https://www.osgi.org/developer/benefits-of-using-osgi/](https://www.o
 * OSGi is a module system which allows for code to be loaded, started and stopped easily.
 * Can share resources between OSGi bundles (modules) in the same process leading to a more efficient runtime for running multiple modules on the same machine. No need to have one process per MicroService, have one process for many MicroServices.
 * OSGi module system works and is reliable as a module system.
+* The container is not heavyweight, it does not provide a lot of services, it just allows services to work together as modules.
  
 ## FAQ: What about Java 9 Modules?
  
-[Java modules](https://en.wikipedia.org/wiki/Java_Module_System) deferred to a Java 9 release in 2017 looks like a new and good idea but OSGi, although boring, works. I'm happy to move to Java Modules once I understand it. 
+[Java modules](https://en.wikipedia.org/wiki/Java_Module_System) deferred to a Java 9 release in 2017 looks like a new and good idea but OSGi, although boring, works. I'm happy to move to Java Modules once I understand it. I'd like to integrate Java modules to work with this so that older OSGi JARs will work.  
 
 ## FAQ: Shouldn't MicroServices be smaller?
 
