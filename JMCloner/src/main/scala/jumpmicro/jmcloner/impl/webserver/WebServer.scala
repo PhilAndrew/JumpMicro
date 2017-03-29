@@ -10,6 +10,7 @@ import java.io.{File => JFile}
 
 import scala.concurrent.Future
 import scala.io.Codec
+import scala.concurrent.blocking
 
 object WebServer {
 
@@ -51,7 +52,7 @@ object WebServer {
   def cleanProject(toPath: File) = {
     val targetFolder = File(toPath.pathAsString + / + "target")
     targetFolder.delete(true)
-    targetFolder.createDirectory()
+    try { targetFolder.createDirectory() } catch { case ex: java.nio.file.FileAlreadyExistsException => { } }
   }
 
   private def cloneMicroService2(from: String, to: String) = {
@@ -91,12 +92,14 @@ class WebServer extends KorolevBlazeServer {
   import State.effects._
   object MyStorage {
 
-    def futureInitialState = Future {
+    def initialState = {
       val dirs = new java.io.File(".." + java.io.File.separator).listFiles().toSeq.filter(_.isDirectory).filter(_.getName.startsWith("JM")).toSeq
       State(
         projects = dirs.map(f => JumpMicroProject(f.getName, isSelected = false)).toVector
       )
     }
+
+    def futureInitialState = Future { blocking { initialState } }
 
     def getStateByDeviceId(deviceId: StateStorage.DeviceId): Future[State] = futureInitialState
   }
@@ -171,7 +174,7 @@ class WebServer extends KorolevBlazeServer {
                         MyStorage.futureInitialState
                       }}.flatMap(_ => {
                         Future { transition { case s => {
-                          State(Vector())
+                          blocking { MyStorage.initialState }
                         }
                         } }
                       })
