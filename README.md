@@ -12,9 +12,28 @@ You need Java, Scala, SBT build tool.
 
 JMScalaJs wants to use a Neo4J database if it is available as that is the default database for storage, but not required to run. Refer to the file jumpmicro.conf for connection settings. 
 
+## How can this be run?
+
+You can also run a normal Java or Scala main within this project by doing the following. However this does not give you any OSGi features and really it not the right way to run it.
+
+    > sbt runMain package.path.to.main.YourClass param1 param2
+
+JumpMicro produces an OSGi JAR bundle which can be run inside an OSGi container. You can run it in three ways.
+ 
+* [Apache Felix](http://felix.apache.org/) in [embedded mode](http://felix.apache.org/documentation/subprojects/apache-felix-framework/apache-felix-framework-launching-and-embedding.html) by running ```sbt run``` which is a simple and easy way to run the OSGi program
+* In the [Apache Felix](http://felix.apache.org/) container normally
+* In the [Apache Karaf](http://karaf.apache.org/) container by ```sbt karafBuild``` and ```sbt karafDeploy```
+* Other OSGi containers have not yet been tested
+
+Other OSGi containers I would like to test in the near future are
+
+* [Eclipse Virgo](http://www.eclipse.org/virgo/)
+* [Equinox OSGi](http://www.eclipse.org/equinox/) 
+* [Knopflerfish OSGi](http://www.knopflerfish.org/) 
+
 ## How to get started
 
-You must firstly install [Neo4J OGM OSGi](https://github.com/PhilAndrew/neo4j-ogm-osgi) so that it is available for build.
+You must firstly install [Neo4J OGM OSGi](https://github.com/PhilAndrew/neo4j-ogm-osgi) so that it is available for build as a dependency.
 
     > git clone git@github.com:PhilAndrew/neo4j-ogm-osgi.git
     
@@ -22,7 +41,7 @@ You must firstly install [Neo4J OGM OSGi](https://github.com/PhilAndrew/neo4j-og
     
     > sbt publishLocal
     
-Then git clone this repo    
+Then git clone this repository, for test purposes lets run JMScalaJS.    
 
 Go to the JMScalaJs directory inside JumpMicro and
 
@@ -38,15 +57,15 @@ Then go to http://localhost:8080/test
 
 You are looking at an Akka Http server delivering a ScalaJs page running in OSGi in Felix Embedded.
 
-## Deploy to Karaf
+## Deploy to Karaf (if you wish to)
 
 The normal build steps to get it to Karaf as
 
-1. Compile it
+1. Compile it (normally you just want to sbt compile)
 
     > sbt clean update compile
     
-2. Osgi Bundle
+2. Osgi Bundle builds the OSGi bundle file for example for the JMCloner MicroService in ```target/scala-2.11/jmcloner-2.11-1.0.0.jar```
 
     > sbt osgiBundle
     
