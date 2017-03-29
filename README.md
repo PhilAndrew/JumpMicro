@@ -69,11 +69,11 @@ Dependencies in SBT are usually written as follows
 
 However for OSGi we want to be able to express the the normal SBT module dependencies but also the packages we want to import and use ```packageRequirements```. The settings you are less likely to use are what files must be JAR files for Karaf (I'll explain that later) and what modules you want to import. You shouldn't really import modules, you should import packages in ```packageRequirements```, but module importing is a more coarse grained way to import. 
 
-     OsgiDependency(val name : String, 
-                val sbtModules : Seq[sbt.ModuleID], 
-                val packageRequirements : Seq[scala.Predef.String], 
-                val mustBeJarFilesForKaraf : Seq[scala.Predef.String], 
-                val moduleRequirements : Seq[scala.Predef.String])
+     OsgiDependency(val name : String, // name is just for documentation purposes
+                val sbtModules : Seq[sbt.ModuleID], // The SBT modules imported
+                val packageRequirements : Seq[scala.Predef.String], // The packages which we import in our project
+                val mustBeJarFilesForKaraf : Seq[scala.Predef.String], // Less used setting
+                val moduleRequirements : Seq[scala.Predef.String]) // Less used setting
      
 So the equivalent OsgiDependency for Log4s is as follows.                
                 
