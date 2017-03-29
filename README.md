@@ -57,6 +57,10 @@ Then go to http://localhost:8080/test
 
 You are looking at an Akka Http server delivering a ScalaJs page running in OSGi in Felix Embedded.
 
+## How to create a new MicroService
+
+Creating a new one is done by copying one to a new folder. This is done by running JMCloner, go into the JMCloner and run ```sbt run```, then http://localhost:8081/, click on the MicroService you want to clone, type in a new name such as JMNewMicroService and press "Clone MicroService". This creates a new directory with a copy of that MicroService with a new name.
+
 ## Adding SBT dependencies
 
 Dependencies in SBT are usually written as follows
@@ -100,8 +104,8 @@ The normal build steps to get it to Karaf as
 | ------------------------ |:----------------------------------------------------------------------------:|
 | JMScalaJs                | Akka Http server with ScalaJS running in webpage http://localhost:8080/test/ |
 | JMCloner                 | Allow creation of a new MicroService by copying one to another<br>After sbt run the visit http://localhost:8181/        |
-| JMSangriaGraphql         | Demonstration of Sangria GraphQL<br>After sbt run the visit http://localhost:8181/ |
-| JMResourceRegistry       | A common resource registry OSGi service used by the other OSGi services |
+| JMSangriaGraphql         | NOT WORKING YET: Demonstration of Sangria GraphQL<br>After sbt run the visit http://localhost:8181/ |
+| JMResourceRegistry       | NOT WORKING YET: A common resource registry OSGi service used by the other OSGi services |
 
 ## Features    
   
@@ -123,7 +127,8 @@ It has the following features:
 
 ## Conventions and rules
 
-* Use a higher level messaging solution to communicate between MicroServices such as Akka remoting messaging (in a cluster), consider use of backpressure or Camel to send and receive messages, rather than REST. 
+* Use a higher level messaging solution to communicate between MicroServices such as Akka remoting messaging (in a cluster), consider use of backpressure or Camel to send and receive messages, use GraphQL, rather than REST.
+* ?.
 
 ## Suggested libaries
 
@@ -148,11 +153,17 @@ Deploys the Karaf features file and dependent jar files to the environment varia
 
 After deploying Karaf then start Karaf (or it could already be started), if the features file is deployed to Karaf then it should auto-install, else start it.
 
+Inside the Karaf shell, after running Karaf, for example:
+
     > feature:install JMScalaJs
 
 ## Environment variables
 
+The following is used by the MicroService when running.
+
 **JUMPMICRO_CONFIG_PATH** Full path to the configuration file, default value is "jumpmicro.conf" which is the configuration file in the current running directory.
+
+The following is used by the SBT build.sbt.
 
 If Karaf is the OSGi target being used and is accessable from this SBT project via the file system the the following environment variables should be set.
 
