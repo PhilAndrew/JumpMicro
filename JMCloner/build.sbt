@@ -155,7 +155,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
   OsgiDependency(
-    "ScalaTagsDependency",
+    "Scala Tags",
     // sbt dependencys
     Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
     // package requirements
@@ -163,7 +163,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), Seq()
   ),
 
-  OsgiDependency("DeclarativeServicesDependency",
+  OsgiDependency("Declarative Services",
     Seq(// Required for Declarative Services
       // However for DS to work you need to install and run another bundle before this one
       // http://stackoverflow.com/questions/16707784/using-an-embedded-osgi-container
@@ -178,7 +178,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), Seq()
   ),
 
-  OsgiDependency("DominoOsgiDependency",
+  OsgiDependency("Domino Osgi",
     Seq(  // Domino OSGi
       // https://www.helgoboss.org/projects/domino/user-guide
       "com.github.domino-osgi" % "domino_2.11" % "1.1.1"
@@ -187,7 +187,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), Seq()
   ),
 
-  OsgiDependency("CamelCoreDependency",
+  OsgiDependency("Camel Core",
     Seq("org.osgi" % "org.osgi.compendium" % "5.0.0", // Required for camel-core-osgi
       "org.apache.camel" % "camel-core-osgi" % camelVersion,
       // Scala DSL for Camel
@@ -200,7 +200,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     )
   ),
 
-  OsgiDependency("MonixCoreDependency",
+  OsgiDependency("Monix Core",
     Seq(  // Monix https://monix.io/
       //"io.monix" %% "monix" % "2.2.1",
       "io.monix" %% "monix-cats" % "2.2.1"
@@ -209,12 +209,12 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), Seq()
   ),
 
-  OsgiDependency("AkkaCamelDependency",
+  OsgiDependency("Akka Camel",
     Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
     Seq(), Seq(), Seq("com.typesafe.akka.camel")
   ),
 
-  OsgiDependency("AkkaDependency",
+  OsgiDependency("Akka",
     Seq(  // Akka
       "com.typesafe.akka" %% "akka-osgi" % akkaVersion,
       //"com.typesafe.akka" %% "akka-actor" % akkaVersion,
@@ -227,7 +227,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), Seq("com.typesafe.akka.osgi")
   ),
 
-  OsgiDependency("Neo4JDependency",
+  OsgiDependency("Neo4J",
     Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.39"),
     Seq("org.neo4j.ogm",
       "org.neo4j.ogm.compiler",
@@ -241,13 +241,13 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq()
   ),
 
-  OsgiDependency("ScaldiDependency",
+  OsgiDependency("Scaldi",
     // Scala Dependency Injection
     // http://scaldi.org/
     Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq("scaldi"), Seq("org.scaldi/scaldi_2.11"), Seq()
   ),
 
-  OsgiDependency("CamelDependency",
+  OsgiDependency("Camel",
     Seq(// Camel components
       //"org.apache.camel" % "camel-ssh" % camelVersion,
       "org.apache.camel" % "camel-ftp" % camelVersion,
@@ -264,7 +264,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.apache.camel.camel-stream")
   ),
 
-  OsgiDependency("CatsDependency",
+  OsgiDependency("Cats",
     // Cats https://github.com/typelevel/cats
     // Un-tested to work
     Seq("org.typelevel" %% "cats-core" % catsVersion),
@@ -272,7 +272,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), Seq()
   ),
 
-  OsgiDependency("ShapelessDependency",
+  OsgiDependency("Shapeless",
     // Shapeless https://github.com/milessabin/shapeless
     // Un-tested to work
     Seq("org.typelevel" % "macro-compat_2.11" % "1.1.1",
@@ -283,7 +283,7 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq(), Seq()
   ),
 
-  OsgiDependency("ConfigDependency",
+  OsgiDependency("Configs",
     Seq(  // https://github.com/kxbmap/configs
       "com.github.kxbmap" %% "configs" % "0.4.4"
     ),
