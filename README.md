@@ -31,7 +31,7 @@ Other OSGi containers I would like to test in the near future are
 * [Equinox OSGi](http://www.eclipse.org/equinox/) 
 * [Knopflerfish OSGi](http://www.knopflerfish.org/) 
 
-## How to get started
+## How to get build and run
 
 You must firstly install [Neo4J OGM OSGi](https://github.com/PhilAndrew/neo4j-ogm-osgi) so that it is available for build as a dependency.
 
