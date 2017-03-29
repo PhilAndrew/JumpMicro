@@ -73,9 +73,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 
 
-
-// [jumpmicro.shared, jumpmicro.shared.util, Decidable, Prelude, main]
-
+// @feature start body
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
@@ -311,7 +309,7 @@ osgiRepositoryRules := Seq(
   rewrite("better-files_2.11", imports =
     """javax.xml.bind,scala,scala.collection,scala.collection.generic,scala.collection.immutable,scala.collection.mutable,scala.collection.parallel,scala.io,scala.math,scala.reflect,scala.runtime,scala.util,scala.util.control""")
 )
-
+// @feature end body
 
 
 
@@ -436,8 +434,7 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 */
 // @feature end scalajs
 
-// @feature idris directory src/main/idris
-
+// @feature start copy_shared
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Copy shared source
@@ -449,9 +446,9 @@ copySharedSrc := {
   //IO.delete(sharedDir)
   //IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
 }
+// @feature end copy_shared
 
-// @feature start idris
-
+// @feature start synchronize
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Synchronize all MicroServices
@@ -658,7 +655,9 @@ jmSyncTask := {
   lastSyncFile.delete()
   lastSyncFile.createNewFile()
 }
+// @feature end synchronize
 
+// @feature start idris
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Compile Idris to Java classes
@@ -728,7 +727,6 @@ cleanFiles += file("target" + \\ + "idrisclass")
 //unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
 
 compile in Compile <<= (compile in Compile).dependsOn(copySharedSrc).dependsOn(compileIdris)
-
 // @feature end idris
 
 // OSGi component properties
