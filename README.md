@@ -31,7 +31,7 @@ Other OSGi containers I would like to test in the near future are
 * [Equinox OSGi](http://www.eclipse.org/equinox/) 
 * [Knopflerfish OSGi](http://www.knopflerfish.org/) 
 
-## How to get build and run
+## How to build and run
 
 You must firstly install [Neo4J OGM OSGi](https://github.com/PhilAndrew/neo4j-ogm-osgi) so that it is available for build as a dependency.
 
@@ -56,6 +56,27 @@ When it has started the console will state
 Then go to http://localhost:8080/test
 
 You are looking at an Akka Http server delivering a ScalaJs page running in OSGi in Felix Embedded.
+
+## Adding SBT dependencies
+
+Dependencies in SBT are usually written as follows
+
+    libraryDependencies += "org.log4s" %% "log4s" % "1.3.4"
+
+However for OSGi we want to be able to express the the normal SBT module dependencies but also the packages we want to import and use ```packageRequirements```. The settings you are less likely to use are what files must be JAR files for Karaf (I'll explain that later) and what modules you want to import. You shouldn't really import modules, you should import packages in ```packageRequirements```, but module importing is a more coarse grained way to import. 
+
+     OsgiDependency(val name : String, 
+                val sbtModules : Seq[sbt.ModuleID], 
+                val packageRequirements : Seq[scala.Predef.String], 
+                val mustBeJarFilesForKaraf : Seq[scala.Predef.String], 
+                val moduleRequirements : Seq[scala.Predef.String])
+     
+So the equivalent OsgiDependency for Log4s is as follows.                
+                
+    OsgiDependency("Log4s",
+      Seq("org.log4s" %% "log4s" % "1.3.4"),
+      Seq("org.log4s"),
+      Seq(), Seq()),                
 
 ## Deploy to Karaf (if you wish to)
 
