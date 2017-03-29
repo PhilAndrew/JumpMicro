@@ -22,7 +22,7 @@ JumpMicro produces an OSGi JAR bundle which can be run inside an OSGi container.
  
 * [Apache Felix](http://felix.apache.org/) in [embedded mode](http://felix.apache.org/documentation/subprojects/apache-felix-framework/apache-felix-framework-launching-and-embedding.html) by running ```sbt run``` which is a simple and easy way to run the OSGi program
 * In the [Apache Felix](http://felix.apache.org/) container normally
-* In the [Apache Karaf](http://karaf.apache.org/) container by ```sbt karafBuild``` and ```sbt karafDeploy```
+* In the [Apache Karaf](http://karaf.apache.org/) container by ```sbt karafBuild``` and ```sbt karafDeploy``` which will create a ```features.xml``` file and deploy it to Karaf
 * Other OSGi containers have not yet been tested
 
 Other OSGi containers I would like to test in the near future are
