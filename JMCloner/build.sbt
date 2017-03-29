@@ -409,11 +409,29 @@ initialize := {
 // END - Acyclic, prevents circular dependencies.
 
 // @feature start scalajs
-
+/*
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // ScalaJS compile Scala to Javascript
-/*
+lazy val scalaJsProject = (project in file("scalajs")).settings(
+  scalaVersion := "2.11.8",
+  libraryDependencies ++= Seq(
+    "org.scala-js" %%% "scalajs-dom" % "0.8.1",
+    "com.lihaoyi" %%% "scalatags" % "0.5.2",
+    "com.lihaoyi" %%% "scalarx" % "0.2.8",
+    "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
+    "com.lihaoyi" %%% "upickle" % "0.3.4",
+    "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
+  )
+).enablePlugins(ScalaJSPlugin)
+
+lazy val privatePackages: Seq[String] = Seq()
+
+lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
+  "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
+
+lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
+
 lazy val packageScalaJsResource = taskKey[Unit]("Package ScalaJS")
 
 packageScalaJsResource := {
@@ -431,6 +449,7 @@ compile in Compile <<= (compile in Compile).dependsOn(packageScalaJsResource)
 
 // http://stackoverflow.com/questions/30513492/sbt-in-a-multi-project-build-how-to-invoke-project-bs-task-from-project-a
 compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in scalaJsProject)
+
 */
 // @feature end scalajs
 
