@@ -121,6 +121,10 @@ It has the following features:
 * Can run in a Docker container.
 * [Idris language](http://www.idris-lang.org/) compiles, runs and interacts on the JVM in the MicroService using [Idris-JVM](https://github.com/mmhelloworld/idris-jvm) to compile in the sbt project. 
 
+## Conventions and rules
+
+* Use a higher level messaging solution to communicate between MicroServices such as Akka remoting messaging (in a cluster), consider use of backpressure or Camel to send and receive messages, rather than REST. 
+
 ## Suggested libaries
 
 * [Binding.scala](https://github.com/ThoughtWorksInc/Binding.scala) for HTML on client side
