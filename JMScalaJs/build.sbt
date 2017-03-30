@@ -81,6 +81,7 @@ lazy val JUMPMICRO_DOT = "jumpmicro."
 
 
 
+
 // ScalaJS builds from Scala code to Javascript code so therefore it does not get involved in the OSGi process.
 // Its dependencies are un-related to OSGi.
 
@@ -157,15 +158,12 @@ val akkaHttpVersion = "10.0.4"  // Akka Http library
 val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
-lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", // org.neo4j.driver/neo4j-java-driver/1.0.5
-  "io.jvm.uuid/scala-uuid_2.11",
-  "universe/neo4j-ogm-osgi_2.11", // universe/neo4j-ogm-osgi_2.11/1.4.38
-  "org.scaldi/scaldi_2.11",
-  "com.typesafe.akka/akka-http_2.11",
+// @todo Should I include?
+/*  "com.typesafe.akka/akka-http_2.11",
   "com.typesafe.akka/akka-http-core_2.11",
   "com.typesafe.akka/akka-parsing_2.11",
   "com.lihaoyi/scalatags_2.11",
-  "com.lihaoyi/sourcecode_2.11") // org.scaldi/scaldi_2.11/0.5.8
+  "com.lihaoyi/sourcecode_2.11"*/
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -177,41 +175,30 @@ lazy val karafDepsMustBeJarFiles = Seq(//"org.neo4j.driver/neo4j-java-driver", /
 lazy val OsgiDependencies = Seq[OsgiDependency](
 
   // https://github.com/melezov/scala-uuid
-  OsgiDependency("Scala-UUID, An optimized Scala wrapper for java.util.UUID - inspired by scala-time",
+  OsgiDependency("UUID",
     Seq("io.jvm.uuid" %% "scala-uuid" % "0.2.2"),
-    Seq(),
-    Seq("io.jvm.uuid")),
+    Seq("io.jvm.uuid"),
+    Seq("io.jvm.uuid/scala-uuid_2.11"),
+    Seq()
+  ),
+
+  OsgiDependency("Log4s",
+    Seq("org.log4s" %% "log4s" % "1.3.4"),
+    Seq("org.log4s"),
+    Seq(), Seq()),
 
   // ScalaTags
   // http://www.lihaoyi.com/scalatags/
   OsgiDependency(
-
-    "ScalaTagsDependency",
+    "Scala Tags",
     // sbt dependencys
-    Seq("com.lihaoyi" %% "scalatags" % "0.6.1",
-      "com.lihaoyi" %% "sourcecode" % "0.1.3"),
-    // bundle requirements
-    Seq(),
+    Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
     // package requirements
-    Seq("scalatags", "scalatags.text")
+    Seq("scalatags", "scalatags.text"),
+    Seq(), Seq()
   ),
 
-
-  /*OsgiDependency("Slf4jDependency",
-    Seq("org.slf4j" % "slf4j-api" % slf4jVersion,
-      "org.slf4j" % "slf4j-simple" % slf4jVersion,
-      "org.slf4j" % "jcl-over-slf4j" % slf4jVersion,
-      "org.slf4j" % "log4j-over-slf4j" % slf4jVersion),
-    Seq(),
-    Seq()
-  ),*/
-
-  OsgiDependency("Log4s",
-    Seq("org.log4s" %% "log4s" % "1.3.4"),
-    Seq(),
-    Seq("org.log4s")),
-
-  OsgiDependency("DeclarativeServicesDependency",
+  OsgiDependency("Declarative Services",
     Seq(// Required for Declarative Services
       // However for DS to work you need to install and run another bundle before this one
       // http://stackoverflow.com/questions/16707784/using-an-embedded-osgi-container
@@ -223,62 +210,51 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       //  "org.apache.felix" % "org.apache.felix.scr.ds-annotations" % "1.2.8",
     ),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
-  OsgiDependency("DominoOsgiDependency",
+  OsgiDependency("Domino Osgi",
     Seq(  // Domino OSGi
       // https://www.helgoboss.org/projects/domino/user-guide
       "com.github.domino-osgi" % "domino_2.11" % "1.1.1"
     ),
-    Seq(),
-    Seq("domino")
+    Seq("domino"),
+    Seq(), Seq()
   ),
 
-  OsgiDependency("CamelCoreDependency",
+  OsgiDependency("Camel Core",
     Seq("org.osgi" % "org.osgi.compendium" % "5.0.0", // Required for camel-core-osgi
       "org.apache.camel" % "camel-core-osgi" % camelVersion,
       // Scala DSL for Camel
       "org.scala-lang.modules" %% "scala-xml" % "1.0.4", // Required by camel-scala
       "org.apache.camel" % "camel-scala" % camelVersion),
+    Seq(),
+    Seq(),
     Seq("org.apache.camel.camel-core-osgi",
       "org.apache.camel.camel-scala"
-    ),
-    Seq()
+    )
   ),
 
-  /*OsgiDependency("MonixCoreDependency",
-    Seq(  // Monix https://monix.io/
-      //"io.monix" %% "monix" % "2.2.1",
-      "io.monix" %% "monix-cats" % "2.2.1"
-    ),
-    Seq(), // @todo Monix is untested to work
-    Seq()
-  ),*/
-
-  OsgiDependency("AkkaCamelDependency",
+  OsgiDependency("Akka Camel",
     Seq("com.typesafe.akka" %% "akka-camel" % akkaVersion),
-    Seq("com.typesafe.akka.camel"),
-    Seq()
+    Seq(), Seq(), Seq("com.typesafe.akka.camel")
   ),
 
-  OsgiDependency("AkkaDependency",
+  OsgiDependency("Akka",
     Seq(  // Akka
       "com.typesafe.akka" %% "akka-osgi" % akkaVersion,
       //"com.typesafe.akka" %% "akka-actor" % akkaVersion,
       //"com.typesafe.akka" %% "akka-stream" % akkaVersion,
       "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
       "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-parsing" % akkaHttpVersion
+      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     ),
-    Seq("com.typesafe.akka.osgi"),
-    Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl")
+    Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl"),
+    Seq(), Seq("com.typesafe.akka.osgi")
   ),
 
-  OsgiDependency("Neo4JDependency",
+  OsgiDependency("Neo4J",
     Seq("universe" % "neo4j-ogm-osgi_2.11" % "1.4.39"),
-    Seq(),
     Seq("org.neo4j.ogm",
       "org.neo4j.ogm.compiler",
       "org.neo4j.ogm.config",
@@ -286,16 +262,18 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.neo4j.ogm.transaction",
       "org.neo4j.ogm.drivers.bolt.driver",
       "org.neo4j.ogm.service",
-      "org.neo4j.ogm.annotation")
+      "org.neo4j.ogm.annotation"),
+    Seq("universe/neo4j-ogm-osgi_2.11"),
+    Seq()
   ),
 
-  OsgiDependency("ScaldiDependency",
+  OsgiDependency("Scaldi",
     // Scala Dependency Injection
     // http://scaldi.org/
-    Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq(), Seq("scaldi")
+    Seq("org.scaldi" %% "scaldi" % "0.5.8"), Seq("scaldi"), Seq("org.scaldi/scaldi_2.11"), Seq()
   ),
 
-  OsgiDependency("CamelDependency",
+  OsgiDependency("Camel",
     Seq(// Camel components
       //"org.apache.camel" % "camel-ssh" % camelVersion,
       "org.apache.camel" % "camel-ftp" % camelVersion,
@@ -304,22 +282,23 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     // If adding other camel package then add it here like the following:
     //"org.apache.camel.camel-ssh",
     //"org.apache.camel.camel-jsch",),)
+    Seq(),
+    Seq(),
     Seq("org.apache.camel.camel-exec",
       //"org.apache.camel.camel-ssh",
       "org.apache.camel.camel-ftp",
-      "org.apache.camel.camel-stream"),
-    Seq()
+      "org.apache.camel.camel-stream")
   ),
 
-  OsgiDependency("CatsDependency",
+  OsgiDependency("Cats",
     // Cats https://github.com/typelevel/cats
     // Un-tested to work
     Seq("org.typelevel" %% "cats-core" % catsVersion),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
-  OsgiDependency("ShapelessDependency",
+  OsgiDependency("Shapeless",
     // Shapeless https://github.com/milessabin/shapeless
     // Un-tested to work
     Seq("org.typelevel" % "macro-compat_2.11" % "1.1.1",
@@ -327,21 +306,21 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "org.scala-lang" % "scala-compiler" % "2.11.8",
       "com.chuusai" %% "shapeless" % shapelessVersion),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
-  OsgiDependency("ConfigDependency",
+  OsgiDependency("Configs",
     Seq(  // https://github.com/kxbmap/configs
       "com.github.kxbmap" %% "configs" % "0.4.4"
     ),
     Seq(),
-    Seq()
+    Seq(), Seq()
   ),
 
   OsgiDependency("Acylic",
     Seq("com.lihaoyi" %% "acyclic" % "0.1.7"),
-    Seq(),
-    Seq("acyclic"))
+    Seq("acyclic"), Seq(), Seq()
+  )
   // https://github.com/erikvanoosten/metrics-scala
   /*OsgiDependency("MetricsScalaDependency",
     Seq("org.mpierce.metrics.reservoir" % "hdrhistogram-metrics-reservoir" % "1.1.0", // required for metrics-scala
@@ -399,6 +378,8 @@ osgiRepositoryRules := Seq(
 
 lazy val dependencys = OsgiDependencies.map(_.sbtModules)
 
+lazy val karafDepsMustBeJarFiles: Seq[String] = OsgiDependencies.map(_.mustBeJarFilesForKaraf).flatten
+
 // http://stackoverflow.com/questions/5137460/sbt-stop-run-without-exiting
 //fork in run := false
 
@@ -448,11 +429,9 @@ initialize := {
 // END - Acyclic, prevents circular dependencies.
 
 // @feature start scalajs
-
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // ScalaJS compile Scala to Javascript
-
 lazy val packageScalaJsResource = taskKey[Unit]("Package ScalaJS")
 
 packageScalaJsResource := {
@@ -473,8 +452,7 @@ compile in Compile <<= (compile in Compile).dependsOn(fastOptJS in Compile in sc
 
 // @feature end scalajs
 
-// @feature idris directory src/main/idris
-
+// @feature start copy_shared
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Copy shared source
@@ -486,9 +464,9 @@ copySharedSrc := {
   //IO.delete(sharedDir)
   //IO.copyDirectory(new File(".." + \\ + "JMShared" + \\ + "src" + \\ + "main" + \\ + "scala" + \\ + "jumpmicro" + \\ + "shared"), sharedDir, true, true)
 }
+// @feature end copy_shared
 
-// @feature start idris
-
+// @feature start synchronize
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Synchronize all MicroServices
@@ -695,7 +673,9 @@ jmSyncTask := {
   lastSyncFile.delete()
   lastSyncFile.createNewFile()
 }
+// @feature end synchronize
 
+// @feature start idris
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // Compile Idris to Java classes
@@ -765,7 +745,6 @@ cleanFiles += file("target" + \\ + "idrisclass")
 //unmanagedClasspath in Compile += baseDirectory.value / "target" / "idrisclass"
 
 compile in Compile <<= (compile in Compile).dependsOn(copySharedSrc).dependsOn(compileIdris)
-
 // @feature end idris
 
 // OSGi component properties
@@ -790,8 +769,7 @@ privatePackage := privatePackages ++ subPackagesOf(JUMPMICRO_DOT + name.value.to
   "mmhelloworld.idrisjvmruntime",
   "Decidable",
   "Prelude",
-  "main"
-)
+  "main")
 
 lazy val moduleDeps: Seq[ModuleID] = dependencys.flatten
 
