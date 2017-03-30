@@ -159,11 +159,6 @@ val catsVersion = "0.9.0"       // https://github.com/typelevel/cats
 val shapelessVersion = "2.3.2"  // https://github.com/milessabin/shapeless
 
 // @todo Should I include?
-/*  "com.typesafe.akka/akka-http_2.11",
-  "com.typesafe.akka/akka-http-core_2.11",
-  "com.typesafe.akka/akka-parsing_2.11",
-  "com.lihaoyi/scalatags_2.11",
-  "com.lihaoyi/sourcecode_2.11"*/
 
 // Dependencies
 // All dependencies take the form of OsgiDependency due to the fact that we need to declare not only
@@ -195,7 +190,8 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
     Seq("com.lihaoyi" %% "scalatags" % "0.6.1"),
     // package requirements
     Seq("scalatags", "scalatags.text"),
-    Seq(), Seq()
+    Seq("com.lihaoyi/scalatags_2.11",
+      "com.lihaoyi/sourcecode_2.11"), Seq()
   ),
 
   OsgiDependency("Declarative Services",
@@ -250,7 +246,9 @@ lazy val OsgiDependencies = Seq[OsgiDependency](
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
     ),
     Seq("akka.http", "akka.http.scaladsl.server", "akka.http.scaladsl"),
-    Seq(), Seq("com.typesafe.akka.osgi")
+    Seq("com.typesafe.akka/akka-http_2.11",
+      "com.typesafe.akka/akka-http-core_2.11",
+      "com.typesafe.akka/akka-parsing_2.11"), Seq("com.typesafe.akka.osgi")
   ),
 
   OsgiDependency("Neo4J",
@@ -956,19 +954,33 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
          mustBeFile <- getMustBeFileOf(module)) yield module
   }
 
-  def getJarFilesInBundles(mustBeFiles: Seq[Module]): Seq[File] = {
-    for (f <- mustBeFiles;
-         jarFile <- f.jarFile) yield {
-      val result = new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
-      if (result.exists()) result else {
-        val result2 = new File("." + \\ + "target" + \\ + "bundles" + \\ + f.id.name + ".jar")
-        if (result2.exists()==false) {
-          println("Error, the jar file is not found. " + result2)
-        }
-        result2
-      }
-    }
+  def jarFileStartingWith(p: File, start: String): Option[File] = {
+    val allFiles = p.listFiles()
+    allFiles.find( (f) => {
+      f.getName.startsWith(start)
+    })
   }
+
+  def getJarFilesInBundles(mustBeFiles: Seq[Module]): Seq[File] = {
+    val result: Seq[Option[File]] = for (f: Module <- mustBeFiles;
+         jarFile <- f.jarFile) yield {
+      val result1 = new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
+      val result2 = new File("." + \\ + "target" + \\ + "bundles" + \\ + f.id.name + ".jar")
+      val result3 = new File("." + \\ + "target" + \\ + "bundles" + \\ + f.id.name + "-" + f.id.version + ".jar")
+      val fileStartingWith: Option[File] = jarFileStartingWith(new File("." + \\ + "target" + \\ + "bundles"), f.id.name)
+      if (result1.exists()) Some(result1) else
+        if (result2.exists()) Some(result2) else
+        if (result3.exists()) Some(result3) else
+        if (fileStartingWith.isDefined)
+            fileStartingWith
+          else
+      {
+        println("Error: File not found: " + jarFile.toString)
+        None
+      }
+      }
+      result.flatten
+    }
 
   val modulesWithEvictedOnesRemoved = allModules.filter(! _.isEvicted)
   val modulesToRemove = findModulesToRemoveAsTheyAreInvolvedInKarafFeatures(modulesWithEvictedOnesRemoved)

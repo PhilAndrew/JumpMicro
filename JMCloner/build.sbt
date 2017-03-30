@@ -413,25 +413,6 @@ initialize := {
 // ***********************************************************************************************************************************************
 // ***********************************************************************************************************************************************
 // ScalaJS compile Scala to Javascript
-lazy val scalaJsProject = (project in file("scalajs")).settings(
-  scalaVersion := "2.11.8",
-  libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.1",
-    "com.lihaoyi" %%% "scalatags" % "0.5.2",
-    "com.lihaoyi" %%% "scalarx" % "0.2.8",
-    "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
-    "com.lihaoyi" %%% "upickle" % "0.3.4",
-    "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
-  )
-).enablePlugins(ScalaJSPlugin)
-
-lazy val privatePackages: Seq[String] = Seq()
-
-lazy val resourcePackages: Seq[String] = Seq("js", "static.bootstrap.css", "static.bootstrap.js",
-  "static.jquery", "static.tether.dist.css", "static.tether.dist.js")
-
-lazy val rootProject = project.in(file(".")).aggregate(scalaJsProject)
-
 lazy val packageScalaJsResource = taskKey[Unit]("Package ScalaJS")
 
 packageScalaJsResource := {
@@ -957,18 +938,32 @@ karafBuildTask <<= (moduleGraph in Compile) map { (m: ModuleGraph) =>
          mustBeFile <- getMustBeFileOf(module)) yield module
   }
 
+  def jarFileStartingWith(p: File, start: String): Option[File] = {
+    val allFiles = p.listFiles()
+    allFiles.find( (f) => {
+      f.getName.startsWith(start)
+    })
+  }
+
   def getJarFilesInBundles(mustBeFiles: Seq[Module]): Seq[File] = {
-    for (f <- mustBeFiles;
-         jarFile <- f.jarFile) yield {
-      val result = new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
-      if (result.exists()) result else {
-        val result2 = new File("." + \\ + "target" + \\ + "bundles" + \\ + f.id.name + ".jar")
-        if (result2.exists()==false) {
-          println("Error, the jar file is not found. " + result2)
-        }
-        result2
+    val result: Seq[Option[File]] = for (f: Module <- mustBeFiles;
+                                         jarFile <- f.jarFile) yield {
+      val result1 = new File("." + \\ + "target" + \\ + "bundles" + \\ + jarFile.getName)
+      val result2 = new File("." + \\ + "target" + \\ + "bundles" + \\ + f.id.name + ".jar")
+      val result3 = new File("." + \\ + "target" + \\ + "bundles" + \\ + f.id.name + "-" + f.id.version + ".jar")
+      val fileStartingWith: Option[File] = jarFileStartingWith(new File("." + \\ + "target" + \\ + "bundles"), f.id.name)
+      if (result1.exists()) Some(result1) else
+      if (result2.exists()) Some(result2) else
+      if (result3.exists()) Some(result3) else
+      if (fileStartingWith.isDefined)
+        fileStartingWith
+      else
+      {
+        println("Error: File not found: " + jarFile.toString)
+        None
       }
     }
+    result.flatten
   }
 
   val modulesWithEvictedOnesRemoved = allModules.filter(! _.isEvicted)
