@@ -18,6 +18,6 @@ Neo4j is not required but is used if available.
 
 ### Running as a daemon process
 
-Docker can run processes as daemon, use the ```-d``` command line option. In which case starting Neo4J with the ```-d``` option is as follows.
+Docker can run processes as daemon, use the ```-d``` command line option. In which case starting Neo4J with the ```-d``` option will run it in the background.
 
     docker run -d --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j2/data:/data neo4j:3.0
