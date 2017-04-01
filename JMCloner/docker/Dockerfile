@@ -5,4 +5,6 @@ WORKDIR /app/neo4j-ogm-osgi
 RUN sbt publishLocal
 RUN git clone https://github.com/PhilAndrew/JumpMicro.git /app/JumpMicro
 WORKDIR /app/JumpMicro/JMCloner
-RUN sbt run
+RUN sbt update compile
+EXPOSE 8181
+#RUN sbt run
