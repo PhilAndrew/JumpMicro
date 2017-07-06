@@ -59,7 +59,7 @@ You are looking at an Akka Http server delivering a ScalaJs page running in OSGi
 
 ## How to create a new MicroService
 
-Creating a new one is done by copying one to a new folder. This is done by running JMCloner, go into the JMCloner and run ```sbt run```, then http://localhost:8081/, click on the MicroService you want to clone, type in a new name such as JMNewMicroService and press "Clone MicroService". This creates a new directory with a copy of that MicroService with a new name, all the packages, classes and names are updated to match the new name.
+Creating a new one is done by copying one to a new folder. This is done by running JMCloner, go into the JMCloner and run ```sbt run```, then http://localhost:8181/, click on the MicroService you want to clone, type in a new name such as JMNewMicroService and press "Clone MicroService". This creates a new directory with a copy of that MicroService with a new name, all the packages, classes and names are updated to match the new name.
 
 ## Adding SBT dependencies
 
