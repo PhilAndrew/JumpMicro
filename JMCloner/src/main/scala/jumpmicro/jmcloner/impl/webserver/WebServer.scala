@@ -69,6 +69,7 @@ object WebServer {
     val toLower = to.toLowerCase
 
     replaceStringInFiles(toPath, "jumpmicro." + fromLower, "jumpmicro." + toLower)
+    replaceStringInFiles(toPath, "jumpmicro/" + fromLower, "jumpmicro/" + toLower)
     replaceStringInFiles(toPath, from, to)
 
     renameFiles(toPath, from, to)
